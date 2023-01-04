@@ -31,14 +31,14 @@ function CrmDashboard() {
     <ApexChartWrapper>
       <Grid container spacing={6} className='match-height'>
         <Grid item xs={12} md={4}>
-          <CrmAward />
+          <CrmAward/>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
           <CardStatisticsVertical
             stats='155k'
             color='primary'
             trendNumber='+22%'
-            icon={<CartPlus />}
+            icon={<CartPlus/>}
             title='Total Orders'
             chipText='Last 4 Month'
           />
@@ -49,49 +49,54 @@ function CrmDashboard() {
             color='success'
             trendNumber='+38%'
             title='Total Sales'
-            icon={<CurrencyUsd />}
+            icon={<CurrencyUsd/>}
             chipText='Last Six Month'
           />
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <CrmTotalProfit />
+          <CrmTotalProfit/>
         </Grid>
         <Grid item xs={6} sm={3} md={2}>
-          <CrmTotalGrowth />
+          <CrmTotalGrowth/>
         </Grid>
         <Grid item xs={12} md={4}>
-          <CrmOrganicSessions />
+          <CrmOrganicSessions/>
         </Grid>
         <Grid item xs={12} md={8}>
-          <CrmProjectTimeline />
+          <CrmProjectTimeline/>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <CrmWeeklyOverview />
+          <CrmWeeklyOverview/>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <CrmSocialNetworkVisits />
+          <CrmSocialNetworkVisits/>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <CrmMonthlyBudget />
+          <CrmMonthlyBudget/>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <CrmMeetingSchedule />
+          <CrmMeetingSchedule/>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <CrmExternalLinks />
+          <CrmExternalLinks/>
         </Grid>
         <Grid item xs={12} sm={6} md={4}>
-          <CrmPaymentHistory />
+          <CrmPaymentHistory/>
         </Grid>
         <Grid item xs={12} md={4}>
-          <CrmMostSalesInCountries />
+          <CrmMostSalesInCountries/>
         </Grid>
         <Grid item xs={12} md={8}>
-          <CrmTable />
+          <CrmTable/>
         </Grid>
       </Grid>
     </ApexChartWrapper>
   )
+}
+
+CrmDashboard.acl = {
+  action: 'read',
+  subject: 'every-page'
 }
 
 export default CrmDashboard

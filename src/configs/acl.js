@@ -7,15 +7,13 @@ export const AppAbility = Ability
  * We have just shown Admin and Client rules for demo purpose where
  * admin can manage everything and client can just visit ACL page
  */
-const defineRulesFor = (role, subject) => {
+const defineRulesFor = (role) => {
   const {can, rules} = new AbilityBuilder(AppAbility)
   console.log(role)
   if (role[0] !== 1) {
-    can('manage', 'all')
-  } else if (role === 'client') {
-    can(['read'], 'acl-page')
+    can('read', 'every-page')
   } else {
-    can(['read', 'create', 'update', 'delete'], subject)
+    can('read', 'acl-page')
   }
 
   return rules

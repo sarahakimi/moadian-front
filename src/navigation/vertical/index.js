@@ -9,32 +9,49 @@ const navigation = () => [
   {
     icon: HomeOutline,
     title: 'داشبورد',
-    path: '/dashboards/crm'
+    path: '/dashboards/crm',
+    action: 'read',
+    subject: 'every-page',
   },
   {
     icon: PlusOutline,
     title: 'سفارش جدید',
-    path: '/newOrder'
+    path: '/newOrder',
+    action: 'read',
+    subject: 'every-page',
   },
   {
     icon: ViewListOutline,
     title: 'کاربران',
-    path: '/users'
+    path: '/users',
+    action: 'read',
+    subject: 'every-page',
   },
   {
     icon: StoreOutline,
     title: 'هاب',
-    path: '/hub'
+    path: '/hub',
+    action: 'read',
+    subject: 'every-page',
   },
   {
     icon: StoreOutline,
     title: 'رانندگان',
-    path: '/drivers'
+    path: '/drivers',
+    action: 'read',
+    subject: 'every-page',
   },
   {
     path: '/acl',
     action: 'read',
     subject: 'acl-page',
+    icon: ShieldOutline,
+    title: 'لیست شرکت ها'
+  },
+  {
+    path: '/couriers',
+    action: 'read',
+    subject: 'every-page',
     icon: ShieldOutline,
     title: 'لیست شرکت ها'
   }
