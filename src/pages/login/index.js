@@ -177,7 +177,6 @@ function LoginPage() {
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.username)}
-                      placeholder='admin@gmail.com'
                     />
                   )}
                 />
