@@ -36,7 +36,7 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
     setLoading(true)
     setInitiateDownload(false)
     http
-      .get('hub/all', sortModel, {
+      .get('hub/company/all', sortModel, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(response => {

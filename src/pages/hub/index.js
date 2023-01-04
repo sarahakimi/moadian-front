@@ -237,7 +237,7 @@ function ACLPage() {
   useEffect(() => {
     setLoading(true)
     http
-      .get('hub/all', sortModel, {
+      .get('hub/company/all', sortModel, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {

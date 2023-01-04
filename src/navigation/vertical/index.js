@@ -1,9 +1,11 @@
 // ** Icon imports
-import ShieldOutline from 'mdi-material-ui/ShieldOutline'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
 import PlusOutline from 'mdi-material-ui/PlusOutline'
 import ViewListOutline from 'mdi-material-ui/ViewListOutline'
 import StoreOutline from 'mdi-material-ui/StoreOutline'
+import Account from "mdi-material-ui/Account";
+import Taxi from "mdi-material-ui/Taxi"
+import {AccountSupervisor} from "mdi-material-ui";
 
 const navigation = () => [
   {
@@ -21,9 +23,23 @@ const navigation = () => [
     subject: 'every-page',
   },
   {
-    icon: ViewListOutline,
+    icon: Account,
     title: 'کاربران',
     path: '/users',
+    action: 'read',
+    subject: 'every-page',
+  },
+  {
+    icon: AccountSupervisor,
+    title: 'مشتریان',
+    path: '/customers',
+    action: 'read',
+    subject: 'every-page',
+  },
+  {
+    icon: Taxi,
+    title: 'رانندگان',
+    path: '/drivers',
     action: 'read',
     subject: 'every-page',
   },
@@ -35,25 +51,18 @@ const navigation = () => [
     subject: 'every-page',
   },
   {
-    icon: StoreOutline,
-    title: 'رانندگان',
-    path: '/drivers',
-    action: 'read',
-    subject: 'every-page',
-  },
-  {
-    path: '/acl',
+    path: '/superadmin',
     action: 'read',
     subject: 'acl-page',
-    icon: ShieldOutline,
-    title: 'لیست شرکت ها'
+    icon: ViewListOutline,
+    title: ' شرکت ها'
   },
   {
     path: '/couriers',
     action: 'read',
     subject: 'every-page',
-    icon: ShieldOutline,
-    title: 'لیست شرکت ها'
+    icon: ViewListOutline,
+    title: ' شرکت ها'
   }
 
   // {
