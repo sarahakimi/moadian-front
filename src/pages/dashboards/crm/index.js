@@ -2,7 +2,6 @@
 import Grid from '@mui/material/Grid'
 
 // ** Icon Imports
-import CartPlus from 'mdi-material-ui/CartPlus'
 import CurrencyUsd from 'mdi-material-ui/CurrencyUsd'
 
 // ** Custom Component Import
@@ -33,16 +32,7 @@ function CrmDashboard() {
         <Grid item xs={12} md={4}>
           <CrmAward/>
         </Grid>
-        <Grid item xs={6} sm={3} md={2}>
-          <CardStatisticsVertical
-            stats='155k'
-            color='primary'
-            trendNumber='+22%'
-            icon={<CartPlus/>}
-            title='Total Orders'
-            chipText='Last 4 Month'
-          />
-        </Grid>
+
         <Grid item xs={6} sm={3} md={2}>
           <CardStatisticsVertical
             stats='$13.4k'

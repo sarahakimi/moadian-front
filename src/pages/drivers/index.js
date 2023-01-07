@@ -204,7 +204,7 @@ function ACLPage() {
       flex: 0.15,
       field: 'vehicle',
       minWidth: 150,
-      headerName: 'وسیله نقله',
+      headerName: 'وسیله نقلیه',
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>

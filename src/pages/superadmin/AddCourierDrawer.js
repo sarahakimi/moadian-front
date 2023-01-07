@@ -51,16 +51,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
   const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  // const defaultValuesWithCompany = {
-  //   natural_code: company?.admin?.natural_code,
-  //   name: company.name,
-  //   phone: company?.admin?.phone,
-  //   duration_of_activity: 0,
-  //   username: company?.admin?.username,
-  //   password: "********",
-  //   adminName: company?.admin?.name,
-  // }
-
+  
   const defaultValues = company
     ? {
       natural_code: company?.admin?.natural_code,

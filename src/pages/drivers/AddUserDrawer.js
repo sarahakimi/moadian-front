@@ -54,11 +54,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   const [showPassword, setShowPassword] = useState(false)
   // eslint-disable-next-line camelcase
   const [hub_ids, sethub_ids] = useState([])
+  console.log("edit", user)
   useEffect(() => {
     setLoading(true)
-    console.log('user', user)
     http
-      .get('hub/all')
+      .get('hub/company/all', {}, {
+        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+      })
       .then(async response => {
         setLoading(false)
         if (response.data != null) {
@@ -90,7 +92,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
       phone: user.phone,
       hub_id: user.hub_id,
       username: user.username,
-      password: '********',
+      password: '*****',
       vehicle: user.vehicle
     }
     : emptyForm
@@ -111,6 +113,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   const onSubmit = data => {
     setLoading(true)
     if (edit) {
+      // eslint-disable-next-line no-param-reassign
+      delete data.password
       http
         .put(`user/admin/${user.id}`, data, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
@@ -274,7 +278,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
             />
             {errors.username && <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>}
           </FormControl>
-          <FormControl fullWidth sx={{mb: 4}}>
+          {!edit && <FormControl fullWidth sx={{mb: 4}}>
             <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
               کلمه عبور
             </InputLabel>
@@ -306,7 +310,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                 />
               )}
             />
-          </FormControl>
+          </FormControl>}
           <FormControl fullWidth sx={{mb: 4}}>
             <Controller
               name='hub_id'

@@ -1,6 +1,6 @@
 // ** MUI Theme Provider
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { deepmerge } from '@mui/utils'
+import {deepmerge} from '@mui/utils'
 
 // ** User Theme Options
 import UserThemeOptions from 'layouts/UserThemeOptions'
@@ -13,10 +13,10 @@ import breakpoints from './breakpoints'
 
 const themeOptions = settings => {
   // ** Vars
-  const { skin, mode, direction, themeColor } = settings
+  const {skin, mode, direction, themeColor} = settings
 
   // ** Create New object before removing user component overrides and typography objects from userThemeOptions
-  const userThemeConfig = { ...UserThemeOptions() }
+  const userThemeConfig = {...UserThemeOptions()}
   const userFontFamily = userThemeConfig.typography?.fontFamily
 
   // ** Remove component overrides and typography objects from userThemeOptions
@@ -31,18 +31,7 @@ const themeOptions = settings => {
         fontFamily:
           userFontFamily ||
           [
-            'Inter',
-            'sans-serif',
-            '-apple-system',
-            'BlinkMacSystemFont',
-            '"Segoe UI"',
-            'Roboto',
-            '"Helvetica Neue"',
-            'Arial',
-            'sans-serif',
-            '"Apple Color Emoji"',
-            '"Segoe UI Emoji"',
-            '"Segoe UI Symbol"'
+            'IranSans',
           ].join(',')
       },
       shadows: shadows(mode),

@@ -10,6 +10,7 @@ import Spinner from '@core/components/spinner'
 // ** Hook Imports
 import {useAuth} from 'hooks/useAuth'
 
+
 export const getHomeRoute = role => {
   if (role[0] === 1) return '/superadmin'
 
@@ -22,15 +23,13 @@ function Home() {
   const router = useRouter()
 
   useEffect(() => {
-    console.log(auth.user)
-
     if (!router.isReady) {
       return
     }
 
     if (auth.user && auth.user.roles) {
       const homeRoute = getHomeRoute(auth.user.roles)
-      
+
       router.replace(homeRoute)
     }
 

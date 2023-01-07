@@ -17,7 +17,9 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
   const headers = [
     {key: "id", label: "شناسه"},
     {key: "name", label: "تام کاربر"},
-    {key: "telephone", label: "شماره تلفن"},
+    {key: "username", label: "تام کاربری"},
+    {key: "natural_code", label: "کدملی"},
+    {key: "phone", label: "شماره تلفن"},
     {key: "created_at", label: "تاریخ ایجاد"},
   ];
   useEffect(() => {
@@ -30,7 +32,7 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
     setLoading(true)
     setInitiateDownload(false)
     http
-      .get('hub/all?type=1', sortModel, {
+      .get('user/admin/all?type=1', sortModel, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {

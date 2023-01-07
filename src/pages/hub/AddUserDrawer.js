@@ -241,6 +241,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                   onChange={onChange}
                   error={Boolean(errors.fax)}
                   disabled={showUser}
+                  inputProps={{maxLength: 12}}
                 />
               )}
             />

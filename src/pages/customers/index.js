@@ -242,7 +242,9 @@ function ACLPage() {
       })
       .then(async response => {
         setLoading(false)
-        setData(response.data)
+        if (response.data === null) {
+          setData([])
+        } else setData(response.data)
         setChange(false)
       })
       .catch(err => {

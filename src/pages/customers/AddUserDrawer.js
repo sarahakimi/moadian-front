@@ -11,8 +11,7 @@ import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Controller, useForm} from 'react-hook-form'
 import Close from 'mdi-material-ui/Close'
-import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
-import http from 'services/http'
+import {Autocomplete, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
 import DialogContentText from '@mui/material/DialogContentText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
@@ -22,6 +21,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import {ostan, shahr} from "iran-cities-json";
+import http from "../../services/http";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -30,6 +31,7 @@ const Header = styled(Box)(({theme}) => ({
   justifyContent: 'space-between',
   backgroundColor: theme.palette.background.default
 }))
+
 
 const schema = yup.object().shape({
   natural_code: yup
@@ -43,60 +45,82 @@ const schema = yup.object().shape({
     .required('موبایل الزامی است')
     .matches(/d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
-  hub_id: yup.number().required('هاب الزامی است'),
+  tel_number: yup
+    .string()
+    .required('تلفن الزامی است')
+    .matches(/d*/, ' تلفن باید عدد باشد'),
+  postal_code: yup
+    .string()
+    .required('کدپستی الزامی است')
+    .matches(/d*/, ' کدپستی باید عدد باشد'),
+  provence: yup
+    .string()
+    .required('استان الزامی است'),
+  city: yup
+    .string()
+    .required('شهر الزامی است'),
+  address: yup
+    .string()
+    .required('ادرس الزامی است').min(10, "ادرس را کامل وارد کنید"),
+  other_information: yup
+    .string(),
+  texes: yup.boolean().required('فیلد الزامی'),
+  off_percent_status: yup.boolean().required('فیلد الزامی'),
+  off_percent: yup.number().min(0.01, " باید مثبت باشد").max(100, "حداکثر باید 100 باشد").typeError("باید عدد باشد"),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
-  roles: yup.array().required(' الزامی است').min(1, 'حداقل 1 دسترسی انتخاب کنید')
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
   const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   // eslint-disable-next-line camelcase
-  const [hub_ids, sethub_ids] = useState([])
-  const [roles, setRoles] = useState([])
+  const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
+  const [hasDiscount, setHasDiscount] = useState(false)
   useEffect(() => {
-    setLoading(true)
-    http
-      .get('hub/all')
-      .then(async response => {
-        setLoading(false)
-        if (response.data != null) {
-          sethub_ids(response.data)
-        } else sethub_ids([])
-        console.log(hub_ids)
-      })
-      .catch(err => {
-        setLoading(false)
-        console.log(err)
-      })
-    http
-      .get('user/roles', {}, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(async response => {
-        if (response.data != null) {
-          setRoles(response.data)
-        } else setRoles([])
-        console.log(roles)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }, [])
+    if (edit) {
+      setHasDiscount(user.off_percent_status)
+    }
+  }, [hasDiscount])
 
   const emptyForm = {
-    natural_code: '', name: '', phone: '', hub_id: 0, username: '', password: '', roles: []
+    natural_code: "",
+    name: '',
+    phone: '',
+    tel_number: '',
+    postal_code: '',
+    provence: '',
+    city: '',
+    address: '',
+    other_information: '',
+    texes: false,
+    off_percent_status: false,
+    off_percent: 0,
+    username: '',
+    password: '',
   }
+
+  function onChangeSenderOstan(event, onChange, values) {
+    onChange(values)
+    setSelectedSenderOstan(ostan.find(element => element.name === event.target.innerText)?.id)
+  }
+
 
   const defaultValues = user ? {
     natural_code: user.natural_code,
     name: user.name,
     phone: user.phone,
-    hub_id: user.hub_id,
+    tel_number: user.tel_number,
+    postal_code: user.postal_code,
+    provence: user.provence,
+    city: user.city,
+    address: user.address,
+    other_information: user.other_information,
+    texes: user.texes,
+    off_percent_status: user.off_percent_status,
+    off_percent: user.off_percent,
     username: user.username,
-    password: '********',
-    roles: user.roles
+    password: '******',
   } : emptyForm
 
 
@@ -111,11 +135,18 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     reset(emptyForm)
   }
 
+  const onDiscount = (ev, onChange) => {
+    onChange(ev)
+    setHasDiscount(ev.target.value)
+  }
+
   const onSubmit = data => {
     setLoading(true)
     if (edit) {
+      // eslint-disable-next-line no-param-reassign
+      delete data.password;
       http
-        .put(`user/admin/${user.id}`, data, {
+        .put(`customer/admin/${user.id}`, data, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
@@ -125,11 +156,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
           handleClose()
         })
         .catch(err => {
-          setError('natural_code', {type: 'custom', message: err.response.data.message})
+          setLoading(false)
+          console.log(err)
+          setError('natural_code', {type: 'custom', message: err.response.data?.message})
         })
     } else {
       http
-        .post('user/admin/register', data, {
+        .post('customer/admin/3/register', data, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
@@ -139,7 +172,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
           handleClose()
         })
         .catch(err => {
-          setError('natural_code', {type: 'custom', message: err.response.data.message})
+          setLoading(false)
+          setError('natural_code', {type: 'custom', message: err.response.data?.message})
         })
     }
   }
@@ -224,6 +258,226 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
+            name='tel_number'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='شماره تلفن'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.tel_number)}
+              inputProps={{maxLength: 12}}
+              dir='ltr'
+              disabled={showUser}
+            />)}
+          />
+          {errors.tel_number && <FormHelperText sx={{color: 'error.main'}}>{errors.tel_number.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='postal_code'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='کدپستی'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.postal_code)}
+              inputProps={{maxLength: 20}}
+              dir='ltr'
+              disabled={showUser}
+            />)}
+          />
+          {errors.postal_code &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.postal_code.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            fullWidth
+            name='provence'
+            control={control}
+            rules={{required: true}}
+            render={({field: {onChange, value, onBlur}}) => (
+              <Autocomplete
+                disabled={showUser}
+                onBlur={onBlur}
+                select
+                options={ostan.map(element => element.name)}
+                onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
+                value={value}
+                renderInput={params => (
+                  <TextField
+                    /* eslint-disable-next-line react/jsx-props-no-spreading */
+                    {...params}
+                    label='استان'
+                    variant='outlined'
+                    onChange={onChange}
+                    error={Boolean(errors.provence)}
+                  />
+                )}
+              />
+            )}
+          />
+          {errors.provence && (
+            <FormHelperText sx={{color: 'error.main'}}>{errors.provence.message}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='city'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (
+              <Autocomplete
+                disabled={showUser}
+                onBlur={onBlur}
+                select
+                options={shahr
+                  .filter(element => element.ostan === selectedSenderOstan)
+                  .map(element => element.name)}
+                onChange={(event, values) => onChange(values)}
+                value={value}
+                renderInput={params => (
+                  <TextField
+                    /* eslint-disable-next-line react/jsx-props-no-spreading */
+                    {...params}
+                    label='شهر'
+                    variant='outlined'
+                    onChange={onChange}
+                    error={Boolean(errors.city)}
+                  />
+                )}
+              />
+            )}
+          />
+          {errors.city && (
+            <FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='address'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='ادرس'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.address)}
+              disabled={showUser}
+              multiline
+              rows={2}
+            />)}
+          />
+          {errors.address && <FormHelperText sx={{color: 'error.main'}}>{errors.address.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='other_information'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='سایر اطلاعات'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.other_information)}
+              disabled={showUser}
+              multiline
+              rows={2}
+            />)}
+          />
+          {errors.other_information &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.other_information.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            fullWidth
+            name='texes'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (
+              <>
+                <InputLabel>شامل مالیات</InputLabel>
+                <Select
+                  autoFocus
+                  label='شامل مالیات'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.texes)}
+                  disabled={showUser}
+                >
+                  <MenuItem value>می باشد</MenuItem>
+                  <MenuItem value={false}>نمی باشد</MenuItem>
+                </Select>
+              </>
+            )}
+          />
+          {errors.texes && (
+            <FormHelperText sx={{color: 'error.main'}}>{errors.texes.message}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            fullWidth
+            name='off_percent_status'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (
+              <>
+                <InputLabel>شامل تخفیف</InputLabel>
+                <Select
+                  disabled={showUser}
+                  autoFocus
+                  label='شامل تخفیف'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={(ev) => onDiscount(ev, onChange)}
+                  error={Boolean(errors.off_percent_status)}
+                >
+                  <MenuItem value>می باشد</MenuItem>
+                  <MenuItem value={false}>نمی باشد</MenuItem>
+                </Select>
+              </>
+            )}
+          />
+          {errors.off_percent_status && (
+            <FormHelperText sx={{color: 'error.main'}}>{errors.off_percent_status.message}</FormHelperText>
+          )}
+        </FormControl>
+        {(hasDiscount || showUser || edit) && <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='off_percent'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='درصد تخفیف'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.postal_code)}
+              type="number"
+              InputProps={{inputProps: {min: 0, max: 100}}}
+              dir='ltr'
+              disabled={showUser}
+
+              defaultValue={0}
+            />)}
+          />
+          {errors.off_percent &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.off_percent.message}</FormHelperText>}
+        </FormControl>}
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
             name='username'
             control={control}
             rules={{required: true}}
@@ -239,7 +493,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
           />
           {errors.username && <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>}
         </FormControl>
-        <FormControl fullWidth sx={{mb: 4}}>
+        {!edit && <FormControl fullWidth sx={{mb: 4}}>
           <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
             کلمه عبور
           </InputLabel>
@@ -267,62 +521,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
               </InputAdornment>}
             />)}
           />
-        </FormControl>
-        <FormControl fullWidth sx={{mb: 4}}>
-          <Controller
-            name='hub_id'
-            control={control}
-            rules={{required: true}}
-            render={({field: {onChange, onBlur}}) => (<>
-              <InputLabel>هاب</InputLabel>
-              <Select
-                type='number'
-                onBlur={onBlur}
-                id='demo-multiple-name'
-                onChange={onChange}
-                input={<OutlinedInput label='Name'/>}
-                error={Boolean(errors.hub_id)}
-                disabled={showUser}
-                defaultValue={user ? user.hub_id : 0}
-              >
-                {/* eslint-disable-next-line camelcase */}
-                {hub_ids.map(hub_id => (// eslint-disable-next-line camelcase
-                  <MenuItem key={hub_id.id} value={parseInt(hub_id.id, 10)}>
-                    {/* eslint-disable-next-line camelcase */}
-                    {hub_id.name}
-                  </MenuItem>))}
-              </Select>
-            </>)}
-          />
-          {errors.hub_id && <FormHelperText sx={{color: 'error.main'}}>{errors.hub_id.message}</FormHelperText>}
-        </FormControl>
-        <FormControl fullWidth sx={{mb: 4}}>
-          <Controller
-            name='roles'
-            control={control}
-            rules={{required: true}}
-            render={({field: {onChange, onBlur}}) => (<>
-              <InputLabel id='demo-multiple-name-label'>دسترسی ها</InputLabel>
-              <Select
-                onBlur={onBlur}
-                labelId='demo-multiple-name-label'
-                id='demo-multiple-name'
-                multiple
-                defaultValue={user ? user.roles : []}
-                onChange={onChange}
-                error={Boolean(errors.roles)}
-                input={<OutlinedInput label='Name'/>}
-              >
-                {roles.map(role => (<MenuItem key={role.id} value={role.id} disabled={showUser}>
-                  {role.name}
-                </MenuItem>))}
-              </Select>
-            </>)}
-          />
-          {errors.roles && <FormHelperText sx={{color: 'error.main'}}>{errors.roles.message}</FormHelperText>}
-        </FormControl>
-
-
+          {errors.password && <FormHelperText sx={{color: 'error.main'}}>{errors.password.message}</FormHelperText>}
+        </FormControl>}
         {!showUser && (<Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>
           ذخیره
         </Button>)}

@@ -22,6 +22,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import Chip from "../../@core/components/mui/chip";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -50,15 +51,43 @@ const schema = yup.object().shape({
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
+  
   const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   // eslint-disable-next-line camelcase
   const [hub_ids, sethub_ids] = useState([])
   const [roles, setRoles] = useState([])
+
+  const emptyForm = {
+    natural_code: '', name: '', phone: '', hub_id: 0, username: '', password: '', roles: []
+  }
+  if (user && !Array.isArray(user.roles)) {
+    // eslint-disable-next-line no-param-reassign
+    user.roles = [user.roles]
+  }
+
+  const defaultValues = user ? {
+    natural_code: user.natural_code,
+    name: user.name,
+    phone: user.phone,
+    hub_id: user.hub_id,
+    username: user.username,
+    password: '******',
+    roles: user.roles
+  } : emptyForm
+
+  const {
+    reset, control, handleSubmit, setError, formState: {errors}
+  } = useForm({
+    defaultValues, mode: 'onChange', resolver: yupResolver(schema)
+  })
   useEffect(() => {
     setLoading(true)
+    console.log(user.hub_id)
     http
-      .get('hub/all')
+      .get('hub/company/all', {}, {
+        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+      })
       .then(async response => {
         setLoading(false)
         if (response.data != null) {
@@ -68,7 +97,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
       })
       .catch(err => {
         setLoading(false)
-        console.log(err)
+        setError('natural_code', {type: 'custom', message: err.response.data.message})
       })
     http
       .get('user/roles', {}, {
@@ -81,30 +110,11 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
         console.log(roles)
       })
       .catch(err => {
-        console.log(err)
+        setLoading(false)
+        setError('natural_code', {type: 'custom', message: err.response.data.message})
       })
   }, [])
 
-  const emptyForm = {
-    natural_code: '', name: '', phone: '', hub_id: 0, username: '', password: '', roles: []
-  }
-
-  const defaultValues = user ? {
-    natural_code: user.natural_code,
-    name: user.name,
-    phone: user.phone,
-    hub_id: user.hub_id,
-    username: user.username,
-    password: '********',
-    roles: user.roles
-  } : emptyForm
-
-
-  const {
-    reset, control, handleSubmit, setError, formState: {errors}
-  } = useForm({
-    defaultValues, mode: 'onChange', resolver: yupResolver(schema)
-  })
 
   const handleClose = () => {
     toggle()
@@ -114,6 +124,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   const onSubmit = data => {
     setLoading(true)
     if (edit) {
+      // eslint-disable-next-line no-param-reassign
+      delete data.password
       http
         .put(`user/admin/${user.id}`, data, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
@@ -239,7 +251,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
           />
           {errors.username && <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>}
         </FormControl>
-        <FormControl fullWidth sx={{mb: 4}}>
+        {!edit && <FormControl fullWidth sx={{mb: 4}}>
           <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
             کلمه عبور
           </InputLabel>
@@ -267,7 +279,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
               </InputAdornment>}
             />)}
           />
-        </FormControl>
+        </FormControl>}
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
             name='hub_id'
@@ -312,6 +324,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                 onChange={onChange}
                 error={Boolean(errors.roles)}
                 input={<OutlinedInput label='Name'/>}
+                renderValue={(selected) => (
+
+                  <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={roles[value]?.name}/>
+                    ))}
+                  </Box>
+                )}
               >
                 {roles.map(role => (<MenuItem key={role.id} value={role.id} disabled={showUser}>
                   {role.name}

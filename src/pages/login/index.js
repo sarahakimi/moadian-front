@@ -107,6 +107,7 @@ function LoginPage() {
     const {username, password} = data
     setLoading(true)
     auth.login({username, password}, err => {
+      setLoading(false)
       setError('username', {
         type: 'manual',
         message: err.response?.data?.message

@@ -16,8 +16,9 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
 
   const headers = [
     {key: "id", label: "شناسه"},
-    {key: "name", label: "تام کاربر"},
-    {key: "telephone", label: "شماره تلفن"},
+    {key: "name", label: "تام و نام خانوادگی"},
+    {key: "username", label: "تام کاربری"},
+    {key: "phone", label: "شماره تلفن"},
     {key: "created_at", label: "تاریخ ایجاد"},
     {key: "vehicle", label: "وسیله نقلیه"}
   ];
@@ -32,7 +33,7 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
 
     setInitiateDownload(false)
     http
-      .get('hub/all?type=2', sortModel, {
+      .get('user/admin/all?type=2', sortModel, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
@@ -64,12 +65,12 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
           size='small'
           value={value}
           sx={{mr: 6, mb: 2}}
-          placeholder='جستجوی هاب'
+          placeholder='جستجوی راننده'
           onChange={e => handleFilter(e.target.value)}
         />
 
         <Button sx={{mb: 2}} onClick={toggle} variant='contained'>
-          افزودن هاب
+          افزودن راننده
         </Button>
       </Box>
     </Box>
