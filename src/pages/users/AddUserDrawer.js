@@ -51,7 +51,7 @@ const schema = yup.object().shape({
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
-  
+
   const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   // eslint-disable-next-line camelcase
@@ -83,7 +83,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   })
   useEffect(() => {
     setLoading(true)
-    console.log(user.hub_id)
     http
       .get('hub/company/all', {}, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`

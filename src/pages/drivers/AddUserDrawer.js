@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import {styled} from '@mui/material/styles'
@@ -16,8 +16,6 @@ import http from 'services/http'
 import DialogContentText from '@mui/material/DialogContentText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import Select from '@mui/material/Select'
-import MenuItem from '@mui/material/MenuItem'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
@@ -43,7 +41,6 @@ const schema = yup.object().shape({
     .required('موبایل الزامی است')
     .matches(/d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
-  hub_id: yup.number().required('هاب الزامی است'),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   vehicle: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید')
@@ -52,34 +49,11 @@ const schema = yup.object().shape({
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
   const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  // eslint-disable-next-line camelcase
-  const [hub_ids, sethub_ids] = useState([])
-  console.log("edit", user)
-  useEffect(() => {
-    setLoading(true)
-    http
-      .get('hub/company/all', {}, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(async response => {
-        setLoading(false)
-        if (response.data != null) {
-          sethub_ids(response.data)
-        } else sethub_ids([])
-        console.log(hub_ids)
-      })
-      .catch(err => {
-        setLoading(false)
-        console.log(err)
-      })
-
-  }, [])
 
   const emptyForm = {
     natural_code: '',
     name: '',
     phone: '',
-    hub_id: 0,
     username: '',
     password: '',
     vehicle: ''
@@ -90,7 +64,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
       natural_code: user.natural_code,
       name: user.name,
       phone: user.phone,
-      hub_id: user.hub_id,
       username: user.username,
       password: '*****',
       vehicle: user.vehicle
@@ -311,38 +284,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
               )}
             />
           </FormControl>}
-          <FormControl fullWidth sx={{mb: 4}}>
-            <Controller
-              name='hub_id'
-              control={control}
-              rules={{required: true}}
-              render={({field: {onChange, onBlur}}) => (
-                <>
-                  <InputLabel>هاب</InputLabel>
-                  <Select
-                    type='number'
-                    onBlur={onBlur}
-                    id='demo-multiple-name'
-                    onChange={onChange}
-                    input={<OutlinedInput label='Name'/>}
-                    error={Boolean(errors.hub_id)}
-                    disabled={showUser}
-                    defaultValue={user ? user.hub_id : 0}
-                  >
-                    {/* eslint-disable-next-line camelcase */}
-                    {hub_ids.map(hub_id => (
-                      // eslint-disable-next-line camelcase
-                      <MenuItem key={hub_id.id} value={parseInt(hub_id.id, 10)}>
-                        {/* eslint-disable-next-line camelcase */}
-                        {hub_id.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </>
-              )}
-            />
-            {errors.hub_id && <FormHelperText sx={{color: 'error.main'}}>{errors.hub_id.message}</FormHelperText>}
-          </FormControl>
 
 
           <Box sx={{display: 'flex', alignItems: 'center'}}>

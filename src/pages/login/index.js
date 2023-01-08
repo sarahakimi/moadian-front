@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
+import MenuItem from "@mui/material/MenuItem";
 import FormControl from '@mui/material/FormControl'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import OutlinedInput from '@mui/material/OutlinedInput'
@@ -15,6 +16,7 @@ import Typography from '@mui/material/Typography'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import * as yup from 'yup'
+import DialogContentText from "@mui/material/DialogContentText";
 import {Controller, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {useAuth} from 'hooks/useAuth'
@@ -24,6 +26,8 @@ import themeConfig from 'configs/themeConfig'
 import BlankLayout from '@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'views/pages/auth/FooterIllustrationsV2'
 import Loading from "pages/components/loading/loading";
+import {Dialog, DialogActions, DialogContent, DialogTitle, Select} from "@mui/material";
+
 
 const LoginIllustrationWrapper = styled(Box)(({theme}) => ({
   padding: theme.spacing(20),
@@ -75,13 +79,10 @@ const schema = yup.object().shape({
   password: yup.string()
     .required('رمز عبور الزامی است')
     .min(4, 'رمز عبور باید حداقل ۴زکاراکتر باشد.')
-    .max(32, 'مز عبور باید حداکثر 32 کاراکتر باشد.')
+    .max(32, 'مز عبور باید حداکثر 32 کاراکتر باشد.'),
+  hub_id: yup.number(),
 })
 
-const defaultValues = {
-  password: '',
-  username: ''
-}
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -91,6 +92,21 @@ function LoginPage() {
   const {settings} = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
   const {skin} = settings
+  const [companies, setCompanies] = useState([])
+  const [isDuplicate, setIsDuplicate] = useState(false)
+  const [prevForm, setPrevForm] = useState({})
+
+  const emptyForm = {
+    password: '',
+    username: '',
+    company_id: -1,
+  }
+
+  const defaultValues = isDuplicate ? {
+    company_id: -1,
+    ...prevForm,
+  } : emptyForm
+
 
   const {
     control,
@@ -103,16 +119,46 @@ function LoginPage() {
     resolver: yupResolver(schema)
   })
 
+  const handleClose = () => {
+    setIsDuplicate(false);
+  };
+
+
   const onSubmit = data => {
-    const {username, password} = data
     setLoading(true)
-    auth.login({username, password}, err => {
-      setLoading(false)
-      setError('username', {
-        type: 'manual',
-        message: err.response?.data?.message
+    if (isDuplicate) {
+      auth.login({
+        username: data.username,
+        password: data.password,
+        company_id: companies[data.company_id].companyId.companyId,
+        hub_id: companies[data.company_id].hubId.hubId
+      }, err => {
+        setLoading(false)
+        setError('username', {
+          type: 'manual',
+          message: err.response?.data?.message
+        })
+      }, () => {
+        setLoading(false)
+        setIsDuplicate(false)
       })
-    }, () => setLoading(false))
+    } else {
+      const {username, password} = data
+
+      setPrevForm(data)
+      auth.login({username, password}, err => {
+        setLoading(false)
+        setError('username', {
+          type: 'manual',
+          message: err.response?.data?.message
+        })
+        if (err.response.data.messageCode === 413) {
+          const {data} = err.response.data
+          setCompanies(data)
+          setIsDuplicate(true)
+        }
+      }, () => setLoading(false))
+    }
   }
 
   return (
@@ -185,7 +231,7 @@ function LoginPage() {
                   <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>
                 )}
               </FormControl>
-              <FormControl fullWidth>
+              <FormControl fullWidth sx={{mb: 4}}>
                 <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
                   کلمه عبور
                 </InputLabel>
@@ -222,6 +268,49 @@ function LoginPage() {
                   </FormHelperText>
                 )}
               </FormControl>
+              {isDuplicate && <Dialog open={isDuplicate} onClose={handleClose}>
+                <DialogTitle>انتخاب هاب</DialogTitle>
+                <DialogContent>
+                  <DialogContentText>
+                    لطفا شرکت و هاب خود را از بین گزینه های زیر انتخاب کنبد.
+                  </DialogContentText>
+
+                  <FormControl fullWidth sx={{mt: 4}}>
+                    <Controller
+                      type="number"
+                      name="company_id"
+                      control={control}
+                      render={({field: {onChange, onBlur}}) => (
+                        <>
+                          <InputLabel>شرکت</InputLabel>
+                          <Select
+                            label="شرکت"
+                            type="number"
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            input={<OutlinedInput/>}
+                            error={Boolean(errors.comapny_id)}
+
+                          >
+                            {companies.map((company, idx) => (
+                              <MenuItem key={idx}
+                                        value={idx}>
+                                شرکت {company.companyId.companyName} ,هاب {company.hubId.hubName}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </>
+                      )}
+                    />
+                    {errors.comapny_id &&
+                      <FormHelperText sx={{color: 'error.main'}}>{errors.comapny_id.message}</FormHelperText>}
+                  </FormControl>
+                </DialogContent><DialogActions>
+                <Button fullWidth size='large' type='submit' variant='contained' sx={{mb: 7}}
+                        onClick={handleSubmit(onSubmit)}>
+                  ورود
+                </Button>
+              </DialogActions></Dialog>}
               <Box
                 sx={{
                   mb: 4,

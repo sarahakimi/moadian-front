@@ -29,6 +29,7 @@ const schema = yup.object().shape({
 })
 
 export default function SecondPageForm({setPage, firstFormData}) {
+
   const defaultValues = {
     otp: '',
     password: '',
@@ -53,7 +54,7 @@ export default function SecondPageForm({setPage, firstFormData}) {
       .post('auth/user/forget_password', data,)
       .then(() => {
         reset(defaultValues)
-        window.location = `${window.location.origin  }/login`
+        window.location = `${window.location.origin}/login`
       })
       .catch(err => {
         console.log(err)

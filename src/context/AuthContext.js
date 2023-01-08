@@ -1,5 +1,5 @@
-import { createContext, useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import {createContext, useEffect, useState} from 'react'
+import {useRouter} from 'next/router'
 import authConfig from 'configs/auth'
 import http from 'services/http'
 
@@ -16,10 +16,11 @@ const defaultProvider = {
 }
 const AuthContext = createContext(defaultProvider)
 
-function AuthProvider({ children }) {
+function AuthProvider({children}) {
   const [user, setUser] = useState(defaultProvider.user)
   const [loading, setLoading] = useState(defaultProvider.loading)
   const [isInitialized, setIsInitialized] = useState(defaultProvider.isInitialized)
+ 
 
   const router = useRouter()
   useEffect(() => {
@@ -39,8 +40,8 @@ function AuthProvider({ children }) {
           )
           .then(async response => {
             setLoading(false)
-            setUser({ ...response.data })
-            const { returnUrl } = router.query
+            setUser({...response.data})
+            const {returnUrl} = router.query
             const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
             router.replace(redirectURL)
           })
@@ -60,7 +61,6 @@ function AuthProvider({ children }) {
   }, [])
 
   const handleLogin = (params, errorCallback) => {
-    console.log(params)
     http
       .post(authConfig.loginEndpoint, params)
       .then(async res => {
@@ -79,8 +79,8 @@ function AuthProvider({ children }) {
             }
           )
           .then(async response => {
-            const { returnUrl } = router.query
-            setUser({ ...response.data })
+            const {returnUrl} = router.query
+            setUser({...response.data})
             await window.localStorage.setItem('userData', JSON.stringify(response.data))
             const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
             router.replace(redirectURL)
@@ -113,4 +113,4 @@ function AuthProvider({ children }) {
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }
 
-export { AuthContext, AuthProvider }
+export {AuthContext, AuthProvider}
