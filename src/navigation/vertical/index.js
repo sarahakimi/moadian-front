@@ -5,13 +5,14 @@ import ViewListOutline from 'mdi-material-ui/ViewListOutline'
 import StoreOutline from 'mdi-material-ui/StoreOutline'
 import Account from "mdi-material-ui/Account";
 import Taxi from "mdi-material-ui/Taxi"
-import {AccountSupervisor} from "mdi-material-ui";
+import {AccountMultipleCheck, AccountSupervisor, HumanMale} from "mdi-material-ui";
+
 
 const navigation = () => [
   {
     icon: HomeOutline,
     title: 'داشبورد',
-    path: '/dashboards/crm',
+    path: '/dashboards',
     action: 'read',
     subject: 'every-page',
   },
@@ -33,6 +34,20 @@ const navigation = () => [
     icon: AccountSupervisor,
     title: 'مشتریان',
     path: '/customers',
+    action: 'read',
+    subject: 'every-page',
+  },
+  {
+    icon: AccountMultipleCheck,
+    title: 'بازاریابان',
+    path: '/marketers',
+    action: 'read',
+    subject: 'every-page',
+  },
+  {
+    icon: HumanMale,
+    title: 'نمایندگان',
+    path: '/representatives',
     action: 'read',
     subject: 'every-page',
   },

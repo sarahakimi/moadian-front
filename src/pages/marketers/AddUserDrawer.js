@@ -162,7 +162,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
         })
     } else {
       http
-        .post('customer/admin/3/register', data, {
+        .post('customer/admin/2/register', data, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
@@ -193,7 +193,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     sx={{'& .MuiDrawer-paper': {width: {xs: 300, sm: 400}}}}
   >
     <Header>
-      <Typography variant='h6'>اطلاعات مشتری</Typography>
+      <Typography variant='h6'>اطلاعات بازاریاب</Typography>
       <Close fontSize='small' onClick={handleClose} sx={{cursor: 'pointer'}}/>
     </Header>
     <Box sx={{
@@ -537,9 +537,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
       </form>
     </Box>
     <Dialog open={success} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
-      <DialogTitle id='alert-dialog-title'>ایجاد کاربر</DialogTitle>
+      <DialogTitle id='alert-dialog-title'>ایجاد بازاریاب</DialogTitle>
       <DialogContent>
-        <DialogContentText id='alert-dialog-description'>کاربر مورد نظر ایجاد شد</DialogContentText>
+        <DialogContentText id='alert-dialog-description'>بازاریاب مورد نظر ایجاد شد</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleDialogClose} autoFocus>

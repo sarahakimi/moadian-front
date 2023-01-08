@@ -162,7 +162,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
         })
     } else {
       http
-        .post('customer/admin/3/register', data, {
+        .post('customer/admin/1/register', data, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
@@ -193,7 +193,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     sx={{'& .MuiDrawer-paper': {width: {xs: 300, sm: 400}}}}
   >
     <Header>
-      <Typography variant='h6'>اطلاعات مشتری</Typography>
+      <Typography variant='h6'>اطلاعات نماینده</Typography>
       <Close fontSize='small' onClick={handleClose} sx={{cursor: 'pointer'}}/>
     </Header>
     <Box sx={{
