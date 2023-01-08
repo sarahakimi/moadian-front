@@ -8,7 +8,6 @@ import {DataGrid, faIR} from '@mui/x-data-grid'
 import MenuItem from '@mui/material/MenuItem'
 import {styled} from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
-import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
 import Laptop from 'mdi-material-ui/Laptop'
 import ChartDonut from 'mdi-material-ui/ChartDonut'
@@ -25,6 +24,7 @@ import Button from '@mui/material/Button'
 import TableHeader from './TableHeader'
 import AddUserDrawer from './AddUserDrawer'
 import Loading from "../components/loading/loading";
+
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -147,8 +147,8 @@ function ACLPage() {
 
   const columns = [
     {
-      flex: 0.2,
-      minWidth: 230,
+      flex: 0.1,
+      minWidth: 150,
       field: 'name',
       headerName: 'نام و نام خانوادگی',
       hideable: false,
@@ -163,8 +163,8 @@ function ACLPage() {
       )
     },
     {
-      flex: 0.2,
-      minWidth: 230,
+      flex: 0.1,
+      minWidth: 150,
       field: 'username',
       headerName: 'نام کاربری',
       hideable: false,
@@ -175,21 +175,6 @@ function ACLPage() {
               {row.username}
             </Typography>
           </Box>
-        </Box>
-      )
-    },
-    {
-      flex: 0.15,
-      field: 'created_at',
-      minWidth: 150,
-      headerName: 'تاریخ ثبت نام',
-      hideable: false,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          {userRoleObj[row.role]}
-          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {moment(row.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
-          </Typography>
         </Box>
       )
     },
@@ -209,7 +194,7 @@ function ACLPage() {
       )
     },
     {
-      flex: 0.15,
+      flex: 0.1,
       field: 'phone',
       minWidth: 150,
       headerName: 'شماره تلفن',
@@ -225,7 +210,49 @@ function ACLPage() {
     },
     {
       flex: 0.1,
-      minWidth: 90,
+      field: 'postal_code',
+      minWidth: 150,
+      headerName: 'کدپستی',
+      hideable: false,
+      renderCell: ({row}) => (
+        <Box sx={{display: 'flex', alignItems: 'center'}}>
+          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
+            {row.postal_code}
+          </Typography>
+        </Box>
+      )
+    },
+    {
+      flex: 0.1,
+      field: 'city',
+      minWidth: 150,
+      headerName: 'شهر',
+      hideable: false,
+      renderCell: ({row}) => (
+        <Box sx={{display: 'flex', alignItems: 'center'}}>
+          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
+            {row.city}
+          </Typography>
+        </Box>
+      )
+    },
+    {
+      flex: 0.2,
+      field: 'address',
+      minWidth: 150,
+      headerName: 'ادرس',
+      hideable: false,
+      renderCell: ({row}) => (
+        <Box sx={{display: 'flex', alignItems: 'center'}}>
+          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
+            {row.address}
+          </Typography>
+        </Box>
+      )
+    },
+    {
+      flex: 0.1,
+      minWidth: 50,
       sortable: false,
       hideable: false,
       field: 'گزینه ها',
@@ -288,7 +315,7 @@ function ACLPage() {
               pageSize={pageSize}
               disableSelectionOnClick
               rowsPerPageOptions={[10, 25, 50]}
-              sx={{'& .MuiDataGrid-columnHeaders': {borderRadius: 0}}}
+              sx={{'& .MuiDataGrid-columnHeaders': {borderRadius: 0},}}
               paginationMode='server'
               onPageSizeChange={handlePageSizeChange}
               localeText={faIR.components.MuiDataGrid.defaultProps.localeText}

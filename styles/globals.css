@@ -25,3 +25,11 @@ code:not([class*='language-']):after {
 code[class*='language-'] {
   padding: 0;
 }
+
+.MuiDataGrid-columnsContainer {
+  direction: ltr
+}
+
+.MuiDataGrid-virtualScroller {
+  direction: ltr,
+}

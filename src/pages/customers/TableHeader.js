@@ -45,11 +45,18 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
-        console.log("data", response.data)
-        setData(response.data.map((element) => ({
-          ...element,
-          created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
-        })))
+        setData(response.data.map((element) => {
+          const hasDiscount = element.off_percent_status ? "می باشد" : "نمی باشد"
+          const hasTexes = element.texes ? "می باشد" : "نمی باشد"
+
+          return ({
+            ...element,
+            created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
+            off_percent_status: hasDiscount,
+            texes: hasTexes
+
+          })
+        }))
         setLoading(false)
       })
       .catch(() => {
