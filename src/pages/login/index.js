@@ -78,7 +78,7 @@ const schema = yup.object().shape({
     .max(50, 'نام کاربری باید حداکثر 50 کاراکتر باشد.'),
   password: yup.string()
     .required('رمز عبور الزامی است')
-    .min(4, 'رمز عبور باید حداقل ۴زکاراکتر باشد.')
+    .min(8, 'رمز عبور باید حداقل 8 کاراکتر باشد.')
     .max(32, 'مز عبور باید حداکثر 32 کاراکتر باشد.'),
   hub_id: yup.number(),
 })
@@ -99,11 +99,11 @@ function LoginPage() {
   const emptyForm = {
     password: '',
     username: '',
-    company_id: -1,
+    hub_id: -1,
   }
 
   const defaultValues = isDuplicate ? {
-    company_id: -1,
+    hub_id: -1,
     ...prevForm,
   } : emptyForm
 
@@ -127,14 +127,15 @@ function LoginPage() {
   const onSubmit = data => {
     setLoading(true)
     if (isDuplicate) {
+      setIsDuplicate(false);
       auth.login({
         username: data.username,
         password: data.password,
-        company_id: companies[data.company_id].companyId.companyId,
-        hub_id: companies[data.company_id].hubId.hubId
+        company_id: companies[data.hub_id].companyId.companyId,
+        hub_id: companies[data.hub_id].hubId.hubId
       }, err => {
         setLoading(false)
-        setError('username', {
+        setError('hub_id', {
           type: 'manual',
           message: err.response?.data?.message
         })
@@ -268,7 +269,7 @@ function LoginPage() {
                   </FormHelperText>
                 )}
               </FormControl>
-              {isDuplicate && <Dialog open={isDuplicate} onClose={handleClose}>
+              {isDuplicate && <Dialog open={isDuplicate} onClose={handleClose} disableEnforceFocus>
                 <DialogTitle>انتخاب هاب</DialogTitle>
                 <DialogContent>
                   <DialogContentText>
@@ -278,7 +279,7 @@ function LoginPage() {
                   <FormControl fullWidth sx={{mt: 4}}>
                     <Controller
                       type="number"
-                      name="company_id"
+                      name="hub_id"
                       control={control}
                       render={({field: {onChange, onBlur}}) => (
                         <>
@@ -289,7 +290,7 @@ function LoginPage() {
                             onBlur={onBlur}
                             onChange={onChange}
                             input={<OutlinedInput/>}
-                            error={Boolean(errors.comapny_id)}
+                            error={Boolean(errors.hub_id)}
 
                           >
                             {companies.map((company, idx) => (
@@ -302,8 +303,8 @@ function LoginPage() {
                         </>
                       )}
                     />
-                    {errors.comapny_id &&
-                      <FormHelperText sx={{color: 'error.main'}}>{errors.comapny_id.message}</FormHelperText>}
+                    {errors.hub_id &&
+                      <FormHelperText sx={{color: 'error.main'}}>{errors.hub_id.message}</FormHelperText>}
                   </FormControl>
                 </DialogContent><DialogActions>
                 <Button fullWidth size='large' type='submit' variant='contained' sx={{mb: 7}}
