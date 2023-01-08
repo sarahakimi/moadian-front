@@ -99,7 +99,14 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
         <Typography variant='h6'> {edit ? 'تغییر اشتراک' : 'ویرایش کوریر'}</Typography>
         <Close fontSize='small' onClick={handleClose} sx={{cursor: 'pointer'}}/>
       </Header>
-      <Box sx={{p: 5}}>
+      <Box sx={{
+        p: 5, "& .MuiInputBase-input.Mui-disabled": {
+          WebkitTextFillColor: "rgba(76,78,100,0.87)",
+        },
+        "& 	.MuiInputLabel-root.Mui-disabled": {
+          WebkitTextFillColor: "rgba(76,78,100,0.87)",
+        }
+      }}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl fullWidth sx={{mb: 4}}>
             <Controller
