@@ -5,7 +5,7 @@ import ViewListOutline from 'mdi-material-ui/ViewListOutline'
 import StoreOutline from 'mdi-material-ui/StoreOutline'
 import Account from "mdi-material-ui/Account";
 import Taxi from "mdi-material-ui/Taxi"
-import {AccountMultipleCheck, AccountSupervisor, HumanMale, SettingsHelper} from "mdi-material-ui";
+import {AccountMultipleCheck, AccountOutline, AccountSupervisor, CogOutline, HumanMale} from "mdi-material-ui";
 
 
 const navigation = () => [
@@ -80,11 +80,18 @@ const navigation = () => [
     title: ' شرکت ها'
   },
   {
-    icon: SettingsHelper,
+    icon: AccountOutline,
     action: 'read',
     subject: 'every-page',
     title: 'پروفایل کاربری',
     path: '/account-settings'
+  },
+  {
+    icon: CogOutline,
+    action: 'read',
+    subject: 'every-page',
+    title: 'تنظیمات',
+    path: '/settings'
   },
 
   // {

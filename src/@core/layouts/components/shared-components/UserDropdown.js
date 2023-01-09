@@ -141,7 +141,10 @@ function UserDropdown(props) {
           </Box>
         </MenuItem>
         <Divider/>
-        <MenuItem sx={{p: 0}} onClick={() => handleDropdownClose()}>
+        <MenuItem sx={{p: 0}} onClick={() => {
+          handleDropdownClose()
+          router.push('/settings')
+        }}>
           <Box sx={styles}>
             <CogOutline sx={{marginRight: 2}}/>
             تنظیمات

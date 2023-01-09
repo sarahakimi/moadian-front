@@ -5,108 +5,60 @@ import {useEffect, useMemo, useState} from 'react'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Alert from '@mui/material/Alert'
-import {styled} from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
 import AlertTitle from '@mui/material/AlertTitle'
 import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import Button from '@mui/material/Button'
-
-// ** Icons Imports
 import Close from 'mdi-material-ui/Close'
 import {Controller, useForm} from "react-hook-form";
-import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
+import InputLabel from "@mui/material/InputLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import * as yup from "yup";
-import {Autocomplete} from "@mui/material";
-import {ostan, shahr} from "iran-cities-json";
-import http from "../../services/http";
+import {useAuth} from "../../hooks/useAuth";
 import Loading from "../components/loading/loading";
-
-const ImgStyled = styled('img')(({theme}) => ({
-  width: 120,
-  height: 120,
-  marginRight: theme.spacing(5),
-  borderRadius: theme.shape.borderRadius
-}))
-
-const ButtonStyled = styled(Button)(({theme}) => ({
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    textAlign: 'center'
-  }
-}))
-
-const ResetButtonStyled = styled(Button)(({theme}) => ({
-  marginLeft: theme.spacing(4),
-  [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    marginLeft: 0,
-    textAlign: 'center',
-    marginTop: theme.spacing(4)
-  }
-}))
+import http from "../../services/http";
+import Chip from "../../@core/components/mui/chip";
 
 const schema = yup.object().shape({
-  image: yup
-    .string(),
-  name: yup
+  natural_code: yup
     .string()
-    .required('نام الزامی است'),
-  fax: yup
+    .required('کدملی  الزامی است')
+    .matches(/d*/, 'کدملی باید عدد باشد')
+    .test('len', 'کدملی باید 10 رقم باشد', val => val.toString().length === 10),
+  name: yup.string().required('نام و نام خانوادگی الزامی است').min(5, 'فیلد را به درستی پر کنید'),
+  phone: yup
     .string()
-    .required('فگس الزامی است').matches(/^[0-9]*$/, ' باید عدد باشد'),
-  provence: yup
-    .string()
-    .required('استان الزامی است').typeError("یک مورد را انتخاب کنید"),
-  city: yup
-    .string()
-    .required('شهر الزامی است').typeError("یک مورد را انتخاب کنید"),
-  telephone: yup
-    .string()
-    .required('تلفن الزامی است').matches(/^[0-9]*$/, ' باید عدد باشد'),
-
+    .required('موبایل الزامی است')
+    .matches(/d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
+    .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
+  hub_id: yup.number().required('هاب الزامی است'),
+  username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
+  password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
+  roles: yup.array().required(' الزامی است').min(1, 'حداقل 1 دسترسی انتخاب کنید')
 })
 
 function TabAccount() {
+  const {user} = useAuth()
   const [openAlert, setOpenAlert] = useState(false)
-  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
   const [loading, setLoading] = useState(false)
   const [alertMsg, setAletMsg] = useState('')
+  // eslint-disable-next-line camelcase
+  const [hub_ids, sethub_ids] = useState([])
+  const [roles, setRoles] = useState([])
 
-  const [formData, setFormData] = useState({
-    image: '',
-    name: '',
-    fax: '',
-    telephone: '',
-    provence: '',
-    city: '',
-  })
-  const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
-
-  function onChangeSenderOstan(event, onChange, values,) {
-    onChange(values)
-    setSelectedSenderOstan(ostan.find(element => element.name === event.target.innerText)?.id)
-  }
-
-  const emptyForm = {
-    image: '',
-    name: '',
-    fax: '',
-    telephone: '',
-    provence: '',
-    city: '',
-  }
+  const [formData, setFormData] = useState(
+    user
+  )
 
 
   const {
     control,
     reset,
-
-    // setValue,
-    handleSubmit,
-    setError,
     formState: {errors}
   } = useForm({
     defaultValues: useMemo(() => formData, [setFormData]),
@@ -118,16 +70,14 @@ function TabAccount() {
   useEffect(() => {
     setLoading(true)
     http
-      .get('hub/me', {}, {
+      .get('user/me', {}, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
         setLoading(false)
-        if (response.data === null) {
-          reset(emptyForm)
-        } else {
+        if (!response.data === null) {
           reset(response.data)
-          setSelectedSenderOstan(response.data.provence)
+          console.log("data", response.data)
         }
 
       })
@@ -137,78 +87,89 @@ function TabAccount() {
 
         setAletMsg(err.response.data.message)
       })
-  }, [setFormData, setSelectedSenderOstan])
-
-
-  const onSubmit = data => {
-    console.log(data)
     setLoading(true)
     http
-      .put(`hub`, data, {
+      .get('hub/company/all', {}, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
-      .then(() => {
+      .then(async response => {
+        setLoading(false)
+        if (response.data != null) {
+          sethub_ids(response.data)
+        } else sethub_ids([])
+        console.log(hub_ids)
+      })
+      .catch(() => {
         setLoading(false)
       })
-      .catch(err => {
-        setLoading(false)
-        setError("name", {type: 'custom', message: err.response.data.message});
+    http
+      .get('user/roles', {}, {
+        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
-  }
+      .then(async response => {
+        if (response.data != null) {
+          setRoles(response.data)
+        } else setRoles([])
+        console.log(roles)
+      })
+      .catch(() => {
+        setLoading(false)
 
+      })
+  }, [setFormData])
 
-  const onChange = file => {
-    const reader = new FileReader()
-    const {files} = file.target
-    if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result)
-      reader.readAsDataURL(files[0])
-    }
-  }
 
   return (
     <CardContent>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={6}>
-          <Grid item xs={12} sx={{my: 5}}>
-            <Box sx={{display: 'flex', alignItems: 'center'}}>
-              <ImgStyled src={imgSrc} alt='Profile Pic'/>
-              <Box>
-                <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
-                  بارگذاری عکس
-                  <input
-                    hidden
-                    type='file'
-                    onChange={onChange}
-                    accept='image/png, image/jpeg'
-                    id='account-settings-upload-image' name="image"
-                  />
-                </ButtonStyled>
-                <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/1.png')}>
-                  انصراف
-                </ResetButtonStyled>
-              </Box>
-            </Box>
+      <form>
+        <Grid container spacing={6} sx={{
+          "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          },
+          "& 	.MuiInputLabel-root.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }
+        }}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth sx={{mb: 4}}>
+              <Controller
+                fullWidth
+                name='natural_code'
+                control={control}
+                rules={{required: true}}
+                render={({field: {value, onChange, onBlur}}) => (<TextField
+                  autoFocus
+                  label='کدملی'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.natural_code)}
+                  inputProps={{maxLength: 10}}
+                  dir='ltr'
+                  disabled
+                  InputLabelProps={{shrink: true}}
+                />)}
+              />
+              {errors.natural_code && (
+                <FormHelperText sx={{color: 'error.main'}}>{errors.natural_code.message}</FormHelperText>)}
+            </FormControl>
           </Grid>
-
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth sx={{mb: 4}}>
               <Controller
                 name='name'
                 control={control}
                 rules={{required: true}}
-                render={({field: {value, onChange, onBlur}}) => (
-                  <TextField
-                    autoFocus
-                    label='نام هاب'
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    error={Boolean(errors.name)}
-                    InputLabelProps={{shrink: true}}
-
-                  />
-                )}
+                render={({field: {value, onChange, onBlur}}) => (<TextField
+                  autoFocus
+                  label='نام و نام خانوادگی'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.name)}
+                  disabled
+                  InputLabelProps={{shrink: true}}
+                />)}
               />
               {errors.name && <FormHelperText sx={{color: 'error.main'}}>{errors.name.message}</FormHelperText>}
             </FormControl>
@@ -216,118 +177,117 @@ function TabAccount() {
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth sx={{mb: 4}}>
               <Controller
-                name='fax'
+                name='phone'
                 control={control}
                 rules={{required: true}}
-                render={({field: {value, onChange, onBlur}}) => (
-                  <TextField
-                    autoFocus
-                    label='فکس'
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    error={Boolean(errors.fax)}
-
-                    inputProps={{maxLength: 12}}
-                    InputLabelProps={{shrink: true}}
-                  />
-                )}
+                render={({field: {value, onChange, onBlur}}) => (<TextField
+                  autoFocus
+                  label='موبایل'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.phone)}
+                  inputProps={{maxLength: 11}}
+                  placeholder='09*********'
+                  dir='ltr'
+                  disabled
+                  InputLabelProps={{shrink: true}}
+                />)}
               />
-              {errors.fax && <FormHelperText sx={{color: 'error.main'}}>{errors.fax.message}</FormHelperText>}
+              {errors.phone && <FormHelperText sx={{color: 'error.main'}}>{errors.phone.message}</FormHelperText>}
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth sx={{mb: 4}}>
               <Controller
-                name='telephone'
+                name='username'
                 control={control}
                 rules={{required: true}}
-                render={({field: {value, onChange, onBlur}}) => (
-                  <TextField
-                    autoFocus
-                    label='تلفن'
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    error={Boolean(errors.telephone)}
-                    inputProps={{maxLength: 11}}
-                    placeholder='021*******'
-                    dir='ltr'
-                    InputLabelProps={{shrink: true}}
-                  />
-                )}
+                render={({field: {value, onChange, onBlur}}) => (<TextField
+                  autoFocus
+                  label='نام کاربری'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.username)}
+                  disabled
+                  InputLabelProps={{shrink: true}}
+                />)}
               />
-              {errors.telephone &&
-                <FormHelperText sx={{color: 'error.main'}}>{errors.telephone.message}</FormHelperText>}
+              {errors.username && <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>}
             </FormControl>
           </Grid>
-          <Grid item xs={12} sm={6}> <FormControl fullWidth sx={{mb: 4}}>
-            <Controller
-              fullWidth
-              name='provence'
-              control={control}
-              rules={{required: true}}
-              render={({field: {onChange, value, onBlur}}) => (
-                <Autocomplete
-                  onBlur={onBlur}
-                  select
-                  options={ostan.map(element => element.name)}
-                  onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
-                  value={value}
-                  inputValue={value}
-                  disableClearable
-                  renderInput={params => (
-                    <TextField
-                      /* eslint-disable-next-line react/jsx-props-no-spreading */
-                      {...params}
-                      label='استان'
-                      variant='outlined'
+          {formData.hub_id !== 0 &&
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth sx={{mb: 4}}>
+                <Controller
+                  name='hub_id'
+                  control={control}
+                  rules={{required: true}}
+                  render={({field: {value, onChange, onBlur}}) => (<>
+                    <InputLabel>هاب</InputLabel>
+                    <Select
+                      type='number'
+                      onBlur={onBlur}
+                      id='demo-multiple-name'
                       onChange={onChange}
-                      error={Boolean(errors.provence)}
-
-                    />
-
-                  )}
+                      input={<OutlinedInput label='Name'/>}
+                      error={Boolean(errors.hub_id)}
+                      disabled
+                      InputLabelProps={{shrink: true}}
+                    >
+                      {/* eslint-disable-next-line camelcase */}
+                      {hub_ids.map(hub_id => (// eslint-disable-next-line camelcase
+                        <MenuItem key={hub_id.id} value={parseInt(hub_id.id, 10)}>
+                          {/* eslint-disable-next-line camelcase */}
+                          {hub_id.name}
+                        </MenuItem>))}
+                      <MenuItem key={0} value={0}>
+                        بدون هاب(ادمین اصلی شرکت)
+                      </MenuItem>
+                    </Select>
+                  </>)}
                 />
-              )}
-            />
-            {errors.provence && (
-              <FormHelperText sx={{color: 'error.main'}}>{errors.provence.message}</FormHelperText>
-            )}
-          </FormControl></Grid>
-          <Grid item xs={12} sm={6}> <FormControl fullWidth sx={{mb: 4}}>
-            <Controller
-              name='city'
-              control={control}
-              rules={{required: true}}
-              render={({field: {value, onChange, onBlur}}) => (
-                <Autocomplete
-                  onBlur={onBlur}
-                  select
-                  disableClearable
-                  options={shahr
-                    .filter(element => element.ostan === selectedSenderOstan)
-                    .map(element => element.name)}
-                  onChange={(event, values) => onChange(values)}
-                  value={value}
-                  noOptionsText="چیزی پیدا نشد"
-                  renderInput={params => (
-                    <TextField
-                      /* eslint-disable-next-line react/jsx-props-no-spreading */
-                      {...params}
-                      label='شهر'
-                      variant='outlined'
-                      onChange={onChange}
-                      error={Boolean(errors.city)}
-                    />
-                  )}
-                />
-              )}
-            />
-            {errors.city && (
-              <FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>
-            )}
-          </FormControl></Grid>
+                {errors.hub_id && <FormHelperText sx={{color: 'error.main'}}>{errors.hub_id.message}</FormHelperText>}
+              </FormControl>
+            </Grid>}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth sx={{mb: 4}}>
+              <Controller
+                name='roles'
+                control={control}
+                rules={{required: true}}
+                render={({field: {onChange, onBlur}}) => (<>
+                  <InputLabel id='demo-multiple-name-label' InputLabelProps={{shrink: true}}>دسترسی ها</InputLabel>
+                  <Select
+                    disabled
+                    onBlur={onBlur}
+                    labelId='demo-multiple-name-label'
+                    id='demo-multiple-name'
+                    multiple
+                    defaultValue={user ? user.roles : []}
+                    onChange={onChange}
+                    error={Boolean(errors.roles)}
+                    input={<OutlinedInput label='Name'/>}
+                    renderValue={(selected) => (
+
+                      <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={roles[value - 1]?.name}/>
+                        ))}
+                      </Box>
+                    )}
+                  >
+                    {roles.slice(1, roles.length - 1).map(role => (
+                      <MenuItem key={role.id} value={role.id} disabled>
+                        {role.name}
+                      </MenuItem>))}
+                  </Select>
+                </>)}
+              />
+              {errors.roles && <FormHelperText sx={{color: 'error.main'}}>{errors.roles.message}</FormHelperText>}
+            </FormControl>
+          </Grid>
           {openAlert ? (
             <Grid item xs={12}>
               <Alert
@@ -344,11 +304,6 @@ function TabAccount() {
             </Grid>
           ) : null}
 
-          <Grid item xs={12}>
-            <Button variant='contained' type="submit" sx={{mr: 4}}>
-              ذخیره تغییرات
-            </Button>
-          </Grid>
         </Grid>
       </form>
       <Loading open={loading}/>
