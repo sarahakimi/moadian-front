@@ -334,14 +334,15 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
 
                   <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5}}>
                     {selected.map((value) => (
-                      <Chip key={value} label={roles[value]?.name}/>
+                      <Chip key={value} label={roles[value - 1]?.name}/>
                     ))}
                   </Box>
                 )}
               >
-                {roles.map(role => (<MenuItem key={role.id} value={role.id} disabled={showUser}>
-                  {role.name}
-                </MenuItem>))}
+                {roles.slice(1, roles.length - 1).map(role => (
+                  <MenuItem key={role.id} value={role.id} disabled={showUser}>
+                    {role.name}
+                  </MenuItem>))}
               </Select>
             </>)}
           />
