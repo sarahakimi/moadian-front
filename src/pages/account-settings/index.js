@@ -1,7 +1,4 @@
-// ** React Imports
 import {useState} from 'react'
-
-// ** MUI Imports
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import TabList from '@mui/lab/TabList'
@@ -10,19 +7,12 @@ import TabContext from '@mui/lab/TabContext'
 import {styled} from '@mui/material/styles'
 import MuiTab from '@mui/material/Tab'
 
-// ** Icons Imports
-import BellOutline from 'mdi-material-ui/BellOutline'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import LockOpenOutline from 'mdi-material-ui/LockOpenOutline'
-import BookmarkOutline from 'mdi-material-ui/BookmarkOutline'
-import InformationOutline from 'mdi-material-ui/InformationOutline'
 
 // ** Demo Tabs Imports
-import TabInfo from 'views/pages/account-settings/TabInfo'
-import TabAccount from 'pages/account-settings/TabAccount'
-import TabBilling from 'views/pages/account-settings/TabBilling'
-import TabSecurity from 'pages/account-settings/TabSecurity'
-import TabNotifications from 'views/pages/account-settings/TabNotifications'
+import TabSecurity from './TabSecurity'
+import TabAccount from './TabAccount'
 
 // ** Third Party Styles Imports
 import 'react-datepicker/dist/react-datepicker.css'
@@ -65,7 +55,7 @@ function AccountSettings() {
             label={
               <Box sx={{display: 'flex', alignItems: 'center'}}>
                 <AccountOutline sx={{fontSize: '1.125rem'}}/>
-                <TabName>Account</TabName>
+                <TabName>پروفایل کاربری</TabName>
               </Box>
             }
           />
@@ -74,37 +64,11 @@ function AccountSettings() {
             label={
               <Box sx={{display: 'flex', alignItems: 'center'}}>
                 <LockOpenOutline sx={{fontSize: '1.125rem'}}/>
-                <TabName>Security</TabName>
+                <TabName>امنیت</TabName>
               </Box>
             }
           />
-          <Tab
-            value='info'
-            label={
-              <Box sx={{display: 'flex', alignItems: 'center'}}>
-                <InformationOutline sx={{fontSize: '1.125rem'}}/>
-                <TabName>Info</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='billing'
-            label={
-              <Box sx={{display: 'flex', alignItems: 'center'}}>
-                <BookmarkOutline sx={{fontSize: '1.125rem'}}/>
-                <TabName>Billing</TabName>
-              </Box>
-            }
-          />
-          <Tab
-            value='notifications'
-            label={
-              <Box sx={{display: 'flex', alignItems: 'center'}}>
-                <BellOutline sx={{fontSize: '1.125rem'}}/>
-                <TabName>Notifications</TabName>
-              </Box>
-            }
-          />
+
         </TabList>
 
         <TabPanel sx={{p: 0}} value='account'>
@@ -113,18 +77,15 @@ function AccountSettings() {
         <TabPanel sx={{p: 0}} value='security'>
           <TabSecurity/>
         </TabPanel>
-        <TabPanel sx={{p: 0}} value='info'>
-          <TabInfo/>
-        </TabPanel>
-        <TabPanel sx={{p: 0}} value='billing'>
-          <TabBilling/>
-        </TabPanel>
-        <TabPanel sx={{p: 0}} value='notifications'>
-          <TabNotifications/>
-        </TabPanel>
       </TabContext>
     </Card>
   )
 }
+
+AccountSettings.acl =
+  {
+    action: 'read',
+    subject: 'every-page'
+  }
 
 export default AccountSettings

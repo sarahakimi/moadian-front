@@ -1,8 +1,8 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import {useState} from 'react'
 
 // ** Next Import
-import { useRouter } from 'next/router'
+import {useRouter} from 'next/router'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -11,15 +11,15 @@ import Badge from '@mui/material/Badge'
 import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
-import { styled } from '@mui/material/styles'
+import {styled} from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
 import CogOutline from 'mdi-material-ui/CogOutline'
 import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
-import { useAuth } from 'hooks/useAuth'
+import {useAuth} from 'hooks/useAuth'
 
 // ** Styled Components
-const BadgeContentSpan = styled('span')(({ theme }) => ({
+const BadgeContentSpan = styled('span')(({theme}) => ({
   width: 8,
   height: 8,
   borderRadius: '50%',
@@ -29,18 +29,18 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 
 function UserDropdown(props) {
   // ** Props
-  const { settings } = props
+  const {settings} = props
 
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
 
   // ** Hooks
   const router = useRouter()
-  const { logout } = useAuth()
-  const { user } = useAuth()
+  const {logout} = useAuth()
+  const {user} = useAuth()
 
   // ** Vars
-  const { direction } = settings
+  const {direction} = settings
 
   const handleDropdownOpen = event => {
     setAnchorEl(event.currentTarget)
@@ -77,8 +77,8 @@ function UserDropdown(props) {
       <Badge
         overlap='circular'
         onClick={handleDropdownOpen}
-        sx={{ ml: 2, cursor: 'pointer' }}
-        badgeContent={<BadgeContentSpan />}
+        sx={{ml: 2, cursor: 'pointer'}}
+        badgeContent={<BadgeContentSpan/>}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'right'
@@ -87,7 +87,7 @@ function UserDropdown(props) {
         <Avatar
           alt='John Doe'
           onClick={handleDropdownOpen}
-          sx={{ width: 40, height: 40 }}
+          sx={{width: 40, height: 40}}
           src='/images/avatars/1.png'
         />
       </Badge>
@@ -95,7 +95,7 @@ function UserDropdown(props) {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={() => handleDropdownClose()}
-        sx={{ '& .MuiMenu-paper': { width: 230, marginTop: 4 } }}
+        sx={{'& .MuiMenu-paper': {width: 230, marginTop: 4}}}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: direction === 'ltr' ? 'right' : 'left'
@@ -105,17 +105,17 @@ function UserDropdown(props) {
           horizontal: direction === 'ltr' ? 'right' : 'left'
         }}
       >
-        <Box sx={{ pt: 2, pb: 3, px: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{pt: 2, pb: 3, px: 4}}>
+          <Box sx={{display: 'flex', alignItems: 'center'}}>
             <Badge
               overlap='circular'
-              badgeContent={<BadgeContentSpan />}
+              badgeContent={<BadgeContentSpan/>}
               anchorOrigin={{
                 vertical: 'bottom',
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{width: '2.5rem', height: '2.5rem'}}/>
             </Badge>
             <Box
               sx={{
@@ -125,26 +125,30 @@ function UserDropdown(props) {
                 flexDirection: 'column'
               }}
             >
-              <Typography sx={{ fontWeight: 600 }}>{user.name} </Typography>
+              <Typography sx={{fontWeight: 600}}>{user.name} </Typography>
             </Box>
           </Box>
         </Box>
-        <Divider sx={{ mt: 0, mb: 1 }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <Divider sx={{mt: 0, mb: 1}}/>
+        <MenuItem sx={{p: 0}} onClick={() => {
+          handleDropdownClose()
+          router.push('/account-settings')
+        }}>
           <Box sx={styles}>
-            <AccountOutline sx={{ marginRight: 2 }} />
+            <AccountOutline sx={{marginRight: 2}}/>
+
             پروفایل کاربری
           </Box>
         </MenuItem>
-        <Divider />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
+        <Divider/>
+        <MenuItem sx={{p: 0}} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
-            <CogOutline sx={{ marginRight: 2 }} />
+            <CogOutline sx={{marginRight: 2}}/>
             تنظیمات
           </Box>
         </MenuItem>
-        <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
+        <Divider/>
+        <MenuItem sx={{py: 2}} onClick={handleLogout}>
           <LogoutVariant
             sx={{
               marginRight: 2,

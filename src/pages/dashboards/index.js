@@ -6,6 +6,7 @@ function Dashoard() {
   );
 }
 
+
 Dashoard.acl = {
   action: 'read',
   subject: 'every-page'

@@ -267,6 +267,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                   options={ostan.map(element => element.name)}
                   onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
                   value={value}
+                  disabled={showUser}
                   renderInput={params => (
                     <TextField
 
@@ -300,6 +301,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                     .map(element => element.name)}
                   onChange={(event, values) => onChange(values)}
                   value={value}
+                  disabled={showUser}
                   renderInput={params => (
                     <TextField
                       /* eslint-disable-next-line react/jsx-props-no-spreading */
