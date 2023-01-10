@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useCallback, useState} from 'react'
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import {styled} from '@mui/material/styles'
@@ -14,6 +14,7 @@ import Close from 'mdi-material-ui/Close'
 import {Autocomplete, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
 import DialogContentText from "@mui/material/DialogContentText";
 import {ostan, shahr} from "iran-cities-json";
+import {useTus} from "use-tus";
 import http from "../../services/http";
 import Avatar from "../../@core/components/mui/avatar";
 
@@ -27,8 +28,7 @@ const Header = styled(Box)(({theme}) => ({
 }))
 
 const schema = yup.object().shape({
-  image: yup
-    .string(),
+  image: yup.mixed(),
   name: yup
     .string()
     .required('نام الزامی است'),
@@ -50,6 +50,7 @@ const schema = yup.object().shape({
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [success, setSuccess] = useState(false)
+  const {upload, setUpload, isSuccess, error, remove} = useTus();
 
   function onChangeSenderOstan(event, onChange, values,) {
     onChange(values)
@@ -57,7 +58,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   }
 
   const emptyForm = {
-    image: '',
+    image: null,
     name: '',
     fax: '',
     telephone: '',
@@ -69,8 +70,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   const {
     reset,
     control,
-
-    // setValue,
     handleSubmit,
     setError,
     formState: {errors}
@@ -81,17 +80,46 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   })
   const [file, setFile] = useState(undefined);
 
-  const handleChange = (event) => {
-    setFile(URL.createObjectURL(event.target.files[0]));
-  }
+  const handleSetUpload = useCallback((event) => {
+      const uploadFile = event.target.files.item(0);
+      setFile(URL.createObjectURL(event.target.files[0]))
+      if (!uploadFile) {
+        return;
+      }
+      setUpload(uploadFile, {
+        endpoint: 'https://api.zaminbar.ir/files',
+
+        // headers: {
+        //   Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,
+        //   'Access-Control-Allow-Origin': '*',
+        //   'Access-Control-Allow-Credentials': true,
+        //   'Access-Control-Allow-Methods': '*'
+        // },
+        metadata: {
+          filename: uploadFile.name,
+          filetype: uploadFile.type,
+        },
+      });
+    },
+    [setUpload]
+  );
 
   const handleClose = () => {
     toggle()
     reset(emptyForm)
   }
 
+  const handleStart = useCallback(() => {
+    if (!upload) {
+      return;
+    }
+
+    upload.start();
+  }, [upload]);
+
   const onSubmit = data => {
     setLoading(true)
+    handleStart()
     if (edit) {
       http
         .put(`hub/${user.id}`, data, {
@@ -171,7 +199,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                     id="raised-button-file"
                     multiple
                     type="file"
-                    onChange={handleChange}
+                    onChange={handleSetUpload}
                     value={value}
                     onBlur={onBlur}
                     error={Boolean(errors.name)}
@@ -249,6 +277,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                   error={Boolean(errors.fax)}
                   disabled={showUser}
                   inputProps={{maxLength: 12}}
+                  dir="ltr"
                 />
               )}
             />

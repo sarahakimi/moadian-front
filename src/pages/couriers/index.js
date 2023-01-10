@@ -112,10 +112,10 @@ function ACLPage() {
     setPageSize(newPageSize)
     setSortModel({...sortModel, ...{page_size: newPageSize}})
   }
-  const [page] = useState(0)
+  const [page, setPage] = useState(0)
 
   const handlePageChange = newPage => {
-    setPageSize(newPage)
+    setPage(newPage)
     setSortModel({...sortModel, ...{page: newPage + 1}})
   }
 
