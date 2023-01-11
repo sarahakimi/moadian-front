@@ -131,6 +131,7 @@ function LoginPage() {
       auth.login({
         username: data.username,
         password: data.password,
+        chosen_item: true,
         company_id: companies[data.hub_id].companyId.companyId,
         hub_id: companies[data.hub_id].hubId.hubId
       }, err => {
@@ -145,7 +146,6 @@ function LoginPage() {
       })
     } else {
       const {username, password} = data
-
       setPrevForm(data)
       auth.login({username, password}, err => {
         setLoading(false)
