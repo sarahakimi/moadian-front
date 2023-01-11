@@ -87,7 +87,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
         return;
       }
       setUpload(uploadFile, {
-        endpoint: 'https://api.zaminbar.ir/files',
+        endpoint: 'https://api.sefareshchi.com/files',
 
         // headers: {
         //   Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,

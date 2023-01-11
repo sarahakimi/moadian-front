@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unstable-nested-components */
-import {useEffect, useState} from 'react'
+import {useCallback, useEffect, useState} from 'react'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import {DataGrid, faIR} from '@mui/x-data-grid'
+import {DataGrid, faIR, getGridStringOperators, GridToolbarFilterButton} from '@mui/x-data-grid'
 import {styled} from '@mui/material/styles'
 import Paper from '@mui/material/Paper'
 import http from 'services/http'
@@ -30,9 +30,13 @@ const userStatusObj = {
 function ACLPage() {
   const [loading, setLoading] = useState(false)
   const [pageSize, setPageSize] = useState(10)
-  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: ''})
+  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
   const [change, setChange] = useState(true)
+
+  const filterOperators = getGridStringOperators().filter(({value}) =>
+    ['contains' /* add more over time */].includes(value),
+  );
 
   const columns = [
     {
@@ -40,6 +44,7 @@ function ACLPage() {
       minWidth: 230,
       field: 'name',
       headerName: 'نام کوریر',
+      filterOperators,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
@@ -53,25 +58,10 @@ function ACLPage() {
     },
     {
       flex: 0.1,
-      minWidth: 230,
-      field: 'adminName',
-      headerName: 'نام مدیرعامل',
-      hideable: false,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
-            <Typography noWrap component='a' variant='subtitle2' sx={{color: 'text.primary', textDecoration: 'none'}}>
-              {row?.admin?.name}
-            </Typography>
-          </Box>
-        </Box>
-      )
-    },
-    {
-      flex: 0.1,
       minWidth: 110,
       field: 'active',
       headerName: 'وضعیت',
+      filterable: false,
       hideable: false,
       renderCell: ({row}) => (
         <CustomChip
@@ -103,12 +93,12 @@ function ACLPage() {
 
 
   const handleSortModelChange = Model => {
-    setSortModel({...sortModel, ...{sort_by: `${Model[0]?.field} ${Model[0]?.sort}`}})
+    const sortMode = Model.length !== 0 ? `${Model[0]?.field} ${Model[0]?.sort}` : 'id desc'
+    setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
 
   const handlePageSizeChange = newPageSize => {
-    console.log(newPageSize)
     setPageSize(newPageSize)
     setSortModel({...sortModel, ...{page_size: newPageSize}})
   }
@@ -118,12 +108,25 @@ function ACLPage() {
     setPage(newPage)
     setSortModel({...sortModel, ...{page: newPage + 1}})
   }
+  const [filter, setFilter] = useState({})
+
+  const handleFilterChange = useCallback((filterModel) => {
+
+    console.log(filterModel)
+    setFilter(filterModel)
+    if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
+      setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
+      console.log(`${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`)
+    } else {
+      setSortModel({...sortModel, ...{search: ''}})
+    }
+  }, [filter, setFilter]);
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <GridContainer>
+          <GridContainer sx={{mt: 4}}>
             <DataGrid
               autoHeight
               pagination
@@ -141,8 +144,12 @@ function ACLPage() {
               onSortModelChange={handleSortModelChange}
               onPageChange={handlePageChange}
               page={page}
-              disableColumnFilter
               rowCount={50}
+              onFilterModelChange={handleFilterChange}
+              isLoading={loading}
+              components={{
+                Toolbar: GridToolbarFilterButton,
+              }}
             />
           </GridContainer>
         </Card>

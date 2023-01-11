@@ -9,7 +9,7 @@ import React, {useEffect, useState} from "react"
 import moment from "jalali-moment";
 import http from "../../services/http";
 
-function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
+function TableHeader({toggle, sortModel, setLoading}) {
   const [data, setData] = useState([])
   const [initiateDownload, setInitiateDownload] = useState(false)
 

@@ -1,13 +1,12 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import ExportVariant from 'mdi-material-ui/ExportVariant'
 import {CSVDownload} from "react-csv";
 import React, {useEffect, useState} from "react"
 import moment from "jalali-moment";
 import http from "services/http";
 
-function TableHeader({handleFilter, toggle, value, setLoading}) {
+function TableHeader({toggle, setLoading}) {
 
   const [data, setData] = useState([])
   const [initiateDownload, setInitiateDownload] = useState(false)
@@ -62,13 +61,6 @@ function TableHeader({handleFilter, toggle, value, setLoading}) {
 
 
       <Box sx={{display: 'flex', flexWrap: 'wrap', alignItems: 'center'}}>
-        <TextField
-          size='small'
-          value={value}
-          sx={{mr: 6, mb: 2}}
-          placeholder='جستجوی شرکت'
-          onChange={e => handleFilter(e.target.value)}
-        />
 
         <Button sx={{mb: 2}} onClick={toggle} variant='contained'>
           افزودن کوریر

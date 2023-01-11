@@ -40,7 +40,7 @@ function ACLPage() {
   const [showUser, setShowUser] = useState(false)
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'created_at desc', serach: ''})
+  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc', serach: ''})
   const [data, setData] = useState([])
   const [change, setChange] = useState(true)
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
@@ -48,7 +48,7 @@ function ACLPage() {
   const toggleShowUserDrawer = () => setShowUser(!showUser)
 
   const handleSortModelChange = Model => {
-    const sortMode = Model.length !== 0 ? `${Model[0]?.field} ${Model[0]?.sort}` : 'created_at desc'
+    const sortMode = Model.length !== 0 ? `${Model[0]?.field} ${Model[0]?.sort}` : 'id desc'
     setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
