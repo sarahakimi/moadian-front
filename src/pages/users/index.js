@@ -4,19 +4,15 @@ import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import Menu from '@mui/material/Menu'
-import {DataGrid, faIR} from '@mui/x-data-grid'
+import {DataGrid, faIR, getGridStringOperators, GridToolbarFilterButton} from '@mui/x-data-grid'
 import MenuItem from '@mui/material/MenuItem'
 import {styled} from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
-import Laptop from 'mdi-material-ui/Laptop'
-import ChartDonut from 'mdi-material-ui/ChartDonut'
-import CogOutline from 'mdi-material-ui/CogOutline'
 import DotsVertical from 'mdi-material-ui/DotsVertical'
 import PencilOutline from 'mdi-material-ui/PencilOutline'
 import DeleteOutline from 'mdi-material-ui/DeleteOutline'
-import AccountOutline from 'mdi-material-ui/AccountOutline'
 import {EyeOutline} from 'mdi-material-ui'
 import http from 'services/http'
 import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
@@ -36,24 +32,15 @@ export const GridContainer = styled(Paper)({
   }
 })
 
-const userRoleObj = {
-  admin: <Laptop sx={{mr: 2, color: 'error.main'}}/>,
-  author: <CogOutline sx={{mr: 2, color: 'warning.main'}}/>,
-  editor: <PencilOutline sx={{mr: 2, color: 'info.main'}}/>,
-  maintainer: <ChartDonut sx={{mr: 2, color: 'success.main'}}/>,
-  subscriber: <AccountOutline sx={{mr: 2, color: 'primary.main'}}/>
-}
-
 function ACLPage() {
   const [loading, setLoading] = useState([false])
   const [selectedCompany, setSelectedCompany] = useState({})
   const [openEdit, setOpenEdit] = useState(false)
   const [success, setSuccess] = useState(false)
   const [showUser, setShowUser] = useState(false)
-  const [value, setValue] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: '', serach: ''})
+  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'created_at desc', serach: ''})
   const [data, setData] = useState([])
   const [change, setChange] = useState(true)
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
@@ -61,7 +48,7 @@ function ACLPage() {
   const toggleShowUserDrawer = () => setShowUser(!showUser)
 
   const handleSortModelChange = Model => {
-    const sortMode = Model.length !== 0 ? `${Model[0]?.field} ${Model[0]?.sort}` : ''
+    const sortMode = Model.length !== 0 ? `${Model[0]?.field} ${Model[0]?.sort}` : 'created_at desc'
     setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
@@ -145,6 +132,11 @@ function ACLPage() {
     )
   }
 
+  const filterOperators = getGridStringOperators().filter(({value}) =>
+    ['contains' /* add more over time */].includes(value),
+  );
+
+
   const columns = [
     {
       flex: 0.2,
@@ -152,7 +144,7 @@ function ACLPage() {
       field: 'name',
       headerName: 'نام و نام خانوادگی',
       hideable: false,
-
+      filterOperators,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
@@ -168,6 +160,7 @@ function ACLPage() {
       minWidth: 230,
       field: 'username',
       headerName: 'نام کاربری',
+      filterOperators,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
@@ -184,10 +177,10 @@ function ACLPage() {
       field: 'created_at',
       minWidth: 150,
       headerName: 'تاریخ ثبت نام',
+      filterable: false,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          {userRoleObj[row.role]}
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
             {moment(row.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
           </Typography>
@@ -199,10 +192,10 @@ function ACLPage() {
       field: 'natural_code',
       minWidth: 150,
       headerName: 'کدملی',
+      filterOperators,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          {userRoleObj[row.role]}
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
             {row.natural_code}
           </Typography>
@@ -214,10 +207,10 @@ function ACLPage() {
       field: 'phone',
       minWidth: 150,
       headerName: 'شماره تلفن',
+      filterOperators,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          {userRoleObj[row.role]}
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
             {row.natural_code}
           </Typography>
@@ -229,6 +222,7 @@ function ACLPage() {
       minWidth: 90,
       sortable: false,
       hideable: false,
+      filterable: false,
       field: 'گزینه ها',
       headerName: 'گزینه ها',
       renderCell: ({row}) => <RowOptions user={row}/>
@@ -256,13 +250,6 @@ function ACLPage() {
       })
   }, [sortModel, change])
 
-  const handleFilter = useCallback(
-    val => {
-      setValue(val)
-    },
-    [change]
-  )
-
 
   const handlePageSizeChange = newPageSize => {
     setPageSize(newPageSize)
@@ -278,8 +265,8 @@ function ACLPage() {
 
   const handleFilterChange = useCallback((filterModel) => {
 
+    console.log(filterModel)
     setFilter(filterModel)
-
     if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
       setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
       console.log(`${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`)
@@ -289,13 +276,11 @@ function ACLPage() {
   }, [filter, setFilter]);
 
 
-  // console.log(queryOptions)
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} sortModel={sortModel}
+          <TableHeader toggle={toggleAddUserDrawer} sortModel={sortModel}
                        setLoading={setLoading}/>
           <GridContainer>
             <DataGrid
@@ -319,20 +304,8 @@ function ACLPage() {
               filterMode="server"
               onFilterModelChange={handleFilterChange}
               isLoading={loading}
-              initialState={{
-                ...data.initialState,
-                filter: {
-                  filterModel: {
-                    items: [
-                      {
-                        id: '',
-                        columnField: 'name',
-                        value: '',
-                        operatorValue: 'شامل',
-                      },
-                    ],
-                  },
-                },
+              components={{
+                Toolbar: GridToolbarFilterButton,
               }}
             />
           </GridContainer>

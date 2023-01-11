@@ -1,7 +1,6 @@
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 
 // ** Icons Imports
 import ExportVariant from 'mdi-material-ui/ExportVariant'
@@ -76,14 +75,6 @@ function TableHeader({handleFilter, toggle, value, sortModel, setLoading}) {
       {initiateDownload && <CSVDownload data={data} headers={headers} target="_blank"/>}
 
       <Box sx={{display: 'flex', flexWrap: 'wrap', alignItems: 'center'}}>
-        <TextField
-          size='small'
-          value={value}
-          sx={{mr: 6, mb: 2}}
-          placeholder='جستجوی مشتری'
-          onChange={e => handleFilter(e.target.value)}
-        />
-
         <Button sx={{mb: 2}} onClick={toggle} variant='contained'>
           افزودن مشتری
         </Button>
