@@ -53,7 +53,7 @@ function ACLPage() {
   const [value, setValue] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: ''})
+  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: '', serach: ''})
   const [data, setData] = useState([])
   const [change, setChange] = useState(true)
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
@@ -152,6 +152,7 @@ function ACLPage() {
       field: 'name',
       headerName: 'نام و نام خانوادگی',
       hideable: false,
+
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
@@ -242,7 +243,11 @@ function ACLPage() {
       })
       .then(async response => {
         setLoading(false)
-        setData(response.data)
+        if (response.data === null) {
+          setData([])
+        } else {
+          setData(response.data)
+        }
         setChange(false)
       })
       .catch(err => {
@@ -269,6 +274,22 @@ function ACLPage() {
     setPage(newPage)
     setSortModel({...sortModel, ...{page: newPage + 1}})
   }
+  const [filter, setFilter] = useState({})
+
+  const handleFilterChange = useCallback((filterModel) => {
+
+    setFilter(filterModel)
+
+    if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
+      setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
+      console.log(`${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`)
+    } else {
+      setSortModel({...sortModel, ...{search: ''}})
+    }
+  }, [filter, setFilter]);
+
+
+  // console.log(queryOptions)
 
   return (
     <Grid container spacing={6}>
@@ -295,12 +316,23 @@ function ACLPage() {
               onPageChange={handlePageChange}
               page={page}
               rowCount={50}
-              filterModel={{
-                items: [{columnField: 'name', operatorValue: 'contains', value: ''},
-                  {columnField: 'username', operatorValue: 'contains', value: ''},
-                  {columnField: 'natural_code', operatorValue: 'contains', value: ''},
-                  {columnField: 'phone', operatorValue: 'contains', value: ''}
-                ],
+              filterMode="server"
+              onFilterModelChange={handleFilterChange}
+              isLoading={loading}
+              initialState={{
+                ...data.initialState,
+                filter: {
+                  filterModel: {
+                    items: [
+                      {
+                        id: '',
+                        columnField: 'name',
+                        value: '',
+                        operatorValue: 'شامل',
+                      },
+                    ],
+                  },
+                },
               }}
             />
           </GridContainer>

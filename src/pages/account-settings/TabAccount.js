@@ -224,7 +224,7 @@ function TabAccount() {
                   name='hub_id'
                   control={control}
                   rules={{required: true}}
-                  render={({field: {value, onChange, onBlur}}) => (<>
+                  render={({field: {onChange, onBlur}}) => (<>
                     <InputLabel>هاب</InputLabel>
                     <Select
                       type='number'

@@ -50,7 +50,7 @@ const schema = yup.object().shape({
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [success, setSuccess] = useState(false)
-  const {upload, setUpload, isSuccess, error, remove} = useTus();
+  const {upload, setUpload} = useTus();
 
   function onChangeSenderOstan(event, onChange, values,) {
     onChange(values)
