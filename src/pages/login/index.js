@@ -132,7 +132,7 @@ function LoginPage() {
           type: 'manual',
           message: "لطفا یک گزینه انتخاب کنید"
         })
-        
+
         return
       }
       setIsDuplicate(false);
@@ -144,7 +144,7 @@ function LoginPage() {
         hub_id: companies[data.hub_id].hubId.hubId
       }, err => {
         setLoading(false)
-        setError('hub_id', {
+        setError('username', {
           type: 'manual',
           message: err.response?.data?.message
         })
