@@ -73,7 +73,7 @@ const schema = yup.object().shape({
 
 function TabAccount() {
   const [openAlert, setOpenAlert] = useState(false)
-  const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
+  const imgSrc = '/images/avatars/1.png'
   const [loading, setLoading] = useState(false)
   const [alertMsg, setAletMsg] = useState('')
   const [imageUrl, setImageUrl] = useState("")
