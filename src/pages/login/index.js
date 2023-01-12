@@ -127,6 +127,14 @@ function LoginPage() {
   const onSubmit = data => {
     setLoading(true)
     if (isDuplicate) {
+      if (data.hub_id === -1) {
+        setError('hub_id', {
+          type: 'manual',
+          message: "لطفا یک گزینه انتخاب کنید"
+        })
+        
+        return
+      }
       setIsDuplicate(false);
       auth.login({
         username: data.username,

@@ -21,8 +21,10 @@ import FormHelperText from "@mui/material/FormHelperText";
 import * as yup from "yup";
 import {Autocomplete} from "@mui/material";
 import {ostan, shahr} from "iran-cities-json";
+import * as tus from "tus-js-client";
 import http from "../../services/http";
 import Loading from "../components/loading/loading";
+import {useAuth} from "../../hooks/useAuth";
 
 const ImgStyled = styled('img')(({theme}) => ({
   width: 120,
@@ -74,6 +76,9 @@ function TabAccount() {
   const [imgSrc, setImgSrc] = useState('/images/avatars/1.png')
   const [loading, setLoading] = useState(false)
   const [alertMsg, setAletMsg] = useState('')
+  const [imageUrl, setImageUrl] = useState("")
+  const [resetImageUrl, setResetImageUrl] = useState("")
+  const hub = useAuth().user.hub_id
 
   const [formData, setFormData] = useState({
     image: '',
@@ -127,6 +132,8 @@ function TabAccount() {
           reset(emptyForm)
         } else {
           reset(response.data)
+          setImageUrl(response.data.image)
+          setResetImageUrl(response.data.image)
           setSelectedSenderOstan(response.data.provence)
         }
 
@@ -141,10 +148,10 @@ function TabAccount() {
 
 
   const onSubmit = data => {
-    console.log(data)
+
     setLoading(true)
     http
-      .put(`hub`, data, {
+      .put(`hub/${hub}`, data, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(() => {
@@ -157,14 +164,31 @@ function TabAccount() {
   }
 
 
-  const onChange = file => {
-    const reader = new FileReader()
-    const {files} = file.target
-    if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result)
-      reader.readAsDataURL(files[0])
+  const handleSetUpload = (event) => {
+    const uploadFile = event.target.files[0]
+    if (!uploadFile) {
+      return;
     }
+
+    const upload = new tus.Upload(uploadFile, {
+      endpoint: "https://api.zaminbar.ir/files/",
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      metadata: {
+        filename: uploadFile.name,
+        filetype: uploadFile.type
+      },
+      onError() {
+        setError("hub_id", {type: 'custom', message: "مشکل در بارگذای عکس. مجدد تلاش کنید"});
+      },
+      onSuccess() {
+        setLoading(false)
+        setImageUrl(upload.url)
+      }
+    })
+    setLoading(true)
+    upload.start()
   }
+
 
   return (
     <CardContent>
@@ -172,19 +196,20 @@ function TabAccount() {
         <Grid container spacing={6}>
           <Grid item xs={12} sx={{my: 5}}>
             <Box sx={{display: 'flex', alignItems: 'center'}}>
-              <ImgStyled src={imgSrc} alt='Profile Pic'/>
+              <ImgStyled src={imageUrl === "" ? imgSrc : imageUrl} alt='Profile Pic'/>
               <Box>
                 <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
                   بارگذاری عکس
                   <input
                     hidden
                     type='file'
-                    onChange={onChange}
+                    onChange={handleSetUpload}
                     accept='image/png, image/jpeg'
                     id='account-settings-upload-image' name="image"
                   />
                 </ButtonStyled>
-                <ResetButtonStyled color='error' variant='outlined' onClick={() => setImgSrc('/images/avatars/1.png')}>
+                <ResetButtonStyled color='error' variant='outlined'
+                                   onClick={() => setImageUrl(resetImageUrl === "" ? imgSrc : resetImageUrl)}>
                   انصراف
                 </ResetButtonStyled>
               </Box>

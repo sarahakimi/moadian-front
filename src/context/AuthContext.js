@@ -20,7 +20,7 @@ function AuthProvider({children}) {
   const [user, setUser] = useState(defaultProvider.user)
   const [loading, setLoading] = useState(defaultProvider.loading)
   const [isInitialized, setIsInitialized] = useState(defaultProvider.isInitialized)
- 
+
 
   const router = useRouter()
   useEffect(() => {
@@ -66,10 +66,9 @@ function AuthProvider({children}) {
       .then(async res => {
         window.localStorage.removeItem('userData')
         window.localStorage.removeItem(authConfig.storageTokenKeyName)
-        console.log(res.data.access_token)
         window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.access_token)
       })
-      .then(res => {
+      .then(() => {
         http
           .get(
             authConfig.meEndpoint,

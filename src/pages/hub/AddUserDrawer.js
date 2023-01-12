@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react'
+import {useState} from 'react'
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import {styled} from '@mui/material/styles'
@@ -14,9 +14,9 @@ import Close from 'mdi-material-ui/Close'
 import {Autocomplete, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
 import DialogContentText from "@mui/material/DialogContentText";
 import {ostan, shahr} from "iran-cities-json";
-import {useTus} from "use-tus";
-import http from "../../services/http";
+import * as tus from "tus-js-client";
 import Avatar from "../../@core/components/mui/avatar";
+import http from "../../services/http";
 
 
 const Header = styled(Box)(({theme}) => ({
@@ -50,7 +50,7 @@ const schema = yup.object().shape({
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [success, setSuccess] = useState(false)
-  const {upload, setUpload} = useTus();
+  const [imageUrl, setImageUrl] = useState(edit ? user.image : "")
 
   function onChangeSenderOstan(event, onChange, values,) {
     onChange(values)
@@ -78,51 +78,44 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-  const [file, setFile] = useState(undefined);
-
-  const handleSetUpload = useCallback((event) => {
-      const uploadFile = event.target.files.item(0);
-      setFile(URL.createObjectURL(event.target.files[0]))
-      if (!uploadFile) {
-        return;
-      }
-      setUpload(uploadFile, {
-        endpoint: 'https://api.sefareshchi.com/files',
-
-        // headers: {
-        //   Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,
-        //   'Access-Control-Allow-Origin': '*',
-        //   'Access-Control-Allow-Credentials': true,
-        //   'Access-Control-Allow-Methods': '*'
-        // },
-        metadata: {
-          filename: uploadFile.name,
-          filetype: uploadFile.type,
-        },
-      });
-    },
-    [setUpload]
-  );
 
   const handleClose = () => {
     toggle()
     reset(emptyForm)
   }
 
-  const handleStart = useCallback(() => {
-    if (!upload) {
+
+  const handleSetUpload = (event) => {
+    const uploadFile = event.target.files[0]
+    if (!uploadFile) {
       return;
     }
 
-    upload.start();
-  }, [upload]);
-
-  const onSubmit = data => {
+    const upload = new tus.Upload(uploadFile, {
+      endpoint: "https://api.zaminbar.ir/files/",
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      metadata: {
+        filename: uploadFile.name,
+        filetype: uploadFile.type
+      },
+      onError() {
+        setError("hub_id", {type: 'custom', message: "مشکل در بارگذای عکس. مجدد تلاش کنید"});
+      },
+      onSuccess() {
+        setLoading(false)
+        setImageUrl(upload.url)
+      }
+    })
     setLoading(true)
-    handleStart()
+    upload.start()
+  }
+
+
+  const onSubmit = async (data) => {
+    console.log(data)
     if (edit) {
       http
-        .put(`hub/${user.id}`, data, {
+        .put(`hub/${user.id}`, {...data, image: imageUrl}, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
@@ -137,7 +130,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
 
     } else {
       http
-        .post('hub/register', data, {
+        .post('hub/register', {...data, image: imageUrl}, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
@@ -185,7 +178,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormControl fullWidth sx={{mb: 4}}>
             <Controller
-              name='image'
+              name='imagee'
               control={control}
               rules={{required: true}}
               render={({field: {value, onBlur}}) => (
@@ -205,13 +198,12 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                     error={Boolean(errors.name)}
                     sx={{display: 'inline'}}
                   />
-                  <Avatar src={file} sx={{width: 56, height: 56}}/>
+                  <Avatar src={imageUrl} sx={{width: 56, height: 56}}/>
                   {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                   {!showUser && <label htmlFor="raised-button-file">
                     <Button
                       variant="text"
                       component="span"
-
                     >
                       افزودن لوگو
                     </Button>
