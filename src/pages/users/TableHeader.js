@@ -9,7 +9,7 @@ import React, {useEffect, useState} from "react"
 import moment from "jalali-moment";
 import http from "../../services/http";
 
-function TableHeader({toggle, sortModel, setLoading}) {
+function TableHeader({toggle, sortModel, setLoading, setAlert}) {
   const [data, setData] = useState([])
   const [initiateDownload, setInitiateDownload] = useState(false)
 
@@ -41,17 +41,18 @@ function TableHeader({toggle, sortModel, setLoading}) {
           created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
         })))
         setLoading(false)
+        setAlert({open: true, message: "با موفقیت انجام شد", variant: "success"})
       })
-      .catch(() => {
+      .catch((err) => {
 
         setLoading(false)
 
-        return false
+        setAlert({open: true, message: err.response.data.message, variant: "error"})
       })
   }
 
   return (
-    <Box sx={{p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between'}}>
+    <Box sx={{p: 5, pb: 0, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between'}}>
       <Button sx={{mr: 4, mb: 2}} color='secondary' variant='outlined' onClick={fetchCsvData}
               startIcon={<ExportVariant fontSize='small'/>}>
         خروجی

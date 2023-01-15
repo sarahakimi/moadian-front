@@ -121,6 +121,11 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   }
 
   const onSubmit = data => {
+    if (data.hub_id === 0) {
+      setError('hub_id', {type: 'custom', message: "هاب را انتخاب نمایید"})
+
+return
+    }
     setLoading(true)
     if (edit) {
       // eslint-disable-next-line no-param-reassign

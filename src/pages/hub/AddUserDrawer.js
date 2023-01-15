@@ -112,7 +112,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
 
 
   const onSubmit = async (data) => {
-    console.log(data)
     if (edit) {
       http
         .put(`hub/${user.id}`, {...data, image: imageUrl}, {
@@ -289,9 +288,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                   onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
                   value={value}
                   disabled={showUser}
+                  disableClearable
                   renderInput={params => (
                     <TextField
-
                       /* eslint-disable-next-line react/jsx-props-no-spreading */
                       {...params}
                       label='استان'
@@ -323,6 +322,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                   onChange={(event, values) => onChange(values)}
                   value={value}
                   disabled={showUser}
+                  disableClearable
                   renderInput={params => (
                     <TextField
                       /* eslint-disable-next-line react/jsx-props-no-spreading */

@@ -9,18 +9,13 @@ import MenuItem from '@mui/material/MenuItem'
 import {styled} from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import Paper from '@mui/material/Paper'
-import Laptop from 'mdi-material-ui/Laptop'
-import ChartDonut from 'mdi-material-ui/ChartDonut'
-import CogOutline from 'mdi-material-ui/CogOutline'
 import DotsVertical from 'mdi-material-ui/DotsVertical'
 import PencilOutline from 'mdi-material-ui/PencilOutline'
 import DeleteOutline from 'mdi-material-ui/DeleteOutline'
-import AccountOutline from 'mdi-material-ui/AccountOutline'
 import {EyeOutline} from 'mdi-material-ui'
 import http from 'services/http'
-import {Avatar, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
-import DialogContentText from '@mui/material/DialogContentText'
-import Button from '@mui/material/Button'
+import {Alert, Avatar} from '@mui/material'
+import Snackbar from "@mui/material/Snackbar";
 import TableHeader from './TableHeader'
 import AddUserDrawer from './AddUserDrawer'
 import Loading from "../components/loading/loading";
@@ -35,29 +30,26 @@ export const GridContainer = styled(Paper)({
   }
 })
 
-const userRoleObj = {
-  admin: <Laptop sx={{mr: 2, color: 'error.main'}}/>,
-  author: <CogOutline sx={{mr: 2, color: 'warning.main'}}/>,
-  editor: <PencilOutline sx={{mr: 2, color: 'info.main'}}/>,
-  maintainer: <ChartDonut sx={{mr: 2, color: 'success.main'}}/>,
-  subscriber: <AccountOutline sx={{mr: 2, color: 'primary.main'}}/>
-}
-
 function ACLPage() {
   const [loading, setLoading] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState({})
   const [openEdit, setOpenEdit] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [showUser, setShowUser] = useState(false)
 
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
-  const [change, setChange] = useState(true)
+  const [change, setChange] = useState(false)
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setOpenEdit(!openEdit)
   const toggleShowUserDrawer = () => setShowUser(!showUser)
+
+  const [alert, setAlert] = useState({
+    open: false,
+    variant: "",
+    message: ""
+  })
 
   // eslint-disable-next-line react/no-unstable-nested-components
   function RowOptions({user}) {
@@ -75,15 +67,15 @@ function ACLPage() {
     const handleDelete = id => {
       setLoading(true)
       http
-        .delete(`company/${id}`, {
+        .delete(`hub/${id}`, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
           setLoading(false)
-          setSuccess(true)
+          setChange(true)
         })
         .catch(err => {
-          console.log(err.response)
+          setAlert({open: true, message: err.response.data.message, variant: "error"})
         })
       handleRowOptionsClose()
     }
@@ -148,6 +140,7 @@ function ACLPage() {
       headerName: 'عکس',
       filterable: false,
       hideable: false,
+      sortable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Avatar alt={row.name} src={row.image}/>
@@ -176,7 +169,7 @@ function ACLPage() {
       flex: 0.15,
       field: 'fax',
       minWidth: 150,
-      headerName: 'قکس',
+      headerName: 'فکس',
       filterOperators,
       hideable: false,
       renderCell: ({row}) => (
@@ -211,7 +204,6 @@ function ACLPage() {
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          {userRoleObj[row.role]}
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
             {row.provence}
           </Typography>
@@ -246,6 +238,9 @@ function ACLPage() {
   ]
 
   useEffect(() => {
+    if (change) {
+      setAlert({open: true, message: "با موفقیت انجام شد", variant: "success"})
+    }
     setLoading(true)
     http
       .get('hub/company/all', sortModel, {
@@ -253,12 +248,14 @@ function ACLPage() {
       })
       .then(async response => {
         setLoading(false)
-        setData(response.data)
+        if (response.data === null) {
+          setData([])
+        } else setData(response.data)
         setChange(false)
       })
       .catch(err => {
         setLoading(false)
-        console.log(err)
+        setAlert({open: true, message: err.response.data.message, variant: "error"})
       })
   }, [sortModel, change])
 
@@ -268,10 +265,6 @@ function ACLPage() {
     setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
-  const handleDialogClose = () => {
-    setSuccess(false)
-    setChange(true)
-  }
 
   const handlePageSizeChange = newPageSize => {
     console.log(newPageSize)
@@ -287,24 +280,25 @@ function ACLPage() {
   const [filter, setFilter] = useState({})
 
   const handleFilterChange = useCallback((filterModel) => {
-
-    console.log(filterModel)
     setFilter(filterModel)
     if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
       setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
-      console.log(`${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`)
     } else {
       setSortModel({...sortModel, ...{search: ''}})
     }
   }, [filter, setFilter]);
+
+  const handleSnackbarClose = () => {
+    setAlert({open: false, message: "", variant: ""})
+  };
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <TableHeader toggle={toggleAddUserDrawer} sortModel={sortModel}
-                       setLoading={setLoading}/>
-          <GridContainer>
+                       setLoading={setLoading} setAlert={setAlert}/>
+          <GridContainer sx={{p: 4, m: 1}}>
             <DataGrid
               autoHeight
               pagination
@@ -364,24 +358,18 @@ function ACLPage() {
           setLoading={setLoading}
         />
       )}
-
-      <Dialog
-        open={success}
-        onClose={handleDialogClose}
-        aria-labelledby='alert-dialog-title'
-        aria-describedby='alert-dialog-description'
-      >
-        <DialogTitle id='alert-dialog-title'>حذف هاب</DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>هاب با موفقیت حذف شد</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} autoFocus>
-            متوجه شدم
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Loading open={loading}/>
+      <Snackbar open={alert.open} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+                key="TransitionUp"
+                variant="error"
+      >
+        <Alert severity={alert.variant} sx={{width: '100%'}}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Grid>
   )
 }

@@ -141,7 +141,8 @@ function LoginPage() {
         password: data.password,
         chosen_item: true,
         company_id: companies[data.hub_id].companyId.companyId,
-        hub_id: companies[data.hub_id].hubId.hubId
+        hub_id: companies[data.hub_id].hubId.hubId,
+        user_type: 1,
       }, err => {
         setLoading(false)
         setError('username', {
@@ -155,7 +156,7 @@ function LoginPage() {
     } else {
       const {username, password} = data
       setPrevForm(data)
-      auth.login({username, password}, err => {
+      auth.login({username, password, user_type: 1}, err => {
         setLoading(false)
         setError('username', {
           type: 'manual',

@@ -66,7 +66,7 @@ const schema = yup.object().shape({
     .string(),
   texes: yup.boolean().required('فیلد الزامی'),
   off_percent_status: yup.boolean().required('فیلد الزامی'),
-  off_percent: yup.number().min(0.01, " باید مثبت باشد").max(100, "حداکثر باید 100 باشد").typeError("باید عدد باشد"),
+  off_percent: yup.number().min(0, " باید مثبت باشد").max(100, "حداکثر باید 100 باشد").typeError("باید عدد باشد"),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
 })
@@ -141,6 +141,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   }
 
   const onSubmit = data => {
+    console.log(data)
     setLoading(true)
     if (edit) {
       // eslint-disable-next-line no-param-reassign

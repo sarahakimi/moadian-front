@@ -11,19 +11,16 @@ import {styled} from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
-import Laptop from 'mdi-material-ui/Laptop'
-import ChartDonut from 'mdi-material-ui/ChartDonut'
-import CogOutline from 'mdi-material-ui/CogOutline'
 import DotsVertical from 'mdi-material-ui/DotsVertical'
 import PencilOutline from 'mdi-material-ui/PencilOutline'
 import DeleteOutline from 'mdi-material-ui/DeleteOutline'
-import AccountOutline from 'mdi-material-ui/AccountOutline'
 import {EyeOutline, PlusOutline} from 'mdi-material-ui'
 import http from 'services/http'
 import CustomChip from '@core/components/mui/chip'
-import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
+import {Alert, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
 import DialogContentText from '@mui/material/DialogContentText'
 import Button from '@mui/material/Button'
+import Snackbar from "@mui/material/Snackbar";
 import AddCourierDrawer from './AddCourierDrawer'
 import TableHeader from './TableHeader'
 import EditDuration from './EditDuration'
@@ -39,14 +36,6 @@ export const GridContainer = styled(Paper)({
   }
 })
 
-const userRoleObj = {
-  admin: <Laptop sx={{mr: 2, color: 'error.main'}}/>,
-  author: <CogOutline sx={{mr: 2, color: 'warning.main'}}/>,
-  editor: <PencilOutline sx={{mr: 2, color: 'info.main'}}/>,
-  maintainer: <ChartDonut sx={{mr: 2, color: 'success.main'}}/>,
-  subscriber: <AccountOutline sx={{mr: 2, color: 'primary.main'}}/>
-}
-
 const userStatusObj = {
   true: 'success',
   false: 'secondary'
@@ -58,12 +47,18 @@ function ACLPage() {
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
-  const [change, setChange] = useState(true)
+  const [change, setChange] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState({})
   const [openEdit, setOpenEdit] = useState(false)
   const [openDurationEdit, setOpenDurationEdit] = useState(false)
   const [success, setSuccess] = useState(false)
   const [showUser, setShowUser] = useState(false)
+
+  const [alert, setAlert] = useState({
+    open: false,
+    variant: "",
+    message: ""
+  })
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setOpenEdit(!openEdit)
   const toggleEditDurationDrawer = () => setOpenDurationEdit(!openDurationEdit)
@@ -88,11 +83,12 @@ function ACLPage() {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
-          setSuccess(true)
           setLoading(false)
+          setChange(true)
         })
-        .catch(() => {
+        .catch(err => {
           setLoading(false)
+          setAlert({open: true, message: err.response.data.message, variant: "error"})
         })
       handleRowOptionsClose()
     }
@@ -181,6 +177,7 @@ function ACLPage() {
       field: 'adminName',
       filterable: false,
       headerName: 'نام ادمین',
+      sortable: false,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
@@ -199,6 +196,7 @@ function ACLPage() {
       headerName: 'نام کاربری ادمین',
       filterable: false,
       hideable: false,
+      sortable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
@@ -218,7 +216,6 @@ function ACLPage() {
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          {userRoleObj[row.role]}
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
             {moment(row.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
           </Typography>
@@ -267,17 +264,24 @@ function ACLPage() {
   ]
 
   useEffect(() => {
+    if (change) {
+      setAlert({open: true, message: "با موفقیت انجام شد", variant: "success"})
+    }
+    setLoading(true)
     http
       .get('company/all/admin', sortModel, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
-        setData(response.data)
+        if (response.data === null) {
+          setData([])
+        } else setData(response.data)
         setChange(false)
-        console.log(response.data)
+        setLoading(false)
       })
       .catch(err => {
-        console.log(err)
+        setLoading(false)
+        setAlert({open: true, message: err.response.data.message, variant: "error"})
       })
   }, [sortModel, change])
 
@@ -317,12 +321,30 @@ function ACLPage() {
     }
   }, [filter, setFilter]);
 
+  const handleSnackbarClose = () => {
+    setAlert({open: false, message: "", variant: ""})
+  };
+
   return (
     <Grid container spacing={6}>
+
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={toggleAddUserDrawer} setLoading={setLoading}/>
-          <GridContainer>
+          <TableHeader toggle={toggleAddUserDrawer} setLoading={setLoading} setAlert={setAlert} sortModel={sortModel}/>
+          <Snackbar open={alert.open} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+                    key="TransitionUp"
+                    variant="error"
+          >
+            <Alert severity={alert.variant} sx={{width: '100%'}}>
+              {alert.message}
+            </Alert>
+          </Snackbar>
+
+
+          <GridContainer sx={{p: 4, m: 1}}>
             <DataGrid
               autoHeight
               pagination
@@ -346,7 +368,6 @@ function ACLPage() {
               components={{
                 Toolbar: GridToolbarFilterButton,
               }}
-            />
             />
           </GridContainer>
         </Card>
@@ -410,6 +431,7 @@ function ACLPage() {
         </DialogActions>
       </Dialog>
       <Loading open={loading}/>
+
     </Grid>
   )
 }

@@ -288,10 +288,10 @@ function TabAccount() {
               {errors.roles && <FormHelperText sx={{color: 'error.main'}}>{errors.roles.message}</FormHelperText>}
             </FormControl>
           </Grid>
-          {openAlert ? (
+          {openAlert && (
             <Grid item xs={12}>
               <Alert
-                severity='warning'
+                severity='error'
                 sx={{'& a': {fontWeight: 400}}}
                 action={
                   <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
@@ -302,7 +302,7 @@ function TabAccount() {
                 <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
               </Alert>
             </Grid>
-          ) : null}
+          )}
 
         </Grid>
       </form>

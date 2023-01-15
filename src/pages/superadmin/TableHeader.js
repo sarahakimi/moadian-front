@@ -6,7 +6,7 @@ import React, {useEffect, useState} from "react"
 import moment from "jalali-moment";
 import http from "services/http";
 
-function TableHeader({toggle, setLoading}) {
+function TableHeader({sortModel, toggle, setLoading, setAlert}) {
 
   const [data, setData] = useState([])
   const [initiateDownload, setInitiateDownload] = useState(false)
@@ -27,7 +27,7 @@ function TableHeader({toggle, setLoading}) {
   const fetchCsvData = () => {
     setLoading(true)
     http
-      .get('company/all/admin', {}, {
+      .get('company/all/admin', sortModel, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
@@ -41,18 +41,17 @@ function TableHeader({toggle, setLoading}) {
           }
         }))
         setLoading(false)
+        setAlert({open: true, message: "با موفقیت انجام شد", variant: "success"})
       })
-      .catch(() => {
-
+      .catch(err => {
         setLoading(false)
-
-        return false
+        setAlert({open: true, message: err.response.data.message, variant: "error"})
       })
 
   }
 
   return (
-    <Box sx={{p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between'}}>
+    <Box sx={{p: 5, pb: 0, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between'}}>
       <Button sx={{mr: 4, mb: 2}} color='secondary' variant='outlined' startIcon={<ExportVariant fontSize='small'/>}
               onClick={fetchCsvData}>
         خروجی
