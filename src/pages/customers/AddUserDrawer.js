@@ -315,6 +315,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                 onBlur={onBlur}
                 select
                 options={ostan.map(element => element.name)}
+                disableClearable
                 onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
                 value={value}
                 renderInput={params => (
@@ -344,6 +345,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
                 disabled={showUser}
                 onBlur={onBlur}
                 select
+                disableClearable
                 options={shahr
                   .filter(element => element.ostan === selectedSenderOstan)
                   .map(element => element.name)}

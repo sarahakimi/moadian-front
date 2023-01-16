@@ -14,9 +14,8 @@ import PencilOutline from 'mdi-material-ui/PencilOutline'
 import DeleteOutline from 'mdi-material-ui/DeleteOutline'
 import {EyeOutline} from 'mdi-material-ui'
 import http from 'services/http'
-import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
-import DialogContentText from '@mui/material/DialogContentText'
-import Button from '@mui/material/Button'
+import Snackbar from "@mui/material/Snackbar";
+import {Alert} from "@mui/material";
 import TableHeader from './TableHeader'
 import AddUserDrawer from './AddUserDrawer'
 import Loading from "../components/loading/loading";
@@ -36,13 +35,18 @@ function ACLPage() {
   const [loading, setLoading] = useState([false])
   const [selectedCompany, setSelectedCompany] = useState({})
   const [openEdit, setOpenEdit] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [showUser, setShowUser] = useState(false)
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
   const [change, setChange] = useState(true)
+
+  const [alert, setAlert] = useState({
+    open: false,
+    variant: "",
+    message: ""
+  })
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setOpenEdit(!openEdit)
   const toggleShowUserDrawer = () => setShowUser(!showUser)
@@ -52,12 +56,7 @@ function ACLPage() {
     setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
-  const handleDialogClose = () => {
-    setSuccess(false)
-    setChange(true)
-  }
-
-
+  
   // eslint-disable-next-line react/no-unstable-nested-components
   function RowOptions({user}) {
     const [anchorEl, setAnchorEl] = useState(null)
@@ -72,15 +71,18 @@ function ACLPage() {
     }
 
     const handleDelete = id => {
+      setLoading(true)
       http
-        .delete(`company/${id}`, {
+        .delete(`customer/admin/${id}`, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
-          setSuccess(true)
+          setChange(true)
+          setLoading(false)
         })
         .catch(err => {
-          console.log(err.response)
+          setLoading(false)
+          setAlert({open: true, message: err.response.data.message, variant: "error"})
         })
       handleRowOptionsClose()
     }
@@ -259,6 +261,9 @@ function ACLPage() {
   ]
 
   useEffect(() => {
+    if (change) {
+      setAlert({open: true, message: "با موفقیت انجام شد", variant: "success"})
+    }
     setLoading(true)
     http
       .get('customer/admin/3/all', sortModel, {
@@ -273,7 +278,7 @@ function ACLPage() {
       })
       .catch(err => {
         setLoading(false)
-        console.log(err)
+        setAlert({open: true, message: err.response.data.message, variant: "error"})
       })
   }, [sortModel, change])
 
@@ -292,24 +297,25 @@ function ACLPage() {
   const [filter, setFilter] = useState({})
 
   const handleFilterChange = useCallback((filterModel) => {
-
-    console.log(filterModel)
     setFilter(filterModel)
     if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
       setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
-      console.log(`${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`)
     } else {
       setSortModel({...sortModel, ...{search: ''}})
     }
   }, [filter, setFilter]);
+
+  const handleSnackbarClose = () => {
+    setAlert({open: false, message: "", variant: ""})
+  };
 
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
           <TableHeader toggle={toggleAddUserDrawer} sortModel={sortModel}
-                       setLoading={setLoading}/>
-          <GridContainer>
+                       setLoading={setLoading} setAlert={setAlert}/>
+          <GridContainer sx={{p: 4, m: 2}}>
             <DataGrid
               autoHeight
               pagination
@@ -371,23 +377,17 @@ function ACLPage() {
           setLoading={setLoading}
         />
       )}
-
-      <Dialog
-        open={success}
-        onClose={handleDialogClose}
-        aria-labelledby='alert-dialog-title'
-        aria-describedby='alert-dialog-description'
+      <Snackbar open={alert.open} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+                key="TransitionUp"
+                variant="error"
       >
-        <DialogTitle id='alert-dialog-title'>حذف مشتری</DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>مشتری با موفقیت حذف شد</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} autoFocus>
-            متوجه شدم
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Alert severity={alert.variant} sx={{width: '100%'}}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
       <Loading open={loading}/>
     </Grid>
   )

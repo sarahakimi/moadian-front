@@ -17,9 +17,7 @@ import DeleteOutline from 'mdi-material-ui/DeleteOutline'
 import {EyeOutline, PlusOutline} from 'mdi-material-ui'
 import http from 'services/http'
 import CustomChip from '@core/components/mui/chip'
-import {Alert, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
-import DialogContentText from '@mui/material/DialogContentText'
-import Button from '@mui/material/Button'
+import {Alert} from '@mui/material'
 import Snackbar from "@mui/material/Snackbar";
 import AddCourierDrawer from './AddCourierDrawer'
 import TableHeader from './TableHeader'
@@ -51,7 +49,6 @@ function ACLPage() {
   const [selectedCompany, setSelectedCompany] = useState({})
   const [openEdit, setOpenEdit] = useState(false)
   const [openDurationEdit, setOpenDurationEdit] = useState(false)
-  const [success, setSuccess] = useState(false)
   const [showUser, setShowUser] = useState(false)
 
   const [alert, setAlert] = useState({
@@ -291,11 +288,6 @@ function ACLPage() {
     setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
-  const handleDialogClose = () => {
-    setSuccess(false)
-    setChange(true)
-  }
-
   const handlePageSizeChange = newPageSize => {
     console.log(newPageSize)
     setPageSize(newPageSize)
@@ -310,12 +302,9 @@ function ACLPage() {
   const [filter, setFilter] = useState({})
 
   const handleFilterChange = useCallback((filterModel) => {
-
-    console.log(filterModel)
     setFilter(filterModel)
     if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
       setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
-      console.log(`${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`)
     } else {
       setSortModel({...sortModel, ...{search: ''}})
     }
@@ -414,22 +403,6 @@ function ACLPage() {
         />
       )}
 
-      <Dialog
-        open={success}
-        onClose={handleDialogClose}
-        aria-labelledby='alert-dialog-title'
-        aria-describedby='alert-dialog-description'
-      >
-        <DialogTitle id='alert-dialog-title'>حذف شرکت</DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>شرکت با موفقیت حذف شد</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} autoFocus>
-            متوجه شدم
-          </Button>
-        </DialogActions>
-      </Dialog>
       <Loading open={loading}/>
 
     </Grid>
