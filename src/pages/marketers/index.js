@@ -52,7 +52,7 @@ function ACLPage() {
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
-  const [change, setChange] = useState(true)
+  const [change, setChange] = useState(false)
 
   const [alert, setAlert] = useState({
     open: false,
@@ -68,11 +68,6 @@ function ACLPage() {
     setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
-  const handleDialogClose = () => {
-    setChange(true)
-  }
-
-
   // eslint-disable-next-line react/no-unstable-nested-components
   function RowOptions({user}) {
     const [anchorEl, setAnchorEl] = useState(null)
@@ -87,6 +82,7 @@ function ACLPage() {
     }
 
     const handleDelete = id => {
+      setLoading(true)
       http
         .delete(`customer/admin/${id}`, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
@@ -332,7 +328,7 @@ function ACLPage() {
       <Grid item xs={12}>
         <Card>
           <TableHeader toggle={toggleAddUserDrawer} sortModel={sortModel}
-                       setLoading={setLoading}/>
+                       setLoading={setLoading} setAlert={setAlert}/>
           <GridContainer sx={{p: 4, m: 1}}>
             <DataGrid
               autoHeight

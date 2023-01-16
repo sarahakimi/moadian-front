@@ -40,7 +40,7 @@ function ACLPage() {
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
-  const [change, setChange] = useState(true)
+  const [change, setChange] = useState(false)
 
   const [alert, setAlert] = useState({
     open: false,
@@ -56,7 +56,7 @@ function ACLPage() {
     setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
   }
 
-  
+
   // eslint-disable-next-line react/no-unstable-nested-components
   function RowOptions({user}) {
     const [anchorEl, setAnchorEl] = useState(null)

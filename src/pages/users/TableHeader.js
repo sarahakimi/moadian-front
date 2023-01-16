@@ -47,7 +47,15 @@ function TableHeader({toggle, sortModel, setLoading, setAlert}) {
 
         setLoading(false)
 
-        setAlert({open: true, message: err.response.data.message, variant: "error"})
+        if (err?.response?.data?.message) {
+          setAlert({open: true, message: err.response.data.message, variant: "error"})
+        } else {
+          setAlert({
+            open: true,
+            message: "مشکلی به وجود آمده است. از خالی نبودن خروجی مطمئن شوید و دوباره امتحان کنید",
+            variant: "error"
+          })
+        }
       })
   }
 

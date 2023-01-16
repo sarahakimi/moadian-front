@@ -70,16 +70,20 @@ function ACLPage() {
     }
 
     const handleDelete = id => {
+      setLoading(true)
       http
         .delete(`user/admin/${id}`, {
           Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
         })
         .then(() => {
+          setLoading(false)
           setChange(true)
         })
         .catch(err => {
-          setAlert({open: true, message: err.response.data.message, variant: "error"})
-        })
+            setLoading(false)
+            setAlert({open: true, message: err.response.data.message, variant: "error"})
+          }
+        )
       handleRowOptionsClose()
     }
 

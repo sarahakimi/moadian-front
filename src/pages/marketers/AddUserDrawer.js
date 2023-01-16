@@ -43,7 +43,7 @@ const schema = yup.object().shape({
   phone: yup
     .string()
     .required('موبایل الزامی است')
-    .matches(/d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
+    .matches(/09d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
   tel_number: yup
     .string()
