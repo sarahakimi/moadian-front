@@ -9,6 +9,8 @@ import {styled} from '@mui/material/styles'
 import Paper from '@mui/material/Paper'
 import http from 'services/http'
 import CustomChip from '@core/components/mui/chip'
+import Snackbar from "@mui/material/Snackbar";
+import {Alert} from "@mui/material";
 import Loading from "../components/loading/loading";
 
 export const GridContainer = styled(Paper)({
@@ -33,6 +35,12 @@ function ACLPage() {
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
   const [change, setChange] = useState(true)
+
+  const [alert, setAlert] = useState({
+    open: false,
+    variant: "",
+    message: ""
+  })
 
   const filterOperators = getGridStringOperators().filter(({value}) =>
     ['contains' /* add more over time */].includes(value),
@@ -82,12 +90,15 @@ function ACLPage() {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
-        setData(response.data)
+        if (response.data === null) {
+          setData([])
+        } else setData(response.data)
         setChange(false)
         setLoading(false)
       })
-      .catch(() => {
+      .catch((err) => {
         setLoading(false)
+        setAlert({open: true, message: err.response.data.message, variant: "error"})
       })
   }, [sortModel, change])
 
@@ -122,11 +133,15 @@ function ACLPage() {
     }
   }, [filter, setFilter]);
 
+  const handleSnackbarClose = () => {
+    setAlert({open: false, message: "", variant: ""})
+  };
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <GridContainer sx={{mt: 4}}>
+          <GridContainer sx={{p: 4, m: 1}}>
             <DataGrid
               autoHeight
               pagination
@@ -154,6 +169,17 @@ function ACLPage() {
           </GridContainer>
         </Card>
       </Grid>
+      <Snackbar open={alert.open} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+                key="TransitionUp"
+                variant="error"
+      >
+        <Alert severity={alert.variant} sx={{width: '100%'}}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
       <Loading open={loading}/>
     </Grid>
   )

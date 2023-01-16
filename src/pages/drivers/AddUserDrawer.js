@@ -39,7 +39,7 @@ const schema = yup.object().shape({
   phone: yup
     .string()
     .required('موبایل الزامی است')
-    .matches(/d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
+    .matches(/09d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),

@@ -19,12 +19,13 @@ import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import * as yup from "yup";
-import {Autocomplete} from "@mui/material";
+import {Autocomplete, Snackbar} from "@mui/material";
 import {ostan, shahr} from "iran-cities-json";
 import * as tus from "tus-js-client";
 import http from "../../services/http";
 import Loading from "../components/loading/loading";
 import {useAuth} from "../../hooks/useAuth";
+
 
 const ImgStyled = styled('img')(({theme}) => ({
   width: 120,
@@ -352,21 +353,26 @@ function TabAccount() {
               <FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>
             )}
           </FormControl></Grid>
-          {openAlert ? (
-            <Grid item xs={12}>
-              <Alert
-                severity='warning'
-                sx={{'& a': {fontWeight: 400}}}
-                action={
-                  <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
-                    <Close fontSize='inherit'/>
-                  </IconButton>
-                }
-              >
-                <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
-              </Alert>
-            </Grid>
-          ) : null}
+          <Snackbar open={openAlert} autoHideDuration={6000} onClose={() => setOpenAlert(false)} anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+                    key="TransitionUp"
+                    variant="error"
+          >
+            <Alert
+              severity='error'
+              sx={{'& a': {fontWeight: 400}}}
+              action={
+                <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
+                  <Close fontSize='inherit'/>
+                </IconButton>
+              }
+            >
+              <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
+            </Alert>
+          </Snackbar>
+
 
           <Grid item xs={12}>
             <Button variant='contained' type="submit" sx={{mr: 4}}>

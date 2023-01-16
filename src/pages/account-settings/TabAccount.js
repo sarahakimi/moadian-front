@@ -19,6 +19,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import * as yup from "yup";
+import {Snackbar} from "@mui/material";
 import {useAuth} from "../../hooks/useAuth";
 import Loading from "../components/loading/loading";
 import http from "../../services/http";
@@ -288,21 +289,26 @@ function TabAccount() {
               {errors.roles && <FormHelperText sx={{color: 'error.main'}}>{errors.roles.message}</FormHelperText>}
             </FormControl>
           </Grid>
-          {openAlert && (
-            <Grid item xs={12}>
-              <Alert
-                severity='error'
-                sx={{'& a': {fontWeight: 400}}}
-                action={
-                  <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
-                    <Close fontSize='inherit'/>
-                  </IconButton>
-                }
-              >
-                <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
-              </Alert>
-            </Grid>
-          )}
+          <Snackbar open={openAlert} autoHideDuration={6000} onClose={() => setOpenAlert(false)} anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+                    key="TransitionUp"
+                    variant="error"
+          >
+            <Alert
+              severity='error'
+              sx={{'& a': {fontWeight: 400}}}
+              action={
+                <IconButton size='small' color='inherit' aria-label='close'>
+                  <Close fontSize='inherit'/>
+                </IconButton>
+              }
+            >
+              <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
+            </Alert>
+          </Snackbar>
+          
 
         </Grid>
       </form>
