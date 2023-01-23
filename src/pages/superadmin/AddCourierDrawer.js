@@ -32,8 +32,8 @@ const schema = yup.object().shape({
   natural_code: yup
     .string()
     .required('کدملی  الزامی است')
-    .matches(/d*/, 'کدملی باید عدد باشد')
-    .test('len', 'کدملی باید 10 رقم باشد', val => val.toString().length === 10),
+    .test('len', 'کدملی باید 10 رقم باشد', val => val.toString().length === 10)
+    .matches(/d*/, 'کدملی باید عدد باشد'),
   adminName: yup.string().required('نام و نام خانوادگی الزامی است').min(5, 'فیلد را به درستی پر کنید'),
   phone: yup
     .string()

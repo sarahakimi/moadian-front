@@ -2,6 +2,7 @@ import {createContext, useEffect, useState} from 'react'
 import {useRouter} from 'next/router'
 import authConfig from 'configs/auth'
 import http from 'services/http'
+import toast from "react-hot-toast";
 
 const defaultProvider = {
   user: null,
@@ -60,7 +61,7 @@ function AuthProvider({children}) {
     initAuth()
   }, [])
 
-  const handleLogin = (params, errorCallback) => {
+  const handleLogin = (params, errorCallback, toastid) => {
     http
       .post(authConfig.loginEndpoint, params)
       .then(async res => {
@@ -69,6 +70,7 @@ function AuthProvider({children}) {
         window.localStorage.setItem(authConfig.storageTokenKeyName, res.data.access_token)
       })
       .then(() => {
+        toast.dismiss(toastid)
         http
           .get(
             authConfig.meEndpoint,
@@ -78,11 +80,13 @@ function AuthProvider({children}) {
             }
           )
           .then(async response => {
+
             const {returnUrl} = router.query
             setUser({...response.data})
             await window.localStorage.setItem('userData', JSON.stringify(response.data))
             const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
             router.replace(redirectURL)
+
           })
       })
       .catch(err => {

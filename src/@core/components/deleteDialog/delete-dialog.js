@@ -34,8 +34,9 @@ function DeleteDialog({closeFunction, setOpen, open, company}) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>خیر</Button>
         <Button onClick={handleDelete}>بله</Button>
+        <Button onClick={handleClose}>خیر</Button>
+
       </DialogActions>
     </Dialog>
   )

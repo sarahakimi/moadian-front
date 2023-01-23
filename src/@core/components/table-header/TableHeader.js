@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import React from "react"
-import ExportButton from "../../@core/components/export-button/export-button";
+import ExportButton from "../export-button/export-button";
 
 function TableHeader({toggle, data, headers, api, name}) {
   return (

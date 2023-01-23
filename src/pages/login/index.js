@@ -27,6 +27,7 @@ import BlankLayout from '@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'views/pages/auth/FooterIllustrationsV2'
 import Loading from "@core/components/loading/loading";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Select} from "@mui/material";
+import toast from "react-hot-toast";
 
 
 const LoginIllustrationWrapper = styled(Box)(({theme}) => ({
@@ -125,7 +126,7 @@ function LoginPage() {
 
 
   const onSubmit = data => {
-    setLoading(true)
+    const toastid = toast.loading("در حال ورود...")
     if (isDuplicate) {
       if (data.hub_id === -1) {
         setError('hub_id', {
@@ -136,6 +137,7 @@ function LoginPage() {
         return
       }
       setIsDuplicate(false);
+
       auth.login({
         username: data.username,
         password: data.password,
@@ -144,20 +146,19 @@ function LoginPage() {
         hub_id: companies[data.hub_id].hubId.hubId,
         user_type: 1,
       }, err => {
-        setLoading(false)
+        toast.dismiss(toastid)
+        toast.error(err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داد")
         setError('username', {
           type: 'manual',
           message: err.response?.data?.message
         })
-      }, () => {
-        setLoading(false)
-        setIsDuplicate(false)
-      })
+      }, toastid)
     } else {
       const {username, password} = data
       setPrevForm(data)
       auth.login({username, password, user_type: 1}, err => {
-        setLoading(false)
+        toast.dismiss(toastid)
+        toast.error(err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داد")
         setError('username', {
           type: 'manual',
           message: err.response?.data?.message
@@ -167,7 +168,7 @@ function LoginPage() {
           setCompanies(data)
           setIsDuplicate(true)
         }
-      }, () => setLoading(false))
+      }, toastid)
     }
   }
 

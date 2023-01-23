@@ -11,7 +11,7 @@ import CustomChip from '@core/components/mui/chip'
 import toast from "react-hot-toast";
 import Table from '@core/components/table/table'
 import AddCourierDrawer from './AddCourierDrawer'
-import TableHeader from './TableHeader'
+import TableHeader from '../../@core/components/table-header/TableHeader'
 import EditDuration from './EditDuration'
 import {fetchData} from "./requests";
 import RowOptions from "./row-options";
