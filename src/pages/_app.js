@@ -1,60 +1,29 @@
-/* eslint-disable react/jsx-props-no-spreading */
-// ** Next Imports
 import Head from 'next/head'
 import {Router} from 'next/router'
-
-// ** Store Imports
 import {store} from 'store'
 import {Provider} from 'react-redux'
-
-// ** Loader Import
 import NProgress from 'nprogress'
-
-// ** Emotion Imports
 import {CacheProvider} from '@emotion/react'
-
-// ** Config Imports
 import 'configs/i18n'
 import {defaultACLObj} from 'configs/acl'
 import themeConfig from 'configs/themeConfig'
-
-// ** Fake-DB Import
-import '@fake-db'
-
-// ** Third Party Import
 import {Toaster} from 'react-hot-toast'
-
-// ** Component Imports
 import UserLayout from 'layouts/UserLayout'
 import AclGuard from '@core/components/auth/AclGuard'
 import ThemeComponent from '@core/theme/ThemeComponent'
 import AuthGuard from '@core/components/auth/AuthGuard'
 import GuestGuard from '@core/components/auth/GuestGuard'
 import WindowWrapper from '@core/components/window-wrapper'
-
-// ** Spinner Import
 import Spinner from '@core/components/spinner'
-
-// ** Contexts
 import {AuthProvider} from 'context/AuthContext'
 import {SettingsConsumer, SettingsProvider} from '@core/context/settingsContext'
-
-// ** Styled Components
 import ReactHotToast from '@core/styles/libs/react-hot-toast'
-
-// ** Utils Imports
 import {createEmotionCache} from '@core/utils/create-emotion-cache'
-
-// ** Prismjs Styles
 import 'prismjs'
 import 'prismjs/themes/prism-tomorrow.css'
 import 'prismjs/components/prism-jsx'
 import 'prismjs/components/prism-tsx'
-
-// ** React Perfect Scrollbar Style
 import 'react-perfect-scrollbar/dist/css/styles.css'
-
-// ** Global css styles
 import '../../styles/globals.css'
 import "fonts/iranSans/css/style.css"
 
@@ -88,7 +57,6 @@ function Guard({children, authGuard, guestGuard}) {
 function App(props) {
   const {Component, emotionCache = clientSideEmotionCache, pageProps} = props
 
-  // Variables
   const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
   const setConfig = Component.setConfig ?? undefined
   const authGuard = Component.authGuard ?? true
@@ -99,12 +67,12 @@ function App(props) {
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title>{` زمین بار`}</title>
+          <title> زمین بار</title>
           <meta
             name='description'
-            content={`${themeConfig.templateName} – Material Design React Admin Dashboard Template – is the most developer friendly & highly customizable Admin Dashboard Template based on MUI v5.`}
+            content={`${themeConfig.templateName} – اپلیکیشن زمسین بار اپلیکیشنی برا یحمل و نقل زمینی است`}
           />
-          <meta name='keywords' content='Material Design, MUI, Admin Template, React Admin Template'/>
+          <meta name='keywords' content=',شرکت حساب رایانه زمین  بار, حساب رایانه, بار, زمین'/>
           <meta name='viewport' content='initial-scale=1, width=device-width'/>
         </Head>
 

@@ -11,15 +11,14 @@ import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Controller, useForm} from 'react-hook-form'
 import Close from 'mdi-material-ui/Close'
-import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
-import http from 'services/http'
-import DialogContentText from '@mui/material/DialogContentText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import toast from "react-hot-toast";
+import {registerCompany} from "./requests";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -39,16 +38,15 @@ const schema = yup.object().shape({
   phone: yup
     .string()
     .required('موبایل الزامی است')
-    .matches(/d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
+    .matches(/09d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
   name: yup.string().required('نام شرکت الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
-  password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
+  password: yup.string().required('رمز عبور الزامی است').min(8, 'حداقل باید 8 کاراکتر باشد'),
   duration_of_activity: yup.number().required(' الزامی است').min(1, 'حداقل 1 روز').typeError('باید عدد باشد')
 })
 
-function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading}) {
-  const [success, setSuccess] = useState(false)
+function SidebarAddCourier({open, toggle, setChange, company, edit}) {
   const [showPassword, setShowPassword] = useState(false)
 
 
@@ -98,33 +96,25 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
         password: data.password
       }
     }
-    setLoading(true)
-    http
-      .post('company/register', config, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(() => {
-        setLoading(false)
-        reset(defaultValues)
-        toggle()
-        setSuccess(true)
-        setChange(true)
-      })
-      .catch(err => {
-        console.log(err)
-        setLoading(false)
-        setError('name', {type: 'custom', message: err.response.data.message})
+    toast.promise(
+      registerCompany(config)
+        .then(() => {
+          reset(defaultValues)
+          setChange(true)
+          toggle()
+        })
+        .catch(err => {
+          setError('name', {type: 'custom', message: err.response.data.message})
+        }), {
+        loading: 'در حال ایجاد شرکت',
+        success: 'شرکت ایجاد شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
       })
   }
 
   const handleClose = () => {
     toggle()
     reset(defaultValues)
-  }
-
-  const handleDialogClose = () => {
-    setSuccess(false)
-    setChange(true)
   }
 
   return (
@@ -156,6 +146,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
+                  inputProps={{maxLength: 30}}
                   autoFocus
                   label='نام شرکت'
                   value={value}
@@ -282,7 +273,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
             />
             {errors.username && <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>}
           </FormControl>
-          <FormControl fullWidth sx={{mb: 4}}>
+          {!edit && <FormControl fullWidth sx={{mb: 4}}>
             <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
               کلمه عبور
             </InputLabel>
@@ -314,7 +305,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
                 />
               )}
             />
-          </FormControl>
+          </FormControl>}
           {!edit && (
             <Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>
               ذخیره
@@ -322,17 +313,6 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
           )}
         </form>
       </Box>
-      <Dialog open={success} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
-        <DialogTitle id='alert-dialog-title'>ایجاد شرکت</DialogTitle>
-        <DialogContent>
-          <DialogContentText id='alert-dialog-description'>شرکت مورد نظر ایجاد شد</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} autoFocus>
-            متوجه شدم
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Drawer>
   )
 }

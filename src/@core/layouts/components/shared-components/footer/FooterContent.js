@@ -11,7 +11,7 @@ function FooterContent() {
       <Typography sx={{mr: 2}}>
         {`© ${new Date().getFullYear()}, تهیه و تنظیم `}
         {` توسط `}
-        <Link target='_blank' href=''>
+        <Link target='_blank' href='http://hesabrayaneh.com/'>
           شرکت حساب رایانه
         </Link>
       </Typography>

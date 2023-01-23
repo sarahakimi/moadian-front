@@ -21,7 +21,7 @@ import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import * as yup from "yup";
 import {Snackbar} from "@mui/material";
 import {useAuth} from "../../hooks/useAuth";
-import Loading from "../components/loading/loading";
+import Loading from "../../@core/components/loading/loading";
 import http from "../../services/http";
 import Chip from "../../@core/components/mui/chip";
 
@@ -308,7 +308,7 @@ function TabAccount() {
               <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
             </Alert>
           </Snackbar>
-          
+
 
         </Grid>
       </form>

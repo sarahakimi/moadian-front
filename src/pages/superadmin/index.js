@@ -1,28 +1,20 @@
-/* eslint-disable react/no-unstable-nested-components */
-import {useCallback, useEffect, useState} from 'react'
+import {useEffect, useState} from 'react'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
-import Menu from '@mui/material/Menu'
-import {DataGrid, faIR, getGridStringOperators, GridToolbarFilterButton} from '@mui/x-data-grid'
-import MenuItem from '@mui/material/MenuItem'
+import {getGridStringOperators} from '@mui/x-data-grid'
 import {styled} from '@mui/material/styles'
-import IconButton from '@mui/material/IconButton'
 import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
-import DotsVertical from 'mdi-material-ui/DotsVertical'
-import PencilOutline from 'mdi-material-ui/PencilOutline'
-import DeleteOutline from 'mdi-material-ui/DeleteOutline'
-import {EyeOutline, PlusOutline} from 'mdi-material-ui'
-import http from 'services/http'
 import CustomChip from '@core/components/mui/chip'
-import {Alert} from '@mui/material'
-import Snackbar from "@mui/material/Snackbar";
+import toast from "react-hot-toast";
+import Table from '@core/components/table/table'
 import AddCourierDrawer from './AddCourierDrawer'
 import TableHeader from './TableHeader'
 import EditDuration from './EditDuration'
-import Loading from "../components/loading/loading";
+import {fetchData} from "./requests";
+import RowOptions from "./row-options";
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -39,112 +31,50 @@ const userStatusObj = {
   false: 'secondary'
 }
 
+
 function ACLPage() {
-  const [loading, setLoading] = useState(false)
-  const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
-  const [change, setChange] = useState(false)
   const [selectedCompany, setSelectedCompany] = useState({})
   const [openEdit, setOpenEdit] = useState(false)
   const [openDurationEdit, setOpenDurationEdit] = useState(false)
   const [showUser, setShowUser] = useState(false)
-
-  const [alert, setAlert] = useState({
-    open: false,
-    variant: "",
-    message: ""
-  })
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
   const toggleEditUserDrawer = () => setOpenEdit(!openEdit)
   const toggleEditDurationDrawer = () => setOpenDurationEdit(!openDurationEdit)
   const toggleShowUserDrawer = () => setShowUser(!showUser)
+  const [downloadData, setDownloadData] = useState([])
+  const [change, setChange] = useState(false)
 
-  function RowOptions({company}) {
-    const [anchorEl, setAnchorEl] = useState(null)
-    const rowOptionsOpen = Boolean(anchorEl)
+  const headers = [
+    {key: "id", label: "شناسه"},
+    {key: "name", label: "تام شرکت"},
+    {key: "duration_of_activity", label: "اشتراک"},
+    {key: "active", label: "وضعیت"},
+    {key: "created_at", label: "تاریخ ایجاد"},
+  ];
 
-    const handleRowOptionsClick = event => {
-      setAnchorEl(event.currentTarget)
-    }
+  const downloadApi = () => toast.promise(fetchData({
+    sort_by: sortModel.sort_by,
+    search: sortModel.search
+  }).then(response => {
+    setDownloadData(response.data.map((element) => {
+      const isActive = element.active ? "فعال" : "غیرفعال"
 
-    const handleRowOptionsClose = () => {
-      setAnchorEl(null)
-    }
+      return {
+        ...element,
+        created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
+        active: isActive
+      }
+    }))
 
-    const handleDelete = id => {
-      setLoading(true)
-      http
-        .delete(`company/${id}`, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          setLoading(false)
-          setChange(true)
-        })
-        .catch(err => {
-          setLoading(false)
-          setAlert({open: true, message: err.response.data.message, variant: "error"})
-        })
-      handleRowOptionsClose()
-    }
+  }), {
+    loading: 'در حال دانلود',
+    success: 'دانلود انجام شد',
+    error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.از خالی نبودن موارد دانلود مطمئن شوید.",
+  })
 
-    const handleDurationExtention = selected => {
-      setSelectedCompany(selected)
-      toggleEditDurationDrawer()
-    }
-
-    const handleEdit = selected => {
-      setSelectedCompany(selected)
-      toggleEditUserDrawer()
-    }
-
-    const handleShowCompany = selected => {
-      setSelectedCompany(selected)
-      toggleShowUserDrawer()
-    }
-
-    return (
-      <>
-        <IconButton size='small' onClick={handleRowOptionsClick}>
-          <DotsVertical/>
-        </IconButton>
-        <Menu
-          keepMounted
-          anchorEl={anchorEl}
-          open={rowOptionsOpen}
-          onClose={handleRowOptionsClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right'
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right'
-          }}
-          PaperProps={{style: {minWidth: '8rem'}}}
-        >
-          <MenuItem onClick={() => handleShowCompany(company)}>
-            <EyeOutline fontSize='small' sx={{mr: 2}}/>
-            نمایش شرکت
-          </MenuItem>
-          <MenuItem onClick={() => handleDurationExtention(company)}>
-            <PlusOutline fontSize='small' sx={{mr: 2}}/>
-            تمدید اشتراک
-          </MenuItem>
-          <MenuItem onClick={() => handleEdit(company)}>
-            <PencilOutline fontSize='small' sx={{mr: 2}}/>
-            ویرایش
-          </MenuItem>
-          <MenuItem onClick={() => handleDelete(company.id)}>
-            <DeleteOutline fontSize='small' sx={{mr: 2}}/>
-            حذف
-          </MenuItem>
-        </Menu>
-      </>
-    )
-  }
 
   const filterOperators = getGridStringOperators().filter(({value}) =>
     ['contains' /* add more over time */].includes(value),
@@ -255,109 +185,39 @@ function ACLPage() {
       sortable: false,
       hideable: false,
       field: 'گزینه ها',
+      filterable: false,
       headerName: 'گزینه ها',
-      renderCell: ({row}) => <RowOptions company={row}/>
+      renderCell: ({row}) => <RowOptions company={row} toggleEditDurationDrawer={toggleEditDurationDrawer}
+                                         toggleShowUserDrawer={toggleShowUserDrawer}
+                                         toggleEditUserDrawer={toggleEditUserDrawer}
+                                         setSelectedCompany={setSelectedCompany} setChange={setChange}
+                                         selectedCompany={selectedCompany}/>
     }
   ]
 
   useEffect(() => {
-    if (change) {
-      setAlert({open: true, message: "با موفقیت انجام شد", variant: "success"})
-    }
-    setLoading(true)
-    http
-      .get('company/all/admin', sortModel, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(async response => {
-        if (response.data === null) {
-          setData([])
-        } else setData(response.data)
-        setChange(false)
-        setLoading(false)
-      })
-      .catch(err => {
-        setLoading(false)
-        setAlert({open: true, message: err.response.data.message, variant: "error"})
-      })
-  }, [sortModel, change])
+    setDownloadData([])
+    fetchData(sortModel).then(response => {
+      if (response.data === null) {
+        setData([])
+      } else setData(response.data)
+      if (change) setChange(false)
+    }).catch((err) => {
+      const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"
+      toast.error(errorMessage)
+    })
 
+  }, [sortModel, setDownloadData, change])
 
-  const handleSortModelChange = Model => {
-    const sortMode = Model.length !== 0 ? `${Model[0]?.field} ${Model[0]?.sort}` : 'id desc'
-    setSortModel({...sortModel, ...{sort_by: `${sortMode}`}})
-  }
-
-  const handlePageSizeChange = newPageSize => {
-    console.log(newPageSize)
-    setPageSize(newPageSize)
-    setSortModel({...sortModel, ...{page_size: newPageSize}})
-  }
-  const [page, setPage] = useState(0)
-
-  const handlePageChange = newPage => {
-    setPage(newPage)
-    setSortModel({...sortModel, ...{page: newPage + 1}})
-  }
-  const [filter, setFilter] = useState({})
-
-  const handleFilterChange = useCallback((filterModel) => {
-    setFilter(filterModel)
-    if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
-      setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
-    } else {
-      setSortModel({...sortModel, ...{search: ''}})
-    }
-  }, [filter, setFilter]);
-
-  const handleSnackbarClose = () => {
-    setAlert({open: false, message: "", variant: ""})
-  };
 
   return (
     <Grid container spacing={6}>
-
       <Grid item xs={12}>
         <Card>
-          <TableHeader toggle={toggleAddUserDrawer} setLoading={setLoading} setAlert={setAlert} sortModel={sortModel}/>
-          <Snackbar open={alert.open} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-                    key="TransitionUp"
-                    variant="error"
-          >
-            <Alert severity={alert.variant} sx={{width: '100%'}}>
-              {alert.message}
-            </Alert>
-          </Snackbar>
-
-
+          <TableHeader toggle={toggleAddUserDrawer} data={downloadData}
+                       api={downloadApi} headers={headers} name="شرکت"/>
           <GridContainer sx={{p: 4, m: 1}}>
-            <DataGrid
-              autoHeight
-              pagination
-              rows={data}
-              columns={columns}
-              pageSize={pageSize}
-              disableSelectionOnClick
-              rowsPerPageOptions={[10, 25, 50]}
-              sx={{'& .MuiDataGrid-columnHeaders': {borderRadius: 0}}}
-              paginationMode='server'
-              onPageSizeChange={handlePageSizeChange}
-              localeText={faIR.components.MuiDataGrid.defaultProps.localeText}
-              disableColumnSelector
-              sortingMode='server'
-              onSortModelChange={handleSortModelChange}
-              onPageChange={handlePageChange}
-              page={page}
-              rowCount={50}
-              onFilterModelChange={handleFilterChange}
-              isLoading={loading}
-              components={{
-                Toolbar: GridToolbarFilterButton,
-              }}
-            />
+            <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel}/>
           </GridContainer>
         </Card>
       </Grid>
@@ -365,10 +225,9 @@ function ACLPage() {
         <AddCourierDrawer
           open={addUserOpen}
           toggle={toggleAddUserDrawer}
-          setChange={setChange}
           edit={false}
           company={null}
-          setLoading={setLoading}
+          setChange={setChange}
         />
       )}
 
@@ -376,34 +235,29 @@ function ACLPage() {
         <EditDuration
           open={openEdit}
           toggle={toggleEditUserDrawer}
-          setChange={setChange}
           company={selectedCompany}
           edit={false}
-          setLoading={setLoading}
+          setChange={setChange}
         />
       )}
       {openDurationEdit && (
         <EditDuration
           open={openDurationEdit}
           toggle={toggleEditDurationDrawer}
-          setChange={setChange}
           company={selectedCompany}
           edit
-          setLoading={setLoading}
+          setChange={setChange}
         />
       )}
       {showUser && (
         <AddCourierDrawer
           open={showUser}
           toggle={toggleShowUserDrawer}
-          setChange={setChange}
           edit
           company={selectedCompany}
-          setLoading={setLoading}
         />
       )}
 
-      <Loading open={loading}/>
 
     </Grid>
   )

@@ -11,7 +11,7 @@ import http from 'services/http'
 import CustomChip from '@core/components/mui/chip'
 import Snackbar from "@mui/material/Snackbar";
 import {Alert} from "@mui/material";
-import Loading from "../components/loading/loading";
+import Loading from "../../@core/components/loading/loading";
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,

@@ -18,7 +18,7 @@ import {Alert, Avatar} from '@mui/material'
 import Snackbar from "@mui/material/Snackbar";
 import TableHeader from './TableHeader'
 import AddUserDrawer from './AddUserDrawer'
-import Loading from "../components/loading/loading";
+import Loading from "../../@core/components/loading/loading";
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,

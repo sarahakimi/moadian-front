@@ -1,13 +1,6 @@
-// ** React Imports
 import {useEffect} from 'react'
-
-// ** Next Imports
 import {useRouter} from 'next/router'
-
-// ** Spinner Import
 import Spinner from '@core/components/spinner'
-
-// ** Hook Imports
 import {useAuth} from 'hooks/useAuth'
 
 

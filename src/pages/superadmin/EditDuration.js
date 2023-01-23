@@ -16,7 +16,8 @@ import DialogContentText from '@mui/material/DialogContentText'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
-import http from '../../services/http'
+import toast from "react-hot-toast";
+import {editCompany} from "./requests";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -32,7 +33,7 @@ const schema = yup.object().shape({
   name: yup.string()
 })
 
-function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading}) {
+function SidebarAddCourier({open, toggle, setChange, company, edit}) {
   const [success, setSuccess] = useState(false)
 
   const defaultValues = {
@@ -64,25 +65,26 @@ function SidebarAddCourier({open, toggle, setChange, company, edit, setLoading})
     })
   }
 
-  const onSubmit = data => {
-    setLoading(true)
-    http
-      .put(`company/${company.id}`, data, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(() => {
-        setLoading(false)
-        handleDialogClose()
-      })
-      .catch(err => {
-        setLoading(false)
-        setError('name', {type: 'custom', message: err.response.data.message})
-      })
-  }
-
   const handleClose = () => {
     toggle()
     reset(defaultValues)
+  }
+
+  const onSubmit = data => {
+    toast.promise(
+      editCompany(company.id, data)
+        .then(() => {
+          handleClose()
+          setChange(true)
+
+        })
+        .catch(err => {
+          setError('name', {type: 'custom', message: err.response.data.message})
+        }), {
+        loading: 'در حال ویرایش شرکت',
+        success: 'شرکت ویرایش شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+      })
   }
 
 

@@ -25,7 +25,7 @@ import {useState} from 'react'
 import themeConfig from 'configs/themeConfig'
 import BlankLayout from '@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'views/pages/auth/FooterIllustrationsV2'
-import Loading from "pages/components/loading/loading";
+import Loading from "@core/components/loading/loading";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Select} from "@mui/material";
 
 

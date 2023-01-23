@@ -23,7 +23,7 @@ import {Autocomplete, Snackbar} from "@mui/material";
 import {ostan, shahr} from "iran-cities-json";
 import * as tus from "tus-js-client";
 import http from "../../services/http";
-import Loading from "../components/loading/loading";
+import Loading from "../../@core/components/loading/loading";
 import {useAuth} from "../../hooks/useAuth";
 
 
