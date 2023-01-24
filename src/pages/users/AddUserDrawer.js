@@ -11,9 +11,7 @@ import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Controller, useForm} from 'react-hook-form'
 import Close from 'mdi-material-ui/Close'
-import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
 import http from 'services/http'
-import DialogContentText from '@mui/material/DialogContentText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import Select from '@mui/material/Select'
@@ -22,7 +20,9 @@ import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import toast from "react-hot-toast";
 import Chip from "../../@core/components/mui/chip";
+import {editUser, registerUser} from "./requests";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -42,7 +42,7 @@ const schema = yup.object().shape({
   phone: yup
     .string()
     .required('موبایل الزامی است')
-    .matches(/d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
+    .matches(/09d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
   hub_id: yup.number().required('هاب الزامی است'),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
@@ -50,9 +50,7 @@ const schema = yup.object().shape({
   roles: yup.array().required(' الزامی است').min(1, 'حداقل 1 دسترسی انتخاب کنید')
 })
 
-function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
-
-  const [success, setSuccess] = useState(false)
+function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const [showPassword, setShowPassword] = useState(false)
   // eslint-disable-next-line camelcase
   const [hub_ids, sethub_ids] = useState([])
@@ -82,21 +80,20 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     defaultValues, mode: 'onChange', resolver: yupResolver(schema)
   })
   useEffect(() => {
-    setLoading(true)
     http
       .get('hub/company/all', {}, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
-        setLoading(false)
         if (response.data != null) {
           sethub_ids(response.data)
         } else sethub_ids([])
         console.log(hub_ids)
       })
       .catch(err => {
-        setLoading(false)
-        setError('natural_code', {type: 'custom', message: err.response.data.message})
+        const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"
+        toast.error(errorMessage)
+        setError('hub_id', {type: 'custom', message: errorMessage})
       })
     http
       .get('user/roles', {}, {
@@ -109,8 +106,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
         console.log(roles)
       })
       .catch(err => {
-        setLoading(false)
-        setError('natural_code', {type: 'custom', message: err.response.data.message})
+        const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"
+        toast.error(errorMessage)
+        setError('roles', {type: 'custom', message: errorMessage})
       })
   }, [])
 
@@ -124,47 +122,37 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     if (data.hub_id === 0) {
       setError('hub_id', {type: 'custom', message: "هاب را انتخاب نمایید"})
 
-return
+      return
     }
-    setLoading(true)
     if (edit) {
       // eslint-disable-next-line no-param-reassign
       delete data.password
-      http
-        .put(`user/admin/${user.id}`, data, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          setSuccess(true)
-          setChange(true)
-          setLoading(false)
-          handleClose()
-        })
-        .catch(err => {
-          setError('natural_code', {type: 'custom', message: err.response.data.message})
+      toast.promise(
+        editUser(user.id, data)
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ویرایش کاربر',
+          success: 'کاربر ویرایش شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     } else {
-      http
-        .post('user/admin/register', data, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          setSuccess(true)
-          setChange(true)
-          setLoading(false)
-          handleClose()
-        })
-        .catch(err => {
-          setError('natural_code', {type: 'custom', message: err.response.data.message})
+      toast.promise(
+        registerUser(data)
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ایجاد کاربر',
+          success: 'کاربر ایجاد شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     }
   }
 
-
-  const handleDialogClose = () => {
-    setSuccess(false)
-    setChange(true)
-  }
 
   return (<Drawer
     open={open}
@@ -327,6 +315,7 @@ return
             render={({field: {onChange, onBlur}}) => (<>
               <InputLabel id='demo-multiple-name-label'>دسترسی ها</InputLabel>
               <Select
+                disabled={edit}
                 onBlur={onBlur}
                 labelId='demo-multiple-name-label'
                 id='demo-multiple-name'
@@ -361,17 +350,6 @@ return
 
       </form>
     </Box>
-    <Dialog open={success} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
-      <DialogTitle id='alert-dialog-title'>ایجاد کاربر</DialogTitle>
-      <DialogContent>
-        <DialogContentText id='alert-dialog-description'>کاربر مورد نظر ایجاد شد</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleDialogClose} autoFocus>
-          متوجه شدم
-        </Button>
-      </DialogActions>
-    </Dialog>
   </Drawer>)
 }
 

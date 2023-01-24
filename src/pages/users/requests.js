@@ -3,25 +3,25 @@ import urls from "../../configs/requestEndpoints";
 
 export const fetchData = async (sortModel) => {
   const response = await http
-    .get(urls.getCompaniesFromSuperAdminPageEndpoint, sortModel, {
+    .get(urls.getusers, sortModel, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
   return response;
 };
 
-export const deleteCompany = async (id) => {
+export const deleteUser = async (id) => {
   const response = await http
-    .delete(urls.singleCompany(id), {
+    .delete(urls.singleUser(id), {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
   return response;
 };
 
-export const registerCompany = async (data) => {
+export const registerUser = async (data) => {
   const response = await http
-    .post(urls.registerCompany, data, {
+    .post(urls.registerUser, data, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
@@ -29,9 +29,9 @@ export const registerCompany = async (data) => {
 
 }
 
-export const editCompany = async (id, data) => {
+export const editUser = async (id, data) => {
   const response = await http
-    .put(urls.singleCompany(id), data, {
+    .put(urls.singleUser(id), data, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
