@@ -11,8 +11,7 @@ import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Controller, useForm} from 'react-hook-form'
 import Close from 'mdi-material-ui/Close'
-import {Autocomplete, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
-import DialogContentText from '@mui/material/DialogContentText'
+import {Autocomplete} from '@mui/material'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import Select from '@mui/material/Select'
@@ -22,7 +21,8 @@ import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import {ostan, shahr} from "iran-cities-json";
-import http from "../../services/http";
+import toast from "react-hot-toast";
+import {editUser, registerUser} from "./requests";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -71,8 +71,7 @@ const schema = yup.object().shape({
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
 })
 
-function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
-  const [success, setSuccess] = useState(false)
+function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const [showPassword, setShowPassword] = useState(false)
   // eslint-disable-next-line camelcase
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
@@ -125,7 +124,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
 
 
   const {
-    reset, control, handleSubmit, setError, formState: {errors}
+    reset, control, handleSubmit, formState: {errors}
   } = useForm({
     defaultValues, mode: 'onChange', resolver: yupResolver(schema)
   })
@@ -141,48 +140,33 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
   }
 
   const onSubmit = data => {
-    console.log(data)
-    setLoading(true)
     if (edit) {
       // eslint-disable-next-line no-param-reassign
-      delete data.password;
-      http
-        .put(`customer/admin/${user.id}`, data, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          setSuccess(true)
-          setChange(true)
-          setLoading(false)
-          handleClose()
-        })
-        .catch(err => {
-          setLoading(false)
-          console.log(err)
-          setError('natural_code', {type: 'custom', message: err.response.data?.message})
+      delete data.password
+      toast.promise(
+        editUser(user.id, data)
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ویرایش کاربر',
+          success: 'کاربر ویرایش شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     } else {
-      http
-        .post('customer/admin/3/register', data, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          setSuccess(true)
-          setChange(true)
-          setLoading(false)
-          handleClose()
-        })
-        .catch(err => {
-          setLoading(false)
-          setError('natural_code', {type: 'custom', message: err.response.data?.message})
+      toast.promise(
+        registerUser(data)
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ایجاد کاربر',
+          success: 'کاربر ایجاد شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     }
-  }
-
-
-  const handleDialogClose = () => {
-    setSuccess(false)
-    setChange(true)
   }
 
   return (<Drawer
@@ -539,17 +523,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
 
       </form>
     </Box>
-    <Dialog open={success} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
-      <DialogTitle id='alert-dialog-title'>ایجاد کاربر</DialogTitle>
-      <DialogContent>
-        <DialogContentText id='alert-dialog-description'>کاربر مورد نظر ایجاد شد</DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleDialogClose} autoFocus>
-          متوجه شدم
-        </Button>
-      </DialogActions>
-    </Dialog>
   </Drawer>)
 }
 

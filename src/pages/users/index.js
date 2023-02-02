@@ -8,11 +8,11 @@ import {styled} from '@mui/material/styles'
 import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
 import toast from "react-hot-toast";
-import AddUserDrawer from './AddUserDrawer'
-import Table from "../../@core/components/table/table";
+import Table from "@core/components/table/table";
 
-import TableHeader from "../../@core/components/table-header/TableHeader";
-import RowOptions from "../../@core/components/row-options/row-options";
+import TableHeader from "@core/components/table-header/TableHeader";
+import RowOptions from "@core/components/row-options/row-options";
+import AddUserDrawer from './AddUserDrawer'
 import {deleteUser, fetchData} from "./requests";
 
 export const GridContainer = styled(Paper)({
@@ -45,15 +45,10 @@ function ACLPage() {
   ];
 
   const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
-    setDownloadData(response.data.map((element) => {
-      const isActive = element.active ? "فعال" : "غیرفعال"
-
-      return {
+    setDownloadData(response.data.map((element) => ({
         ...element,
-        created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
-        active: isActive
-      }
-    }))
+        created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
+      })))
 
   }), {
     loading: 'در حال دانلود',
