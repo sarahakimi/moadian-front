@@ -88,7 +88,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         if (response.data != null) {
           sethub_ids(response.data)
         } else sethub_ids([])
-        console.log(hub_ids)
       })
       .catch(err => {
         const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"
@@ -297,7 +296,10 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 defaultValue={user ? user.hub_id : 0}
               >
                 {/* eslint-disable-next-line camelcase */}
-                {hub_ids.map(hub_id => (// eslint-disable-next-line camelcase
+                {hub_ids.length === 0 ? <MenuItem value={undefined}>
+                  هاب موجود نیست
+                  {/* eslint-disable-next-line camelcase */}
+                </MenuItem> : hub_ids.map(hub_id => (// eslint-disable-next-line camelcase
                   <MenuItem key={hub_id.id} value={parseInt(hub_id.id, 10)}>
                     {/* eslint-disable-next-line camelcase */}
                     {hub_id.name}

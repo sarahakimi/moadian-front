@@ -9,5 +9,12 @@ export default {
   registerUser: "user/admin/register",
   getCustomers: 'customer/admin/3/all',
   singleCustomer: (id) => `customer/admin/${id}`,
-  registerCustomer: 'customer/admin/3/register'
+  registerCustomer: 'customer/admin/3/register',
+  getMarketers: 'customer/admin/2/all',
+  singleMarketer: (id) => `customer/admin/${id}`,
+  registerMarketer: 'customer/admin/2/register',
+  getRepresentatives: 'customer/admin/1/all',
+  singleRepresentatives: (id) => `customer/admin/${id}`,
+  registerRepresentatives: 'customer/admin/1/register',
+  createOrder: 'ordering/admin/register'
 }
