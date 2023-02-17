@@ -163,7 +163,7 @@ function LoginPage() {
           type: 'manual',
           message: err.response?.data?.message
         })
-        if (err.response.data.messageCode === 413) {
+        if (err?.response?.data?.messageCode === 413) {
           const {data} = err.response.data
           setCompanies(data)
           setIsDuplicate(true)
