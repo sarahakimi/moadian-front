@@ -85,11 +85,10 @@ function UserDropdown(props) {
         }}
       >
         <Avatar
-          alt='John Doe'
+          alt={user.name}
           onClick={handleDropdownOpen}
           sx={{width: 40, height: 40}}
-          src='/images/avatars/1.png'
-        />
+        >{user.name.slice(0, 2)}</Avatar>
       </Badge>
       <Menu
         anchorEl={anchorEl}
