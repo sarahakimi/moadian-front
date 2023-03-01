@@ -10,3 +10,12 @@ export const createOrder = async (data) => {
   return response;
 
 }
+
+export const fetchData = async (sortModel) => {
+  const response = await http
+    .get(urls.getusers, sortModel, {
+      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+    })
+
+  return response;
+};

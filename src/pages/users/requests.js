@@ -3,7 +3,7 @@ import urls from "../../configs/requestEndpoints";
 
 export const fetchData = async (sortModel) => {
   const response = await http
-    .get(urls.getusers, sortModel, {
+    .get(urls.getCustomers, sortModel, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 

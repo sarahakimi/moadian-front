@@ -9,12 +9,26 @@ import {ostan, shahr} from 'iran-cities-json'
 import * as yup from 'yup'
 import {Controller, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
-import {Autocomplete, Card, CardContent, CardHeader, FormLabel, Grid, MenuItem, Select} from '@mui/material'
+import {Autocomplete, Card, CardContent, CardHeader, FormLabel, Grid, MenuItem, Modal, Select} from '@mui/material'
 import {useState} from "react";
 import Box from '@mui/material/Box';
 import toast from "react-hot-toast";
 import Map from "./map";
 import {createOrder} from "./requests";
+import Table from "./table"
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: "80vw",
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  pt: 2,
+  px: 4,
+  pb: 3,
+};
 
 const schema = yup.object().shape({
   senderCodeMelli: yup.string()
@@ -166,17 +180,23 @@ const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامی�
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
 
 function ACLPage() {
-
-
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [selectedRecieverOstan, setSelectedRecieverOstan] = useState('')
   const [sendertLatLang, setSenderLatLang] = useState([51.3347, 35.7219])
   const [recieverLatLang, setRecieverLatLang] = useState([51.3347, 35.7219])
-
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [sender, setSender] = useState({})
+  const [reciever, setReciever] = useState({})
+  const [recieverOpen, setRecieverOpen] = useState(false)
+  const handleRecieverOpen = () => setRecieverOpen(true);
+  const handleRecieverClose = () => setRecieverOpen(false);
 
   const {
     control,
     reset,
+    setValue,
 
     // setError,
     handleSubmit,
@@ -196,6 +216,7 @@ function ACLPage() {
     onChange(values)
     setSelectedRecieverOstan(ostan.find(element => element.name === event.target.innerText)?.id)
   }
+
 
   const onSubmit = data => {
     const config = {
@@ -267,10 +288,57 @@ function ACLPage() {
 
   }
 
+  const onsetSenderCustomer = () => {
+
+    console.log(sender)
+    setValue('senderName', sender.name, {shouldTouch: true})
+    setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
+    setValue('senderCompany', sender.identity_code, {shouldTouch: true})
+    setValue('senderMobile', sender.phone, {shouldTouch: true})
+    setValue('senderPhone', sender.tel_number, {shouldTouch: true})
+    setValue('senderPhonePrefix', sender.identity_code, {shouldTouch: true})
+    setValue('senderCounty', sender.identity_code, {shouldTouch: true})
+    setValue('senderCity', sender.city, {shouldTouch: true})
+    setValue('senderCodePosti', sender.identity_code, {shouldTouch: true})
+    setValue('senderMainRoard', sender.identity_code, {shouldTouch: true})
+    setValue('senderSubRoad', sender.identity_code, {shouldTouch: true})
+    setValue('senderAlley', sender.identity_code, {shouldTouch: true})
+    setValue('senderPlaque', sender.identity_code, {shouldTouch: true})
+    setValue('senderFloor', sender.identity_code, {shouldTouch: true})
+    setValue('senderUnit', sender.identity_code, {shouldTouch: true})
+
+
+    handleClose()
+  }
+
   return (
     <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
       <Card sx={{mb: 5}}>
-        <CardHeader title='فرستنده'/>{' '}
+        <CardHeader title='فرستنده' subheader={<Button onClick={handleOpen}>جستجوی مشتری</Button>}/>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+
+          <Box sx={{...style}}>
+            <h2 id="modal-modal-title">انتخاب فرستنده</h2>
+            <Table setCustomer={setSender} customer={sender}/>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+
+            >
+              <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}
+                      disabled>انتخاب </Button>
+              <Button variant="contained" color="error" onClick={handleClose}>بستن</Button>
+            </Box>
+
+          </Box>
+
+        </Modal>
         <CardContent>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
@@ -691,7 +759,31 @@ function ACLPage() {
         </CardContent>
       </Card>
       <Card sx={{mb: 5}}>
-        <CardHeader title='گیرنده'/>{' '}
+        <CardHeader title='گیرنده' subheader={<Button onClick={handleRecieverOpen}>جستجوی مشتری</Button>}/>
+        <Modal
+          open={recieverOpen}
+          onClose={handleRecieverClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+
+          <Box sx={{...style}}>
+            <h2 id="modal-modal-title">انتخاب گیرنده</h2>
+            <Table setCustomer={setReciever} customer={reciever}/>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+
+            >
+              <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}
+                      disabled>انتخاب </Button>
+              <Button variant="contained" color="error" onClick={handleRecieverClose}>بستن</Button>
+            </Box>
+
+          </Box>
+
+        </Modal>
         <CardContent>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>

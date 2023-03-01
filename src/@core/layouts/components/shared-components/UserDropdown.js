@@ -114,7 +114,7 @@ function UserDropdown(props) {
                 horizontal: 'right'
               }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{width: '2.5rem', height: '2.5rem'}}/>
+              <Avatar alt={user.name} sx={{width: '2.5rem', height: '2.5rem'}}>{user.name.slice(0, 2)}</Avatar>
             </Badge>
             <Box
               sx={{
