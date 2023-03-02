@@ -143,7 +143,10 @@ function LoginPage() {
         password: data.password,
         chosen_item: true,
         company_id: companies[data.hub_id].companyId.companyId,
+
         hub_id: companies[data.hub_id].hubId.hubId,
+
+        // hub_id: 1,
         user_type: 1,
       }, err => {
         toast.dismiss(toastid)

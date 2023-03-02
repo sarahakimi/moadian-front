@@ -279,9 +279,14 @@ function ACLPage() {
   )
 }
 
+//
+// ACLPage.acl = {
+//   action: 'read',
+//   subject: 'every-page'
+// }
 ACLPage.acl = {
   action: 'read',
-  subject: 'every-page'
+  subject: 'acl-page'
 }
 
 export default ACLPage

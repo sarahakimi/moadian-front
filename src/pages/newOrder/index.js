@@ -1306,12 +1306,12 @@ function ACLPage() {
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
-                      error={Boolean(errors.height)}
+                      error={Boolean(errors.money)}
                       dir='ltr'
                     />
                   )}
                 />
-                {errors.height && <FormHelperText sx={{color: 'error.main'}}>{errors.height.message}</FormHelperText>}
+                {errors.money && <FormHelperText sx={{color: 'error.main'}}>{errors.money.message}</FormHelperText>}
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
