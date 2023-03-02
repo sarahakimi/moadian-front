@@ -15,8 +15,9 @@ import {Autocomplete, Dialog, DialogActions, DialogContent, DialogTitle} from '@
 import DialogContentText from "@mui/material/DialogContentText";
 import {ostan, shahr} from "iran-cities-json";
 import * as tus from "tus-js-client";
+import toast from "react-hot-toast";
 import Avatar from "../../@core/components/mui/avatar";
-import http from "../../services/http";
+import {editUser, registerUser} from "./requests";
 
 
 const Header = styled(Box)(({theme}) => ({
@@ -47,7 +48,7 @@ const schema = yup.object().shape({
 
 })
 
-function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
+function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [success, setSuccess] = useState(false)
   const [imageUrl, setImageUrl] = useState(edit ? user.image : "")
@@ -90,56 +91,53 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     if (!uploadFile) {
       return;
     }
+    const toastId = toast.loading("در حال بارگذاری لوگو")
 
     const upload = new tus.Upload(uploadFile, {
       endpoint: "https://api.zaminbar.ir/files/",
-      retryDelays: [0, 3000, 5000, 10000, 20000],
+      retryDelays: [0],
       metadata: {
         filename: uploadFile.name,
         filetype: uploadFile.type
       },
       onError() {
         setError("hub_id", {type: 'custom', message: "مشکل در بارگذای عکس. مجدد تلاش کنید"});
+        toast.dismiss(toastId)
+        toast.error("خطا در بارگذاری لوگو")
       },
       onSuccess() {
-        setLoading(false)
         setImageUrl(upload.url)
+        toast.dismiss(toastId)
+        toast.success("با موفقیت بارگذاری شد")
       }
     })
-    setLoading(true)
     upload.start()
   }
 
 
   const onSubmit = async (data) => {
     if (edit) {
-      http
-        .put(`hub/${user.id}`, {...data, image: imageUrl}, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          setLoading(false)
-          handleClose()
-          setSuccess(true)
-          setChange(true)
-        })
-        .catch(err => {
-          setError("name", {type: 'custom', message: err.response.data.message});
+      toast.promise(editUser(user.id, {...data, image: imageUrl})
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ویرایش هاب',
+          success: 'هاب ویرایش شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
 
     } else {
-      http
-        .post('hub/register', {...data, image: imageUrl}, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          setSuccess(true)
-          setChange(true)
-          reset(defaultValues)
-          toggle()
-        })
-        .catch(err => {
-          alert(err)
+      toast.promise(registerUser({...data, image: imageUrl})
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ایجاد هاب',
+          success: 'هاب ایجاد شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     }
 

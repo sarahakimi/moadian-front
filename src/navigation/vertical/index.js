@@ -24,6 +24,13 @@ const navigation = () => [
     subject: 'every-page',
   },
   {
+    icon: PlusOutline,
+    title: 'سفارشات',
+    path: '/orders',
+    action: 'read',
+    subject: 'every-page',
+  },
+  {
     icon: Account,
     title: 'کاربران',
     path: '/users',

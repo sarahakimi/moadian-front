@@ -16,5 +16,9 @@ export default {
   getRepresentatives: 'customer/admin/1/all',
   singleRepresentatives: (id) => `customer/admin/${id}`,
   registerRepresentatives: 'customer/admin/1/register',
-  createOrder: 'ordering/admin/register'
+  createOrder: 'ordering/admin/register',
+  getAdminOrders: "ordering/admin/all",
+  singleHub: (id) => `hub/${id}`,
+  registerHub: 'hub/register',
+  getHubsFromAdmin: 'hub/company/all'
 }
