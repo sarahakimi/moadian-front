@@ -20,5 +20,6 @@ export default {
   getAdminOrders: "ordering/admin/all",
   singleHub: (id) => `hub/${id}`,
   registerHub: 'hub/register',
-  getHubsFromAdmin: 'hub/company/all'
+  getHubsFromAdmin: 'hub/company/all',
+  myHub: 'hub/me',
 }

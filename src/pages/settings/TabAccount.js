@@ -4,27 +4,23 @@ import {useEffect, useMemo, useState} from 'react'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Alert from '@mui/material/Alert'
 import {styled} from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
-import AlertTitle from '@mui/material/AlertTitle'
-import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
 import Button from '@mui/material/Button'
 
 // ** Icons Imports
-import Close from 'mdi-material-ui/Close'
 import {Controller, useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import * as yup from "yup";
-import {Autocomplete, Snackbar} from "@mui/material";
+import {Autocomplete} from "@mui/material";
 import {ostan, shahr} from "iran-cities-json";
 import * as tus from "tus-js-client";
-import http from "../../services/http";
-import Loading from "../../@core/components/loading/loading";
+import toast from "react-hot-toast";
 import {useAuth} from "../../hooks/useAuth";
+import {editHub, fetchData} from "./requests";
 
 
 const ImgStyled = styled('img')(({theme}) => ({
@@ -73,10 +69,8 @@ const schema = yup.object().shape({
 })
 
 function TabAccount() {
-  const [openAlert, setOpenAlert] = useState(false)
-  const imgSrc = '/images/avatars/1.png'
-  const [loading, setLoading] = useState(false)
-  const [alertMsg, setAletMsg] = useState('')
+  const imgSrc = ''
+
   const [imageUrl, setImageUrl] = useState("")
   const [resetImageUrl, setResetImageUrl] = useState("")
   const hub = useAuth().user.hub_id
@@ -122,46 +116,32 @@ function TabAccount() {
 
 
   useEffect(() => {
-    setLoading(true)
-    http
-      .get('hub/me', {}, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(async response => {
-        setLoading(false)
-        if (response.data === null) {
-          reset(emptyForm)
-        } else {
-          reset(response.data)
-          setImageUrl(response.data.image)
-          setResetImageUrl(response.data.image)
-          setSelectedSenderOstan(response.data.provence)
-        }
+    fetchData().then(response => {
+      if (response.data === null) {
+        reset(emptyForm)
+      } else {
+        reset(response.data)
+        setImageUrl(response.data.image)
+        setResetImageUrl(response.data.image)
+        setSelectedSenderOstan(response.data.provence)
+      }
+    }).catch((err) => {
+      const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"
+      toast.error(errorMessage)
+    })
 
-      })
-      .catch(err => {
-        setLoading(false)
-        setOpenAlert(true)
-
-        setAletMsg(err.response.data.message)
-      })
   }, [setFormData, setSelectedSenderOstan])
 
 
   const onSubmit = data => {
+    toast.promise(
+      editHub(hub, data)
+      , {
+        loading: 'در حال ویرایش هاب',
+        success: 'هاب ویرایش شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+      })
 
-    setLoading(true)
-    http
-      .put(`hub/${hub}`, data, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(() => {
-        setLoading(false)
-      })
-      .catch(err => {
-        setLoading(false)
-        setError("name", {type: 'custom', message: err.response.data.message});
-      })
   }
 
 
@@ -170,23 +150,26 @@ function TabAccount() {
     if (!uploadFile) {
       return;
     }
+    const toastId = toast.loading("در حال بارگذاری لوگو")
 
     const upload = new tus.Upload(uploadFile, {
       endpoint: "https://api.zaminbar.ir/files/",
-      retryDelays: [0, 3000, 5000, 10000, 20000],
+      retryDelays: [0],
       metadata: {
         filename: uploadFile.name,
         filetype: uploadFile.type
       },
       onError() {
         setError("hub_id", {type: 'custom', message: "مشکل در بارگذای عکس. مجدد تلاش کنید"});
+        toast.dismiss(toastId)
+        toast.error("خطا در بارگذاری لوگو")
       },
       onSuccess() {
-        setLoading(false)
         setImageUrl(upload.url)
+        toast.dismiss(toastId)
+        toast.success("با موفقیت بارگذاری شد")
       }
     })
-    setLoading(true)
     upload.start()
   }
 
@@ -353,25 +336,6 @@ function TabAccount() {
               <FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>
             )}
           </FormControl></Grid>
-          <Snackbar open={openAlert} autoHideDuration={6000} onClose={() => setOpenAlert(false)} anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-                    key="TransitionUp"
-                    variant="error"
-          >
-            <Alert
-              severity='error'
-              sx={{'& a': {fontWeight: 400}}}
-              action={
-                <IconButton size='small' color='inherit' aria-label='close' onClick={() => setOpenAlert(false)}>
-                  <Close fontSize='inherit'/>
-                </IconButton>
-              }
-            >
-              <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
-            </Alert>
-          </Snackbar>
 
 
           <Grid item xs={12}>
@@ -381,7 +345,7 @@ function TabAccount() {
           </Grid>
         </Grid>
       </form>
-      <Loading open={loading}/>
+
     </CardContent>
   )
 }
