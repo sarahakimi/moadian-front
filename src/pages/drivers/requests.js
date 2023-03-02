@@ -3,7 +3,7 @@ import urls from "../../configs/requestEndpoints";
 
 export const fetchData = async (sortModel) => {
   const response = await http
-    .get(urls.getusers, sortModel, {
+    .get(urls.getDrivers, sortModel, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
@@ -21,7 +21,7 @@ export const deleteUser = async (id) => {
 
 export const registerUser = async (data) => {
   const response = await http
-    .post(urls.registerUser, data, {
+    .post(urls.registerDriver, data, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 

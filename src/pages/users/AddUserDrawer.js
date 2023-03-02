@@ -100,7 +100,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       })
       .then(async response => {
         if (response.data != null) {
-          setRoles(response.data)
+          setRoles(response.data.filter(role => role.name !== "ادمین ویژه"))
         } else setRoles([])
         console.log(roles)
       })

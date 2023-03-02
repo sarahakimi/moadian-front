@@ -22,4 +22,6 @@ export default {
   registerHub: 'hub/register',
   getHubsFromAdmin: 'hub/company/all',
   myHub: 'hub/me',
+  getDrivers: 'user/admin/all?type=2',
+  registerDriver: 'user/admin/courier/register'
 }

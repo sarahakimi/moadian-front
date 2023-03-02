@@ -12,7 +12,6 @@ import {yupResolver} from '@hookform/resolvers/yup'
 import {Controller, useForm} from 'react-hook-form'
 import Close from 'mdi-material-ui/Close'
 import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
-import http from 'services/http'
 import DialogContentText from '@mui/material/DialogContentText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
@@ -20,6 +19,9 @@ import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import toast from "react-hot-toast";
+import {editUser, registerUser} from "./requests";
+
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -46,7 +48,7 @@ const schema = yup.object().shape({
   vehicle: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید')
 })
 
-function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLoading}) {
+function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const [success, setSuccess] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -75,7 +77,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     reset,
     control,
     handleSubmit,
-    setError,
     formState: {errors}
   } = useForm({
     defaultValues,
@@ -83,50 +84,41 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser, setLo
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = data => {
-    setLoading(true)
-    if (edit) {
-      // eslint-disable-next-line no-param-reassign
-      delete data.password
-      http
-        .put(`user/admin/${user.id}`, data, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          reset(emptyForm)
-          setSuccess(true)
-          setLoading(false)
-          toggle()
-          setChange(true)
-        })
-        .catch(err => {
-          setLoading(false)
-          setError('natural_code', {type: 'custom', message: err.response.data.message})
-        })
-    } else {
-      setLoading(true)
-      http
-        .post('user/admin/courier/register', data, {
-          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-        })
-        .then(() => {
-          reset(emptyForm)
-          setSuccess(true)
-          setLoading(false)
-          toggle()
-          setChange(true)
-        })
-        .catch(err => {
-          setError('natural_code', {type: 'custom', message: err.response.data.message})
-          setLoading(false)
-        })
-    }
-  }
-
   const handleClose = () => {
     toggle()
     reset(defaultValues)
   }
+
+  const onSubmit = data => {
+    if (edit) {
+      // eslint-disable-next-line no-param-reassign
+      delete data.password
+      toast.promise(
+        editUser(user.id, data)
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ویرایش راننده',
+          success: 'راننده ویرایش شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+        })
+    } else {
+      toast.promise(
+        registerUser(data)
+          .then(() => {
+            setChange(true)
+            handleClose()
+          })
+        , {
+          loading: 'در حال ایجاد راننده',
+          success: 'راننده ایجاد شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+        })
+    }
+  }
+
 
   const handleDialogClose = () => {
     setSuccess(false)

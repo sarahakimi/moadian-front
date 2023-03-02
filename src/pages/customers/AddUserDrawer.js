@@ -141,8 +141,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
   const onSubmit = data => {
     if (edit) {
-      // eslint-disable-next-line no-param-reassign
-      delete data.password
       toast.promise(
         editUser(user.id, data)
           .then(() => {
@@ -154,6 +152,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           success: 'کاربر ویرایش شد',
           error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
+      // eslint-disable-next-line no-param-reassign
+      delete data.password
+
     } else {
       toast.promise(
         registerUser(data)
