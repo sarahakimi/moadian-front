@@ -103,7 +103,7 @@ const navigation = () => [
     action: 'read',
     subject: 'every-page',
     icon: CalculatorVariantOutline,
-    title: ' محاسبه قیمت'
+    title: ' قیمت گذاری'
   },
   {
     icon: AccountOutline,

@@ -26,5 +26,7 @@ code[class*='language-'] {
   padding: 0;
 }
 
-
+.d-block {
+  display: none;
+}
 

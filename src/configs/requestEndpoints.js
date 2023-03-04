@@ -23,5 +23,11 @@ export default {
   getHubsFromAdmin: 'hub/company/all',
   myHub: 'hub/me',
   getDrivers: 'user/admin/all?type=2',
-  registerDriver: 'user/admin/courier/register'
+  registerDriver: 'user/admin/courier/register',
+  pricingPerKilometer: "pricing/per_kilometer",
+  pricinPerSizeOfCar: (size) => `pricing/size_of_car/${size}`,
+  pricingOtherOptions: "pricing/other_options",
+  getPricingSizeOfCar: "pricing/size_of_car"
+
+
 }
