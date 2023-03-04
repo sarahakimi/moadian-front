@@ -18,3 +18,7 @@ export const editHub = async (id, data) => {
 
   return response;
 };
+
+export default function Home1() {
+  return <div/>;
+}

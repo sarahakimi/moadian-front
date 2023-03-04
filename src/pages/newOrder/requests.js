@@ -19,3 +19,7 @@ export const fetchData = async (sortModel) => {
 
   return response;
 };
+
+export default function Home1() {
+  return <div/>;
+}

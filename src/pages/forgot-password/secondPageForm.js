@@ -9,6 +9,7 @@ import ChevronLeft from "mdi-material-ui/ChevronLeft";
 import {styled} from "@mui/material/styles";
 import * as yup from "yup";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import toast from "react-hot-toast";
 import http from "../../services/http";
 
 
@@ -49,16 +50,19 @@ export default function SecondPageForm({setPage, firstFormData}) {
   })
 
   const onSubmit = data => {
-    console.log(data)
-    http
-      .post('auth/user/forget_password', data,)
-      .then(() => {
-        reset(defaultValues)
-        window.location = `${window.location.origin}/login`
-      })
-      .catch(err => {
-        console.log(err)
-        setError("otp", {type: 'custom', message: err.response.data.message});
+    toast.promise(
+      http
+        .post('auth/user/forget_password', data,)
+        .then(() => {
+          reset(defaultValues)
+          window.location = `${window.location.origin}/login`
+        })
+        .catch(err => {
+          setError("otp", {type: 'custom', message: err.response.data.message});
+        }), {
+        loading: 'در حال ثبت فرم',
+        success: 'فرم ثبت شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است."
       })
   }
 

@@ -17,7 +17,7 @@ export const GridContainer = styled(Paper)({
   },
 })
 
-function Table({customer, setCustomer}) {
+function Table({setCustomer}) {
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc', serach: ''})
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(0)

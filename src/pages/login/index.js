@@ -25,7 +25,6 @@ import {useState} from 'react'
 import themeConfig from 'configs/themeConfig'
 import BlankLayout from '@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'views/pages/auth/FooterIllustrationsV2'
-import Loading from "@core/components/loading/loading";
 import {Dialog, DialogActions, DialogContent, DialogTitle, Select} from "@mui/material";
 import toast from "react-hot-toast";
 
@@ -87,7 +86,6 @@ const schema = yup.object().shape({
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
   const auth = useAuth()
   const theme = useTheme()
   const {settings} = useSettings()
@@ -348,7 +346,6 @@ function LoginPage() {
           </BoxWrapper>
         </Box>
       </RightWrapper>
-      <Loading open={loading}/>
     </Box>
   )
 }

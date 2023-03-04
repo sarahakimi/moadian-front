@@ -77,6 +77,7 @@ function App(props) {
         </Head>
 
         <AuthProvider>
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <SettingsProvider {...(setConfig ? {pageSettings: setConfig()} : {})}>
             <SettingsConsumer>
               {({settings}) => (
@@ -84,6 +85,7 @@ function App(props) {
                   <WindowWrapper>
                     <Guard authGuard={authGuard} guestGuard={guestGuard}>
                       <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                         {getLayout(<Component {...pageProps} />)}
                       </AclGuard>
                     </Guard>

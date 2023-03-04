@@ -5,7 +5,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 
 function MapboxMap({latLang, setLatLang}) {
-  const [map, setMap] = useState();
+  const [, setMap] = useState();
   const mapNode = React.useRef(null);
 
   React.useEffect(() => {
@@ -48,9 +48,7 @@ function MapboxMap({latLang, setLatLang}) {
 
     marker.on('dragend', onDragEnd);
 
-    return () => {
-      mapboxMap.remove();
-    };
+   
   }, []);
 
   return <div ref={mapNode} style={{width: "100%", height: "100%"}}/>;

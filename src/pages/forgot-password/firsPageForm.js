@@ -16,6 +16,7 @@ import {styled} from "@mui/material/styles";
 import * as yup from "yup";
 import {useEffect, useState} from "react";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import toast from "react-hot-toast";
 import http from "../../services/http";
 
 
@@ -69,6 +70,7 @@ export default function FirstPageForm({setPage, setFirstFormData}) {
       })
       .catch(err => {
         setError("hub_id", {type: 'custom', message: err.response.data.message});
+        toast.error("خطا در دریافت اطلاعات.لطفا مجدد تلاش کنید")
       })
     http
       .get('company/all')
@@ -79,23 +81,28 @@ export default function FirstPageForm({setPage, setFirstFormData}) {
       })
       .catch(err => {
         setError("comapny_id", {type: 'custom', message: err.response.data.message});
+        toast.error("خطا در دریافت اطلاعات.لطفا مجدد تلاش کنید")
       })
   }, [])
 
   const onSubmit = data => {
-    console.log(data)
-    http
-      .post('auth/user/validate_phone', data, {
-        Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-      })
-      .then(() => {
-        reset(defaultValues)
-        setFirstFormData(data)
-        setPage(2)
-      })
-      .catch(err => {
-        console.log(err)
-        setError("phone", {type: 'custom', message: err.response.data.message});
+    toast.promise(
+      http
+        .post('auth/user/validate_phone', data, {
+          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+        })
+        .then(() => {
+          reset(defaultValues)
+          setFirstFormData(data)
+          setPage(2)
+        })
+        .catch(err => {
+          console.log(err)
+          setError("phone", {type: 'custom', message: err.response.data.message});
+        }), {
+        loading: 'در حال ثبت فرم',
+        success: 'فرم ثبت شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است."
       })
   }
 

@@ -54,3 +54,7 @@ export const editOtherOptions = async (data) => {
 
   return response;
 };
+
+export default function Home1() {
+  return <div/>;
+}
