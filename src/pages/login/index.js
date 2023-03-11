@@ -140,9 +140,9 @@ function LoginPage() {
         username: data.username,
         password: data.password,
         chosen_item: true,
-        company_id: companies[data.hub_id].companyId.companyId,
+        company_id: companies[data.hub_id].company.companyId,
 
-        hub_id: companies[data.hub_id].hubId.hubId,
+        hub_id: companies[data.hub_id].hub.hubId,
 
         // hub_id: 1,
         user_type: 1,
@@ -307,7 +307,8 @@ function LoginPage() {
                             {companies.map((company, idx) => (
                               <MenuItem key={idx}
                                         value={idx}>
-                                شرکت {company.companyId.companyName} ,هاب {company.hubId.hubName}
+                                {console.log(company.company)}
+                                شرکت {company.company?.companyName} ,هاب {company.hub?.hubName}
                               </MenuItem>
                             ))}
                           </Select>

@@ -80,6 +80,7 @@
     "react-hook-form": "7.3.0",
     "react-hot-toast": "2.1.1",
     "react-i18next": "11.14.3",
+    "react-input-mask": "^2.0.4",
     "react-map-gl": "^7.0.21",
     "react-moment": "^1.1.2",
     "react-neshan-map-leaflet": "^1.2.1",

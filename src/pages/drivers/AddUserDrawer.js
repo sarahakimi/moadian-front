@@ -20,6 +20,7 @@ import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import toast from "react-hot-toast";
+import InputMask from 'react-input-mask';
 import {editUser, registerUser} from "./requests";
 
 
@@ -45,7 +46,9 @@ const schema = yup.object().shape({
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
-  vehicle: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید')
+  vehicle: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
+  vehicle_plaque: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
+  vehicle_card_id: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید')
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -58,7 +61,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     phone: '',
     username: '',
     password: '',
-    vehicle: ''
+    vehicle: '',
+    vehicle_plaque: '',
+    vehicle_card_id: ''
   }
 
   const defaultValues = user
@@ -68,7 +73,10 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       phone: user.phone,
       username: user.username,
       password: '*****',
-      vehicle: user.vehicle
+      vehicle: user.vehicle,
+      vehicle_plaque: user.vehicle_plaque,
+      vehicle_card_id: user.vehicle_card_id
+
     }
     : emptyForm
 
@@ -233,6 +241,59 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           </FormControl>
           <FormControl fullWidth sx={{mb: 4}}>
             <Controller
+              name='vehicle_card_id'
+              control={control}
+              rules={{required: true}}
+              render={({field: {value, onChange, onBlur}}) => (
+                <TextField
+                  autoFocus
+                  label='شماره وسیله نقلیه'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.vehicle_card_id)}
+                  disabled={showUser}
+                />
+              )}
+            />
+            {errors.vehicle_card_id &&
+              <FormHelperText sx={{color: 'error.main'}}>{errors.vehicle_card_id.message}</FormHelperText>}
+          </FormControl>
+          <FormControl fullWidth sx={{mb: 4}}>
+            <Controller
+              name='vehicle_plaque'
+              control={control}
+              rules={{required: true}}
+              render={({field: {value, onChange, onBlur}}) => (
+
+                <InputMask
+                  mask="99 a 999 ایران 99"
+                  value={value}
+                  onChange={onChange}
+                  formatChars={{'a': '[\u0600-\u06FF\\s]', '9': '[0-9]'}}
+                  error={Boolean(errors.vehicle_plaque)}
+                  onBlur={onBlur}
+                  disabled={showUser}
+                >
+                  {() => <TextField
+                    label='پلاک'
+                    helperText={!showUser && "* برای پلاک های (الف) از آ استفاده نمایید"}
+                    placeholder=" ب 999 ایران 99"
+                    margin="normal"
+                    type="text"
+                    error={Boolean(errors.vehicle_plaque)}
+                    disabled={showUser}
+
+                  />}
+                </InputMask>
+              )}
+            />
+            {errors.vehicle_plaque &&
+              <FormHelperText sx={{color: 'error.main'}}>{errors.vehicle_plaque.message}</FormHelperText>}
+          </FormControl>
+
+          <FormControl fullWidth sx={{mb: 4}}>
+            <Controller
               name='username'
               control={control}
               rules={{required: true}}
@@ -287,7 +348,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
           <Box sx={{display: 'flex', alignItems: 'center'}}>
             {!showUser && (
-              <Button size='large' type='submit' variant='contained' sx={{mr: 3}}>
+              <Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>
                 ذخیره
               </Button>
             )}
