@@ -45,6 +45,12 @@ const schema = yup.object().shape({
     .required('موبایل الزامی است')
     .matches(/09d*/, ' موبایل باید عدد باشد و با 09 شروع شود')
     .test('len', 'موبایل باید 11 رقم باشد', val => val.toString().length === 11),
+  area_code: yup
+    .string()
+    .required(' پیش شماره تلفن الزامی است')
+    .min(3, 'باید 3 رقم باشد')
+    .max(3, 'باید سه رقم باشد')
+    .matches(/d*/, '  باید عدد باشد'),
   tel_number: yup
     .string()
     .required('تلفن الزامی است')
@@ -59,9 +65,6 @@ const schema = yup.object().shape({
   city: yup
     .string()
     .required('شهر الزامی است'),
-  address: yup
-    .string()
-    .required('ادرس الزامی است').min(10, "ادرس را کامل وارد کنید"),
   other_information: yup
     .string(),
   texes: yup.boolean().required('فیلد الزامی'),
@@ -69,6 +72,24 @@ const schema = yup.object().shape({
   off_percent: yup.number().min(0, " باید مثبت باشد").max(100, "حداکثر باید 100 باشد").typeError("باید عدد باشد"),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
+  main_street: yup
+    .string()
+    .required('خیابان اصلی الزامی است'),
+  side_street: yup
+    .string()
+    .required('خیابان فرعی الزامی است'),
+  floor: yup
+    .string()
+    .required('طبقه الزامی است'),
+  home_unit: yup
+    .string()
+    .required('واحد الزامی است'),
+  plaque: yup
+    .string()
+    .required('پلاک الزامی است'),
+  alley: yup
+    .string()
+    .required('کوچه الزامی است')
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -90,13 +111,20 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     postal_code: '',
     provence: '',
     city: '',
-    address: '',
     other_information: '',
     texes: false,
     off_percent_status: false,
     off_percent: 0,
     username: '',
     password: '',
+    area_code: '',
+    main_street: '',
+    side_street: '',
+    floor: '',
+    home_unit: '',
+    plaque: '',
+    alley: ''
+
   }
 
   function onChangeSenderOstan(event, onChange, values) {
@@ -113,13 +141,20 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     postal_code: user.postal_code,
     provence: user.provence,
     city: user.city,
-    address: user.address,
     other_information: user.other_information,
     texes: user.texes,
     off_percent_status: user.off_percent_status,
     off_percent: user.off_percent,
     username: user.username,
     password: '******',
+    area_code: user.area_code,
+    main_street: user.main_street,
+    side_street: user.side_street,
+    floor: user.floor,
+    home_unit: user.home_unit,
+    plaque: user.plaque,
+    alley: user.alley
+
   } : emptyForm
 
 
@@ -142,7 +177,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const onSubmit = data => {
     if (edit) {
       toast.promise(
-        editUser(user.id, data)
+        editUser(user.id, {address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data})
           .then(() => {
             setChange(true)
             handleClose()
@@ -157,7 +192,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
     } else {
       toast.promise(
-        registerUser(data)
+        registerUser({address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data})
           .then(() => {
             setChange(true)
             handleClose()
@@ -251,12 +286,31 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
+            name='area_code'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='پیش شماره(کد سه رقمی استان)'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.area_code)}
+              inputProps={{maxLength: 3}}
+              dir='ltr'
+              disabled={showUser}
+            />)}
+          />
+          {errors.area_code && <FormHelperText sx={{color: 'error.main'}}>{errors.area_code.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
             name='tel_number'
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
               autoFocus
-              label='شماره تلفن'
+              label='(بدون پیش شماره) شماره تلفن'
               value={value}
               onBlur={onBlur}
               onChange={onChange}
@@ -280,7 +334,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               onBlur={onBlur}
               onChange={onChange}
               error={Boolean(errors.postal_code)}
-              inputProps={{maxLength: 20}}
+              inputProps={{maxLength: 10}}
               dir='ltr'
               disabled={showUser}
             />)}
@@ -288,6 +342,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           {errors.postal_code &&
             <FormHelperText sx={{color: 'error.main'}}>{errors.postal_code.message}</FormHelperText>}
         </FormControl>
+        <Typography fullWidth sx={{mb: 2}}>آدرس</Typography>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
             fullWidth
@@ -353,24 +408,116 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             <FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>
           )}
         </FormControl>
+
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
-            name='address'
+            name='main_street'
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
               autoFocus
-              label='ادرس'
+              label='خیابان اصلی'
               value={value}
               onBlur={onBlur}
               onChange={onChange}
-              error={Boolean(errors.address)}
+              error={Boolean(errors.main_street)}
               disabled={showUser}
-              multiline
-              rows={2}
             />)}
           />
-          {errors.address && <FormHelperText sx={{color: 'error.main'}}>{errors.address.message}</FormHelperText>}
+          {errors.main_street &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.main_street.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='side_street'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='خیابان فرعی'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.side_street)}
+              disabled={showUser}
+            />)}
+          />
+          {errors.side_street &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.side_street.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='alley'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='کوچه'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.alley)}
+              disabled={showUser}
+            />)}
+          />
+          {errors.alley &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.alley.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='plaque'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='پلاک'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.plaque)}
+              disabled={showUser}
+            />)}
+          />
+          {errors.plaque &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.plaque.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='floor'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='طبقه'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.floor)}
+              disabled={showUser}
+              dir="ltr"
+            />)}
+          />
+          {errors.floor &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.floor.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='home_unit'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='واحد'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.home_unit)}
+              disabled={showUser}
+              dir="ltr"
+            />)}
+          />
+          {errors.home_unit &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.home_unit.message}</FormHelperText>}
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller

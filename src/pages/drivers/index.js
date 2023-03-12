@@ -40,7 +40,11 @@ function ACLPage() {
     {key: "username", label: "تام کاربری"},
     {key: "phone", label: "شماره تلفن"},
     {key: "created_at", label: "تاریخ ایجاد"},
-    {key: "vehicle", label: "وسیله نقلیه"}
+    {key: "vehicle", label: "وسیله نقلیه"},
+    {key: "vehicle", label: "نوع وسیله نقلیه"},
+    {key: "vehicle_card_id", label: "شماره وسیله نقلیه"},
+    {key: "vehicle_plaque", label: "پلاک"},
+
   ];
 
   const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
@@ -59,7 +63,7 @@ function ACLPage() {
     toast.promise(deleteUser(company.id).then(setChange(true)), {
         loading: 'در حال حذف راننده',
         success: 'با موفقیت حذف شد',
-        error: (err) => err.response.data.message ? err.response.data.message : "خطایی رخ داده است",
+        error: (err) => err.response?.data?.message ? err.response.data.message : "خطایی رخ داده است",
       }
     )
   }

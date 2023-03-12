@@ -11,7 +11,7 @@ import * as yup from 'yup'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Controller, useForm} from 'react-hook-form'
 import Close from 'mdi-material-ui/Close'
-import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
+import {Autocomplete, Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
 import DialogContentText from '@mui/material/DialogContentText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
@@ -31,6 +31,7 @@ const Header = styled(Box)(({theme}) => ({
   justifyContent: 'space-between',
   backgroundColor: theme.palette.background.default
 }))
+const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 
 const schema = yup.object().shape({
   natural_code: yup
@@ -48,7 +49,9 @@ const schema = yup.object().shape({
   password: yup.string().required('رمز عبور الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   vehicle: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
   vehicle_plaque: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
-  vehicle_card_id: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید')
+  vehicle_card_id: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
+  vehicle_type: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید')
+
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -63,7 +66,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     password: '',
     vehicle: '',
     vehicle_plaque: '',
-    vehicle_card_id: ''
+    vehicle_card_id: '',
+    vehicle_type: ''
   }
 
   const defaultValues = user
@@ -75,7 +79,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       password: '*****',
       vehicle: user.vehicle,
       vehicle_plaque: user.vehicle_plaque,
-      vehicle_card_id: user.vehicle_card_id
+      vehicle_card_id: user.vehicle_card_id,
+      vehicle_type: user.vehicle_type
 
     }
     : emptyForm
@@ -219,6 +224,37 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               )}
             />
             {errors.phone && <FormHelperText sx={{color: 'error.main'}}>{errors.phone.message}</FormHelperText>}
+          </FormControl>
+          <FormControl fullWidth sx={{mb: 4}}>
+            <Controller
+              name='vehicle_type'
+              control={control}
+              rules={{required: true}}
+              render={({field: {value, onChange, onBlur}}) => (
+                <Autocomplete
+                  disabled={showUser}
+                  onBlur={onBlur}
+                  select
+                  options={cars}
+                  onChange={(event, values) => onChange(values)}
+                  value={value}
+                  disableClearable
+                  renderInput={params => (
+                    <TextField
+                      /* eslint-disable-next-line react/jsx-props-no-spreading */
+                      {...params}
+                      label='نوع وسیله نقلیه'
+                      variant='outlined'
+                      onChange={onChange}
+                      error={Boolean(errors.vehicle_type)}
+                    />
+                  )}
+                />
+              )}
+            />
+            {errors.vehicle_type && (
+              <FormHelperText sx={{color: 'error.main'}}>{errors.vehicle_type.message}</FormHelperText>
+            )}
           </FormControl>
           <FormControl fullWidth sx={{mb: 4}}>
             <Controller

@@ -1,24 +1,24 @@
 // ** React Import
-import { useRef, useState } from 'react'
+import {useRef, useState} from 'react'
 
 // ** MUI Import
 import List from '@mui/material/List'
 import Box from '@mui/material/Box'
-import { styled, useTheme } from '@mui/material/styles'
+import {styled, useTheme} from '@mui/material/styles'
 
 // ** Third Party Components
 import PerfectScrollbar from 'react-perfect-scrollbar'
 import themeConfig from 'configs/themeConfig'
 
 // ** Component Imports
-import { hexToRGBA } from '@core/utils/hex-to-rgba'
+import {hexToRGBA} from '@core/utils/hex-to-rgba'
 import Drawer from './Drawer'
 import VerticalNavItems from './VerticalNavItems'
 import VerticalNavHeader from './VerticalNavHeader'
 
 // ** Util Import
 
-const StyledBoxForShadow = styled(Box)(({ theme }) => ({
+const StyledBoxForShadow = styled(Box)(({theme}) => ({
   top: 60,
   left: -8,
   zIndex: 2,
@@ -53,8 +53,8 @@ function Navigation(props) {
   const theme = useTheme()
 
   // ** Var
-  const { skin } = settings
-  const { afterVerticalNavMenuContentPosition, beforeVerticalNavMenuContentPosition } = themeConfig
+  const {skin} = settings
+  const {afterVerticalNavMenuContentPosition, beforeVerticalNavMenuContentPosition} = themeConfig
 
   // ** Fixes Navigation InfiniteScroll
   const handleInfiniteScroll = ref => {
@@ -65,27 +65,20 @@ function Navigation(props) {
         // @ts-ignore
         const original = ref._getBoundingClientRect()
 
-        return { ...original, height: Math.floor(original.height) }
+        return {...original, height: Math.floor(original.height)}
       }
     }
   }
 
   // ** Scroll Menu
-  const scrollMenu = container => {
+  const scrollMenu = () => {
     if (beforeVerticalNavMenuContentPosition === 'static' || !beforeVerticalNavMenuContent) {
-      container = hidden ? container.target : container
-      if (shadowRef && container.scrollTop > 0) {
-        // @ts-ignore
-        if (!shadowRef.current.classList.contains('d-block')) {
-          // @ts-ignore
-          shadowRef.current.classList.add('d-block')
-        }
-      } else {
-        // @ts-ignore
-        shadowRef.current.classList.remove('d-block')
-      }
+
+      // @ts-ignore
+      shadowRef?.current?.classList?.remove('d-block')
     }
   }
+
 
   const shadowBgColor = () => {
     if (skin === 'semi-dark' && theme.palette.mode === 'light') {
@@ -124,20 +117,20 @@ function Navigation(props) {
         ? beforeVerticalNavMenuContent(props)
         : null}
       {(beforeVerticalNavMenuContentPosition === 'static' || !beforeVerticalNavMenuContent) && (
-        <StyledBoxForShadow ref={shadowRef} sx={{ background: shadowBgColor() }} />
+        <StyledBoxForShadow ref={shadowRef} sx={{background: shadowBgColor()}}/>
       )}
-      <Box sx={{ position: 'relative', overflow: 'hidden' }}>
+      <Box sx={{position: 'relative', overflow: 'hidden'}}>
         <ScrollWrapper
           containerRef={ref => handleInfiniteScroll(ref)}
           {...(hidden
             ? {
-                onScroll: container => scrollMenu(container),
-                sx: { height: '100%', overflowY: 'auto', overflowX: 'hidden' }
-              }
+              onScroll: () => scrollMenu(),
+              sx: {height: '100%', overflowY: 'auto', overflowX: 'hidden'}
+            }
             : {
-                options: { wheelPropagation: false },
-                onScrollY: container => scrollMenu(container)
-              })}
+              options: {wheelPropagation: false},
+              onScrollY: () => scrollMenu()
+            })}
         >
           {beforeVerticalNavMenuContent && beforeVerticalNavMenuContentPosition === 'static'
             ? beforeVerticalNavMenuContent(props)
@@ -145,7 +138,7 @@ function Navigation(props) {
           {userVerticalNavMenuContent ? (
             userVerticalNavMenuContent(props)
           ) : (
-            <List className='nav-items' sx={{ pt: 0, '& > :first-child': { mt: '0' } }}>
+            <List className='nav-items' sx={{pt: 0, '& > :first-child': {mt: '0'}}}>
               <VerticalNavItems
                 groupActive={groupActive}
                 setGroupActive={setGroupActive}

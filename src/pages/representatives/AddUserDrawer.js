@@ -279,7 +279,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               onBlur={onBlur}
               onChange={onChange}
               error={Boolean(errors.postal_code)}
-              inputProps={{maxLength: 20}}
+              inputProps={{maxLength: 10}}
               dir='ltr'
               disabled={showUser}
             />)}

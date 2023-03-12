@@ -40,11 +40,17 @@ function ACLPage() {
     {key: "name", label: "تام کاربر"},
     {key: "username", label: "نام کاربری"},
     {key: "phone", label: "موبایل"},
+    {key: "area_code", label: "پیش شماره"},
     {key: "tel_number", label: "شماره تلفن"},
     {key: "postal_code", label: "کدپستی"},
     {key: "natural_code", label: "کدملی"},
     {key: "provence", label: "استان"},
     {key: "city", label: "شهر"},
+    {key: "main_street", label: "خیابان اصلی"},
+    {key: "side_street", label: "خیابان فرعی"},
+    {key: "alley", label: "کوچه"},
+    {key: "floor", label: "طبقه"},
+    {key: "home_unit", label: "واحد"},
     {key: "address", label: "ادرس"},
     {key: "created_at", label: "تاریخ ایجاد"},
     {key: "other_information", label: "سایر اطلاعات"},
@@ -128,7 +134,7 @@ function ACLPage() {
       )
     },
     {
-      flex: 0.15,
+      flex: 0.1,
       field: 'natural_code',
       minWidth: 150,
       filterOperators,
@@ -152,7 +158,7 @@ function ACLPage() {
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {row.natural_code}
+            {row.area_code}{row.tel_number}
           </Typography>
         </Box>
       )
@@ -187,21 +193,22 @@ function ACLPage() {
         </Box>
       )
     },
-    {
-      flex: 0.2,
-      field: 'address',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'ادرس',
-      hideable: false,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {row.address}
-          </Typography>
-        </Box>
-      )
-    },
+
+    // {
+    //   flex: 0.4,
+    //   field: 'address',
+    //   minWidth: 150,
+    //   filterOperators,
+    //   headerName: 'ادرس',
+    //   hideable: false,
+    //   renderCell: ({row}) => (
+    //     <Box sx={{display: 'flex', alignItems: 'center'}}>
+    //       <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
+    //         {row.address}
+    //       </Typography>
+    //     </Box>
+    //   )
+    // },
     {
       flex: 0.1,
       minWidth: 50,
@@ -225,7 +232,7 @@ function ACLPage() {
       } else setData(response.data)
       if (change) setChange(false)
     }).catch((err) => {
-      const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"
+      const errorMessage = err.response?.data?.message ? err.response.data.message : "خطایی رخ داده است"
       toast.error(errorMessage)
     })
 

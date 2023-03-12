@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import toast from "react-hot-toast";
 import {styled} from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-import {fetchData} from "../users/requests";
+import {fetchData} from "./requests";
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -149,23 +149,24 @@ function Table({setCustomer}) {
         </Box>
       )
     },
-    {
-      flex: 0.2,
-      field: 'address',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'ادرس',
-      align: 'center',
-      headerAlign: 'center',
-      hideable: false,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {row.address}
-          </Typography>
-        </Box>
-      )
-    }
+
+    // {
+    //   flex: 0.2,
+    //   field: 'address',
+    //   minWidth: 150,
+    //   filterOperators,
+    //   headerName: 'ادرس',
+    //   align: 'center',
+    //   headerAlign: 'center',
+    //   hideable: false,
+    //   renderCell: ({row}) => (
+    //     <Box sx={{display: 'flex', alignItems: 'center'}}>
+    //       <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
+    //         {row.address}
+    //       </Typography>
+    //     </Box>
+    //   )
+    // }
   ]
 
   const handlePageSizeChange = newPageSize => {
