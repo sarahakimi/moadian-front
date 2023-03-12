@@ -120,6 +120,7 @@ const defaultValues = {
   senderPhone: '',
   senderPhonePrefix: '',
   senderCounty: '',
+  senderCity: '',
   senderCodePosti: '',
   recieverCodeMelli: '',
   recieverName: '',
@@ -127,8 +128,30 @@ const defaultValues = {
   recieverPhone: '',
   recieverPhonePrefix: '',
   recieverCounty: '',
-  recieverCodePosti: ''
+  recieverCodePosti: '',
+  senderMainRoard: "",
+  senderSubRoad: "",
+  senderAlley: "",
+  senderPlaque: "",
+  senderFloor: "",
+  senderUnit: "",
+  senderCompany: '',
+  recieverMainRoard: '',
+  recieverSubRoad: '',
+  recieverAlley: '',
+  recieverPlaque: '',
+  recieverFloor: '',
+  recieverCompany: '',
+  recieverUnit: '',
+  receiverOtherInfo: '',
+  recieverCity: '',
+  needsEvacuate: false,
+  needsLoading: false,
+  needsMovement: false,
+  needsSpecialCarry: false,
+  SpecialBox: false,
 }
+
 
 const emptyForm = {
   senderCodeMelli: "",
@@ -192,6 +215,8 @@ function ACLPage() {
   const [recieverOpen, setRecieverOpen] = useState(false)
   const handleRecieverOpen = () => setRecieverOpen(true);
   const handleRecieverClose = () => setRecieverOpen(false);
+  const [hasSender, setHasSender] = useState(false)
+  const [hasReciever, setHasReciever] = useState(false)
 
   const {
     control,
@@ -289,32 +314,91 @@ function ACLPage() {
   }
 
   const onsetSenderCustomer = () => {
-
-    console.log(sender)
+    setHasSender(true)
     setValue('senderName', sender.name, {shouldTouch: true})
     setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
-    setValue('senderCompany', sender.identity_code, {shouldTouch: true})
+    setValue('senderCompany', sender.company, {shouldTouch: true})
     setValue('senderMobile', sender.phone, {shouldTouch: true})
     setValue('senderPhone', sender.tel_number, {shouldTouch: true})
-    setValue('senderPhonePrefix', sender.identity_code, {shouldTouch: true})
-    setValue('senderCounty', sender.identity_code, {shouldTouch: true})
+    setValue('senderPhonePrefix', sender.area_code, {shouldTouch: true})
+    setValue('senderCounty', sender.provence, {shouldTouch: true})
+
+    setSelectedSenderOstan(ostan.find(element => element.name === sender.provence)?.id)
     setValue('senderCity', sender.city, {shouldTouch: true})
-    setValue('senderCodePosti', sender.identity_code, {shouldTouch: true})
-    setValue('senderMainRoard', sender.identity_code, {shouldTouch: true})
-    setValue('senderSubRoad', sender.identity_code, {shouldTouch: true})
-    setValue('senderAlley', sender.identity_code, {shouldTouch: true})
-    setValue('senderPlaque', sender.identity_code, {shouldTouch: true})
-    setValue('senderFloor', sender.identity_code, {shouldTouch: true})
-    setValue('senderUnit', sender.identity_code, {shouldTouch: true})
+    setValue('senderCodePosti', sender.postal_code, {shouldTouch: true})
+    setValue('senderMainRoard', sender.main_street, {shouldTouch: true})
+    setValue('senderSubRoad', sender.side_street, {shouldTouch: true})
+    setValue('senderAlley', sender.alley, {shouldTouch: true})
+    setValue('senderPlaque', sender.plaque, {shouldTouch: true})
+    setValue('senderFloor', sender.floor, {shouldTouch: true})
+    setValue('senderUnit', sender.home_unit, {shouldTouch: true})
+    setValue('senderOtherInfo', sender.other_information, {shouldTouch: true})
 
 
     handleClose()
   }
 
+  const emptySender = () => {
+    setHasSender(false)
+    setValue('senderName', '', {shouldTouch: true})
+    setValue('senderCodeMelli', '', {shouldTouch: true})
+    setValue('senderCompany', '', {shouldTouch: true})
+    setValue('senderMobile', '', {shouldTouch: true})
+    setValue('senderPhone', '', {shouldTouch: true})
+    setValue('senderPhonePrefix', '', {shouldTouch: true})
+    setValue('senderCounty', '', {shouldTouch: true})
+
+    setSelectedSenderOstan(ostan.find(element => element.name === sender.provence)?.id)
+    setValue('senderCity', '', {shouldTouch: true})
+    setValue('senderCodePosti', '', {shouldTouch: true})
+    setValue('senderMainRoard', '', {shouldTouch: true})
+    setValue('senderSubRoad', '', {shouldTouch: true})
+    setValue('senderAlley', '', {shouldTouch: true})
+    setValue('senderPlaque', '', {shouldTouch: true})
+    setValue('senderFloor', '', {shouldTouch: true})
+    setValue('senderUnit', '', {shouldTouch: true})
+    setValue('senderOtherInfo', '', {shouldTouch: true})
+
+  }
+
+  const onsetRecieverCustomer = () => {
+    setHasReciever(true)
+    setValue('recieverName', reciever.name, {shouldTouch: true})
+    setValue('recieverCodeMelli', reciever.natural_code, {shouldTouch: true})
+    setValue('recieverCompany', reciever.company, {shouldTouch: true})
+    setValue('recieverMobile', reciever.phone, {shouldTouch: true})
+    setValue('recieverPhone', reciever.tel_number, {shouldTouch: true})
+    setValue('recieverPhonePrefix', reciever.area_code, {shouldTouch: true})
+    setValue('recieverCounty', reciever.provence, {shouldTouch: true})
+
+    setSelectedRecieverOstan(ostan.find(element => element.name === sender.provence)?.id)
+    setValue('recieverCity', reciever.city, {shouldTouch: true})
+    setValue('recieverCodePosti', reciever.postal_code, {shouldTouch: true})
+    setValue('recieverMainRoard', reciever.main_street, {shouldTouch: true})
+    setValue('recieverSubRoad', reciever.side_street, {shouldTouch: true})
+    setValue('recieverAlley', reciever.alley, {shouldTouch: true})
+    setValue('recieverPlaque', reciever.plaque, {shouldTouch: true})
+    setValue('recieverFloor', reciever.floor, {shouldTouch: true})
+    setValue('recieverUnit', reciever.home_unit, {shouldTouch: true})
+    setValue('recieverOtherInfo', reciever.other_information, {shouldTouch: true})
+
+
+    handleRecieverClose()
+  }
+
   return (
     <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-      <Card sx={{mb: 5}}>
-        <CardHeader title='فرستنده' subheader={<Button onClick={handleOpen}>جستجوی مشتری</Button>}/>
+      <Card sx={{
+        p: 5, "& .MuiInputBase-input.Mui-disabled": {
+          WebkitTextFillColor: "blue",
+        },
+        "& 	.MuiInputLabel-root.Mui-disabled": {
+          WebkitTextFillColor: "rgba(76,78,100,0.87)",
+        }, mb: 5
+      }}>
+        <CardHeader title='فرستنده'
+                    subheader={hasSender ? <Button onClick={emptySender} color="error">حذف مشتری انتخاب شده</Button> :
+                      <Button onClick={handleOpen}>جستجوی مشتری</Button>}/>
         <Modal
           open={open}
           onClose={handleClose}
@@ -331,8 +415,7 @@ function ACLPage() {
               alignItems="center"
 
             >
-              <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}
-                      disabled>انتخاب </Button>
+              <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}>انتخاب </Button>
               <Button variant="contained" color="error" onClick={handleClose}>بستن</Button>
             </Box>
 
@@ -350,7 +433,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='کدملی'
                       value={value}
                       onBlur={onBlur}
@@ -358,6 +441,7 @@ function ACLPage() {
                       error={Boolean(errors.senderCodeMelli)}
                       inputProps={{maxLength: 10}}
                       dir='ltr'
+                      disabled={hasSender}
                     />
                   )}
                 />
@@ -374,7 +458,8 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='نام و نام خانوادگی'
                       value={value}
                       onBlur={onBlur}
@@ -397,7 +482,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='موبایل'
                       value={value}
                       onBlur={onBlur}
@@ -406,6 +491,7 @@ function ACLPage() {
                       inputProps={{maxLength: 11}}
                       placeholder='09*********'
                       dir='ltr'
+                      disabled={hasSender}
                     />
                   )}
                 />
@@ -422,7 +508,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='تلفن'
                       value={value}
                       onBlur={onBlur}
@@ -430,6 +516,7 @@ function ACLPage() {
                       error={Boolean(errors.senderPhone)}
                       dir='ltr'
                       inputProps={{maxLength: 9}}
+                      disabled={hasSender}
                     />
                   )}
                 />
@@ -446,7 +533,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='پیش شماره'
                       value={value}
                       onBlur={onBlur}
@@ -455,6 +542,7 @@ function ACLPage() {
                       dir='ltr'
                       placeholder='021'
                       inputProps={{maxLength: 3}}
+                      disabled={hasSender}
                     />
                   )}
                 />
@@ -471,12 +559,13 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='شرکت'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.senderCompany)}
+                      disabled={hasSender}
 
                     />
                   )}
@@ -501,6 +590,7 @@ function ACLPage() {
                       onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
                       value={value}
                       disableClearable
+                      disabled={hasSender}
                       renderInput={params => (
                         <TextField
                           /* eslint-disable-next-line react/jsx-props-no-spreading */
@@ -529,6 +619,7 @@ function ACLPage() {
                   render={({field: {value, onChange, onBlur}}) => (
                     <Autocomplete
                       onBlur={onBlur}
+                      disabled={hasSender}
                       select
                       options={shahr
                         .filter(element => element.ostan === selectedSenderOstan)
@@ -563,7 +654,8 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='کدپستی'
                       value={value}
                       onBlur={onBlur}
@@ -584,10 +676,11 @@ function ACLPage() {
                 <Controller
                   name='senderOtherInfo'
                   control={control}
-                  rules={{required: true}}
+
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='سایر اطلاعات'
                       value={value}
                       onBlur={onBlur}
@@ -604,7 +697,7 @@ function ACLPage() {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-              <Typography variant='p' component='p'>
+              <Typography variant='p' component='p' mb={4}>
                 آدرس
               </Typography>
             </Grid>
@@ -616,13 +709,14 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
+                      disabled={hasSender}
                       label='خیابان اصلی'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.senderMainRoard)}
-                      inputProps={{maxLength: 10}}
+
                     />
                   )}
                 />
@@ -639,13 +733,14 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='خیابان فرعی'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.senderSubRoad)}
-                      inputProps={{maxLength: 10}}
+
                     />
                   )}
                 />
@@ -662,13 +757,14 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='کوچه'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.senderAlley)}
-                      inputProps={{maxLength: 10}}
+
                     />
                   )}
                 />
@@ -685,13 +781,14 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='پلاک'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.senderPlaque)}
-                      inputProps={{maxLength: 10}}
+
                     />
                   )}
                 />
@@ -708,13 +805,14 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='طبقه'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.senderFloor)}
-                      inputProps={{maxLength: 10}}
+
                     />
                   )}
                 />
@@ -731,7 +829,8 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+                      disabled={hasSender}
+
                       label='واحد'
                       value={value}
                       onBlur={onBlur}
@@ -758,8 +857,17 @@ function ACLPage() {
           </Grid>
         </CardContent>
       </Card>
-      <Card sx={{mb: 5}}>
-        <CardHeader title='گیرنده' subheader={<Button onClick={handleRecieverOpen}>جستجوی مشتری</Button>}/>
+      <Card sx={{
+        p: 5, "& .MuiInputBase-input.Mui-disabled": {
+          WebkitTextFillColor: "blue",
+        },
+        "& 	.MuiInputLabel-root.Mui-disabled": {
+          WebkitTextFillColor: "rgba(76,78,100,0.87)",
+        }, mb: 5
+      }}>
+        <CardHeader title='گیرنده'
+                    subheader={hasSender ? <Button onClick={emptySender} color="error">حذف مشتری انتخاب شده</Button> :
+                      <Button onClick={handleRecieverOpen}>جستجوی مشتری</Button>}/>
         <Modal
           open={recieverOpen}
           onClose={handleRecieverClose}
@@ -776,8 +884,8 @@ function ACLPage() {
               alignItems="center"
 
             >
-              <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}
-                      disabled>انتخاب </Button>
+              <Button variant="contained" color="primary" onClick={onsetRecieverCustomer} sx={{mx: 2}}
+              >انتخاب </Button>
               <Button variant="contained" color="error" onClick={handleRecieverClose}>بستن</Button>
             </Box>
 
@@ -795,7 +903,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='کدملی'
                       value={value}
                       onBlur={onBlur}
@@ -803,6 +911,7 @@ function ACLPage() {
                       error={Boolean(errors.recieverCodeMelli)}
                       inputProps={{maxLength: 10}}
                       dir='ltr'
+                      disabled={hasReciever}
                     />
                   )}
                 />
@@ -819,13 +928,14 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='نام و نام خانوادگی'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.recieverName)}
                       inputProps={{maxLength: 50}}
+                      disabled={hasReciever}
                     />
                   )}
                 />
@@ -842,7 +952,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='موبایل'
                       value={value}
                       onBlur={onBlur}
@@ -851,6 +961,7 @@ function ACLPage() {
                       inputProps={{maxLength: 11}}
                       placeholder='09*********'
                       dir='ltr'
+                      disabled={hasReciever}
                     />
                   )}
                 />
@@ -867,7 +978,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='تلفن'
                       value={value}
                       onBlur={onBlur}
@@ -875,6 +986,7 @@ function ACLPage() {
                       error={Boolean(errors.recieverPhone)}
                       dir='ltr'
                       inputProps={{maxLength: 9}}
+                      disabled={hasReciever}
                     />
                   )}
                 />
@@ -891,7 +1003,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='پیش شماره'
                       value={value}
                       onBlur={onBlur}
@@ -900,6 +1012,7 @@ function ACLPage() {
                       dir='ltr'
                       placeholder='021'
                       inputProps={{maxLength: 3}}
+                      disabled={hasReciever}
                     />
                   )}
                 />
@@ -916,12 +1029,13 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='شرکت'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
                       error={Boolean(errors.recieverCompany)}
+                      disabled={hasReciever}
                     />
                   )}
                 />
@@ -944,6 +1058,7 @@ function ACLPage() {
                       options={ostan.map(element => element.name)}
                       onChange={(event, values, value) => onChangeRecieverOstan(event, onChange, values, value)}
                       value={value}
+                      disabled={hasReciever}
                       disableClearable
                       renderInput={params => (
                         <TextField
@@ -953,6 +1068,7 @@ function ACLPage() {
                           variant='outlined'
                           onChange={onChange}
                           error={Boolean(errors.recieverCounty)}
+                          disabled={hasReciever}
                         />
                       )}
                     />
@@ -972,6 +1088,7 @@ function ACLPage() {
                   render={({field: {value, onChange, onBlur}}) => (
                     <Autocomplete
                       onBlur={onBlur}
+                      disabled={hasReciever}
                       select
                       options={shahr
                         .filter(element => element.ostan === selectedRecieverOstan)
@@ -1005,8 +1122,9 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='کدپستی'
+                      disabled={hasReciever}
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
@@ -1029,8 +1147,9 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='سایر اطلاعات'
+                      disabled={hasReciever}
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
@@ -1058,8 +1177,9 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='خیابان اصلی'
+                      disabled={hasReciever}
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
@@ -1081,8 +1201,9 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='خیابان فرعی'
+                      disabled={hasReciever}
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
@@ -1104,7 +1225,8 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
+                      disabled={hasReciever}
                       label='کوچه'
                       value={value}
                       onBlur={onBlur}
@@ -1127,7 +1249,8 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
+                      disabled={hasReciever}
                       label='پلاک'
                       value={value}
                       onBlur={onBlur}
@@ -1150,7 +1273,8 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
+                      disabled={hasReciever}
                       label='طبقه'
                       value={value}
                       onBlur={onBlur}
@@ -1173,8 +1297,9 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='واحد'
+                      disabled={hasReciever}
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}
@@ -1213,7 +1338,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='وزن (گرم)'
                       value={value}
                       onBlur={onBlur}
@@ -1235,7 +1360,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='طول (سانتی متر)'
                       value={value}
                       onBlur={onBlur}
@@ -1257,7 +1382,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='عرض (سانتی متر)'
                       value={value}
                       onBlur={onBlur}
@@ -1279,7 +1404,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='ارتفاع (سانتی متر)'
                       value={value}
                       onBlur={onBlur}
@@ -1301,7 +1426,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='ارزش کالا (تومان)'
                       value={value}
                       onBlur={onBlur}
@@ -1357,13 +1482,13 @@ function ACLPage() {
                     <>
                       <InputLabel>نیاز به حمل ویژه</InputLabel>
                       <Select
-                        autoFocus
+
                         label='نیاز به حمل ویژه'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.needsSpecialCarry)}
-                        defaultValue={false}
+
                       >
                         <MenuItem value>دارد</MenuItem>
                         <MenuItem value={false}>ندارد</MenuItem>
@@ -1382,18 +1507,17 @@ function ACLPage() {
                   fullWidth
                   name='SpecialBox'
                   control={control}
-                  rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <>
                       <InputLabel>بار خاص</InputLabel>
                       <Select
-                        autoFocus
+
                         label='بار خاص'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.SpecialBox)}
-                        defaultValue={false}
+
                       >
                         <MenuItem value>دارد</MenuItem>
                         <MenuItem value={false}>ندارد</MenuItem>
@@ -1457,13 +1581,13 @@ function ACLPage() {
                     <>
                       <InputLabel>نیازمند جابجابی</InputLabel>
                       <Select
-                        autoFocus
+
                         label='نیازمند جابجایی'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.needsMovement)}
-                        defaultValue={false}
+
                       >
                         <MenuItem value>دارد</MenuItem>
                         <MenuItem value={false}>ندارد</MenuItem>
@@ -1487,13 +1611,13 @@ function ACLPage() {
                     <>
                       <InputLabel>نیازمند بارگیری</InputLabel>
                       <Select
-                        autoFocus
+
                         label='نیازمند بارگیری'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.needsLoading)}
-                        defaultValue={false}
+
                       >
                         <MenuItem value>دارد</MenuItem>
                         <MenuItem value={false}>ندارد</MenuItem>
@@ -1517,13 +1641,13 @@ function ACLPage() {
                     <>
                       <InputLabel>نیازمند تخلیه</InputLabel>
                       <Select
-                        autoFocus
+
                         label='نیازمند تخلیه'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.needsEvacuate)}
-                        defaultValue={false}
+
                       >
                         <MenuItem value>دارد</MenuItem>
                         <MenuItem value={false}>ندارد</MenuItem>

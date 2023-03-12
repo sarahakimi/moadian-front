@@ -56,7 +56,8 @@ function ACLPage() {
     {key: "other_information", label: "سایر اطلاعات"},
     {key: "texes", label: "شامل مالیات"},
     {key: "off_percent_status", label: "شامل تخفیف"},
-    {key: "off_percent", label: "درصد تخفیف"}
+    {key: "off_percent", label: "درصد تخفیف"},
+    {key: "company", label: "شرکت"}
   ];
 
   const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {

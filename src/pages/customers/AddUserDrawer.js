@@ -89,7 +89,8 @@ const schema = yup.object().shape({
     .required('پلاک الزامی است'),
   alley: yup
     .string()
-    .required('کوچه الزامی است')
+    .required('کوچه الزامی است'),
+  company: yup.string()
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -153,7 +154,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     floor: user.floor,
     home_unit: user.home_unit,
     plaque: user.plaque,
-    alley: user.alley
+    alley: user.alley,
+    company: user.company
 
   } : emptyForm
 
@@ -341,6 +343,24 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           />
           {errors.postal_code &&
             <FormHelperText sx={{color: 'error.main'}}>{errors.postal_code.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='company'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (<TextField
+              autoFocus
+              label='نام شرکت'
+              value={value}
+              onBlur={onBlur}
+              onChange={onChange}
+              error={Boolean(errors.company)}
+              disabled={showUser}
+            />)}
+          />
+          {errors.company &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.company.message}</FormHelperText>}
         </FormControl>
         <Typography fullWidth sx={{mb: 2}}>آدرس</Typography>
         <FormControl fullWidth sx={{mb: 4}}>
