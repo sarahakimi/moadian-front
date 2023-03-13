@@ -348,7 +348,7 @@ function ACLPage() {
     setValue('senderPhonePrefix', '', {shouldTouch: true})
     setValue('senderCounty', '', {shouldTouch: true})
 
-    setSelectedSenderOstan(ostan.find(element => element.name === sender.provence)?.id)
+    setSelectedSenderOstan('')
     setValue('senderCity', '', {shouldTouch: true})
     setValue('senderCodePosti', '', {shouldTouch: true})
     setValue('senderMainRoard', '', {shouldTouch: true})
@@ -384,6 +384,30 @@ function ACLPage() {
 
 
     handleRecieverClose()
+  }
+
+  const emptyReciever = () => {
+    setHasReciever(false)
+    setValue('recieverName', '', {shouldTouch: true})
+    setValue('recieverCodeMelli', '', {shouldTouch: true})
+    setValue('recieverCompany', '', {shouldTouch: true})
+    setValue('recieverMobile', '', {shouldTouch: true})
+    setValue('recieverPhone', '', {shouldTouch: true})
+    setValue('recieverPhonePrefix', '', {shouldTouch: true})
+    setValue('recieverCounty', '', {shouldTouch: true})
+
+    setSelectedRecieverOstan('')
+    setValue('recieverCity', '', {shouldTouch: true})
+    setValue('recieverCodePosti', '', {shouldTouch: true})
+    setValue('recieverMainRoard', '', {shouldTouch: true})
+    setValue('recieverSubRoad', '', {shouldTouch: true})
+    setValue('recieverAlley', '', {shouldTouch: true})
+    setValue('recieverPlaque', '', {shouldTouch: true})
+    setValue('recieverFloor', '', {shouldTouch: true})
+    setValue('recieverUnit', '', {shouldTouch: true})
+    setValue('recieverOtherInfo', '', {shouldTouch: true})
+
+
   }
 
   return (
@@ -866,7 +890,8 @@ function ACLPage() {
         }, mb: 5
       }}>
         <CardHeader title='گیرنده'
-                    subheader={hasSender ? <Button onClick={emptySender} color="error">حذف مشتری انتخاب شده</Button> :
+                    subheader={hasReciever ?
+                      <Button onClick={emptyReciever} color="error">حذف مشتری انتخاب شده</Button> :
                       <Button onClick={handleRecieverOpen}>جستجوی مشتری</Button>}/>
         <Modal
           open={recieverOpen}
