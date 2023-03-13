@@ -337,6 +337,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           reset(emptyForm)
           setSenderLatLang([51.3347, 35.7219])
           setRecieverLatLang([51.3347, 35.7219])
+          setChange(true)
+          toggle()
         })
         , {
           loading: 'در حال ثبت سفارش',
@@ -349,6 +351,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           reset(emptyForm)
           setSenderLatLang([51.3347, 35.7219])
           setRecieverLatLang([51.3347, 35.7219])
+          setChange(true)
+          toggle()
         })
         , {
           loading: 'در حال ثبت سفارش',
@@ -1437,7 +1441,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         onChange={onChange}
                         error={Boolean(errors.weight)}
                         dir='ltr'
-                        disabled={showUser}
+
                       />
                     )}
                   />
