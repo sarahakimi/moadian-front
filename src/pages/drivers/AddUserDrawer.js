@@ -168,7 +168,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='کدملی'
                   value={value}
                   onBlur={onBlur}
@@ -191,7 +191,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='نام و نام خانوادگی'
                   value={value}
                   onBlur={onBlur}
@@ -210,7 +210,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='موبایل'
                   value={value}
                   onBlur={onBlur}
@@ -263,7 +263,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='وسیله نقلیه'
                   value={value}
                   onBlur={onBlur}
@@ -282,7 +282,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='شماره وسیله نقلیه'
                   value={value}
                   onBlur={onBlur}
@@ -335,7 +335,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='نام کاربری'
                   value={value}
                   onBlur={onBlur}
@@ -397,7 +397,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           <DialogContentText id='alert-dialog-description'>راننده مورد نظر ایجاد شد</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} autoFocus>
+          <Button onClick={handleDialogClose}>
             متوجه شدم
           </Button>
         </DialogActions>

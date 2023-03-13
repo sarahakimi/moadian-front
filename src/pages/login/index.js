@@ -230,7 +230,7 @@ function LoginPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
-                      autoFocus
+
                       label='نام کاربری'
                       value={value}
                       onBlur={onBlur}

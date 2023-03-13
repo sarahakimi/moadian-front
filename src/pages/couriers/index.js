@@ -9,9 +9,7 @@ import {styled} from '@mui/material/styles'
 import Paper from '@mui/material/Paper'
 import http from 'services/http'
 import CustomChip from '@core/components/mui/chip'
-import Snackbar from "@mui/material/Snackbar";
-import {Alert} from "@mui/material";
-import Loading from "../../@core/components/loading/loading";
+import toast from "react-hot-toast";
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -30,17 +28,11 @@ const userStatusObj = {
 }
 
 function ACLPage() {
-  const [loading, setLoading] = useState(false)
+
   const [pageSize, setPageSize] = useState(10)
   const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc'})
   const [data, setData] = useState([])
   const [change, setChange] = useState(true)
-
-  const [alert, setAlert] = useState({
-    open: false,
-    variant: "",
-    message: ""
-  })
 
   const filterOperators = getGridStringOperators().filter(({value}) =>
     ['contains' /* add more over time */].includes(value),
@@ -84,7 +76,7 @@ function ACLPage() {
   ]
 
   useEffect(() => {
-    setLoading(true)
+    const toastId = toast.loading("در حال دریافت اطلاعات")
     http
       .get('company/all', sortModel, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
@@ -94,12 +86,13 @@ function ACLPage() {
           setData([])
         } else setData(response.data)
         setChange(false)
-        setLoading(false)
-      })
-      .catch((err) => {
-        setLoading(false)
-        setAlert({open: true, message: err.response.data.message, variant: "error"})
-      })
+        toast.dismiss(toastId)
+        toast.success("انجام شد")
+      }).catch((err) => {
+      const errorMessage = err?.response?.data?.message ? err?.response?.data?.message : "خطایی رخ داده است"
+      toast.error(errorMessage)
+    })
+
   }, [sortModel, change])
 
 
@@ -123,7 +116,6 @@ function ACLPage() {
 
   const handleFilterChange = useCallback((filterModel) => {
 
-    console.log(filterModel)
     setFilter(filterModel)
     if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
       setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
@@ -133,9 +125,6 @@ function ACLPage() {
     }
   }, [filter, setFilter]);
 
-  const handleSnackbarClose = () => {
-    setAlert({open: false, message: "", variant: ""})
-  };
 
   return (
     <Grid container spacing={6}>
@@ -161,7 +150,7 @@ function ACLPage() {
               page={page}
               rowCount={50}
               onFilterModelChange={handleFilterChange}
-              isLoading={loading}
+
               components={{
                 Toolbar: GridToolbarFilterButton,
               }}
@@ -169,18 +158,7 @@ function ACLPage() {
           </GridContainer>
         </Card>
       </Grid>
-      <Snackbar open={alert.open} autoHideDuration={6000} onClose={handleSnackbarClose} anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
-      }}
-                key="TransitionUp"
-                variant="error"
-      >
-        <Alert severity={alert.variant} sx={{width: '100%'}}>
-          {alert.message}
-        </Alert>
-      </Snackbar>
-      <Loading open={loading}/>
+
     </Grid>
   )
 }

@@ -70,7 +70,7 @@ export default function RowOptions({
       >
         <MenuItem onClick={() => handleShowCompany(company)}>
           <EyeOutline fontSize='small' sx={{mr: 2}}/>
-          نمایش کاربر
+          نمایش
         </MenuItem>
         <MenuItem onClick={() => handleEdit(company)}>
           <PencilOutline fontSize='small' sx={{mr: 2}}/>

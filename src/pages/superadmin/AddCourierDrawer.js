@@ -147,7 +147,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
                   inputProps={{maxLength: 30}}
-                  autoFocus
+
                   label='نام شرکت'
                   value={value}
                   onBlur={onBlur}
@@ -167,7 +167,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='اعتبار اکانت (روز)'
                   value={value}
                   onBlur={onBlur}
@@ -194,7 +194,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='کدملی'
                   value={value}
                   onBlur={onBlur}
@@ -217,7 +217,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='نام و نام خانوادگی'
                   value={value}
                   onBlur={onBlur}
@@ -238,7 +238,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='موبایل'
                   value={value}
                   onBlur={onBlur}
@@ -260,7 +260,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='نام کاربری'
                   value={value}
                   onBlur={onBlur}

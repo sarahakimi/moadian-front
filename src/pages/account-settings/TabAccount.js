@@ -4,12 +4,8 @@ import {useEffect, useMemo, useState} from 'react'
 // ** MUI Imports
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import Alert from '@mui/material/Alert'
 import TextField from '@mui/material/TextField'
-import AlertTitle from '@mui/material/AlertTitle'
-import IconButton from '@mui/material/IconButton'
 import CardContent from '@mui/material/CardContent'
-import Close from 'mdi-material-ui/Close'
 import {Controller, useForm} from "react-hook-form";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -19,9 +15,8 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import * as yup from "yup";
-import {Snackbar} from "@mui/material";
+import toast from "react-hot-toast";
 import {useAuth} from "../../hooks/useAuth";
-import Loading from "../../@core/components/loading/loading";
 import http from "../../services/http";
 import Chip from "../../@core/components/mui/chip";
 
@@ -45,9 +40,7 @@ const schema = yup.object().shape({
 
 function TabAccount() {
   const {user} = useAuth()
-  const [openAlert, setOpenAlert] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [alertMsg, setAletMsg] = useState('')
+
   // eslint-disable-next-line camelcase
   const [hub_ids, sethub_ids] = useState([])
   const [roles, setRoles] = useState([])
@@ -69,39 +62,38 @@ function TabAccount() {
 
 
   useEffect(() => {
-    setLoading(true)
+    const toastId = toast.loading("در حال دریافت اطلاعات")
     http
       .get('user/me', {}, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
-        setLoading(false)
+
         if (!response.data === null) {
           reset(response.data)
-          console.log("data", response.data)
         }
 
       })
-      .catch(err => {
-        setLoading(false)
-        setOpenAlert(true)
-
-        setAletMsg(err.response.data.message)
+      .catch((err) => {
+        const errorMessage = err?.response?.data?.message ? err?.response?.data?.message : "خطایی رخ داده است"
+        toast.error(errorMessage)
       })
-    setLoading(true)
+
     http
       .get('hub/company/all', {}, {
         Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
       })
       .then(async response => {
-        setLoading(false)
+        toast.dismiss(toastId)
+        toast.success("انجام شد")
         if (response.data != null) {
           sethub_ids(response.data)
         } else sethub_ids([])
-        console.log(hub_ids)
+
       })
-      .catch(() => {
-        setLoading(false)
+      .catch((err) => {
+        const errorMessage = err?.response?.data?.message ? err?.response?.data?.message : "خطایی رخ داده است"
+        toast.error(errorMessage)
       })
     http
       .get('user/roles', {}, {
@@ -111,10 +103,10 @@ function TabAccount() {
         if (response.data != null) {
           setRoles(response.data)
         } else setRoles([])
-        console.log(roles)
+
       })
       .catch(() => {
-        setLoading(false)
+
 
       })
   }, [setFormData])
@@ -139,7 +131,7 @@ function TabAccount() {
                 control={control}
                 rules={{required: true}}
                 render={({field: {value, onChange, onBlur}}) => (<TextField
-                  autoFocus
+
                   label='کدملی'
                   value={value}
                   onBlur={onBlur}
@@ -162,7 +154,7 @@ function TabAccount() {
                 control={control}
                 rules={{required: true}}
                 render={({field: {value, onChange, onBlur}}) => (<TextField
-                  autoFocus
+
                   label='نام و نام خانوادگی'
                   value={value}
                   onBlur={onBlur}
@@ -182,7 +174,7 @@ function TabAccount() {
                 control={control}
                 rules={{required: true}}
                 render={({field: {value, onChange, onBlur}}) => (<TextField
-                  autoFocus
+
                   label='موبایل'
                   value={value}
                   onBlur={onBlur}
@@ -205,7 +197,7 @@ function TabAccount() {
                 control={control}
                 rules={{required: true}}
                 render={({field: {value, onChange, onBlur}}) => (<TextField
-                  autoFocus
+
                   label='نام کاربری'
                   value={value}
                   onBlur={onBlur}
@@ -289,30 +281,11 @@ function TabAccount() {
               {errors.roles && <FormHelperText sx={{color: 'error.main'}}>{errors.roles.message}</FormHelperText>}
             </FormControl>
           </Grid>
-          <Snackbar open={openAlert} autoHideDuration={6000} onClose={() => setOpenAlert(false)} anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-                    key="TransitionUp"
-                    variant="error"
-          >
-            <Alert
-              severity='error'
-              sx={{'& a': {fontWeight: 400}}}
-              action={
-                <IconButton size='small' color='inherit' aria-label='close'>
-                  <Close fontSize='inherit'/>
-                </IconButton>
-              }
-            >
-              <AlertTitle sx={{mb: '.15rem'}}>{alertMsg}</AlertTitle>
-            </Alert>
-          </Snackbar>
 
 
         </Grid>
       </form>
-      <Loading open={loading}/>
+      
     </CardContent>
   )
 }

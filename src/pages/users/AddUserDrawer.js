@@ -181,7 +181,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='کدملی'
               value={value}
               onBlur={onBlur}
@@ -201,7 +201,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='نام و نام خانوادگی'
               value={value}
               onBlur={onBlur}
@@ -218,7 +218,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='موبایل'
               value={value}
               onBlur={onBlur}
@@ -238,7 +238,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='نام کاربری'
               value={value}
               onBlur={onBlur}

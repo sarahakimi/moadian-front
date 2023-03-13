@@ -208,7 +208,7 @@ function TabAccount() {
                 rules={{required: true}}
                 render={({field: {value, onChange, onBlur}}) => (
                   <TextField
-                    autoFocus
+
                     label='نام هاب'
                     value={value}
                     onBlur={onBlur}
@@ -229,7 +229,7 @@ function TabAccount() {
                 rules={{required: true}}
                 render={({field: {value, onChange, onBlur}}) => (
                   <TextField
-                    autoFocus
+
                     label='فکس'
                     value={value}
                     onBlur={onBlur}
@@ -252,7 +252,7 @@ function TabAccount() {
                 rules={{required: true}}
                 render={({field: {value, onChange, onBlur}}) => (
                   <TextField
-                    autoFocus
+
                     label='تلفن'
                     value={value}
                     onBlur={onBlur}

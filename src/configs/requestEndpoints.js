@@ -27,7 +27,8 @@ export default {
   pricingPerKilometer: "pricing/per_kilometer",
   pricinPerSizeOfCar: (size) => `pricing/size_of_car/${size}`,
   pricingOtherOptions: "pricing/other_options",
-  getPricingSizeOfCar: "pricing/size_of_car"
+  getPricingSizeOfCar: "pricing/size_of_car",
+  singleOrder: (id) => `ordering/admin/${id}`
 
 
 }

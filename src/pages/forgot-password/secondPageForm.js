@@ -81,7 +81,7 @@ export default function SecondPageForm({setPage, firstFormData}) {
           control={control}
           render={({field: {value, onChange, onBlur}}) => (
             <TextField
-              autoFocus
+
               label='کد بازیابی'
               value={value}
               onBlur={onBlur}
@@ -99,7 +99,7 @@ export default function SecondPageForm({setPage, firstFormData}) {
           control={control}
           render={({field: {value, onChange, onBlur}}) => (
             <TextField
-              autoFocus
+
               label='کلمه عبور'
               value={value}
               onBlur={onBlur}

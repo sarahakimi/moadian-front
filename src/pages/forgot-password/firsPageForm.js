@@ -122,7 +122,7 @@ export default function FirstPageForm({setPage, setFirstFormData}) {
           rules={{required: true}}
           render={({field: {value, onChange, onBlur}}) => (
             <TextField
-              autoFocus
+
               label='موبایل'
               value={value}
               onBlur={onBlur}

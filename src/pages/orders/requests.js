@@ -12,7 +12,7 @@ export const fetchData = async (sortModel) => {
 
 export const deleteUser = async (id) => {
   const response = await http
-    .delete(urls.singleMarketer(id), {
+    .delete(urls.singleOrder(id), {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
@@ -21,7 +21,7 @@ export const deleteUser = async (id) => {
 
 export const registerUser = async (data) => {
   const response = await http
-    .post(urls.registerMarketer, data, {
+    .post(urls.createOrder, data, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
@@ -31,7 +31,7 @@ export const registerUser = async (data) => {
 
 export const editUser = async (id, data) => {
   const response = await http
-    .put(urls.singleMarketer(id), data, {
+    .put(urls.singleOrder(id), data, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 

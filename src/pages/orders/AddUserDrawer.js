@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import {styled} from '@mui/material/styles'
@@ -17,9 +17,10 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import {ostan, shahr} from "iran-cities-json";
 import toast from "react-hot-toast";
-import {editUser, registerUser} from "./requests";
 import Table from "../newOrder/table";
 import Map from "../newOrder/map";
+import {createOrder} from "../newOrder/requests";
+import {editUser} from "./requests";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -142,7 +143,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   // eslint-disable-next-line camelcase
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [selectedRecieverOstan, setSelectedRecieverOstan] = useState('')
-  const [hasDiscount, setHasDiscount] = useState(false)
+  const [hasSender, setHasSender] = useState(false)
+  const [hasReciever, setHasReciever] = useState(false)
 
 
   const emptyForm = {
@@ -197,22 +199,66 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     setSelectedSenderOstan(ostan.find(element => element.name === event.target.innerText)?.id)
   }
 
+  function onChangeRecieverOstan(event, onChange, values) {
+    onChange(values)
+    setSelectedRecieverOstan(ostan.find(element => element.name === event.target.innerText)?.id)
+  }
+
+  useEffect(() => {
+    if (showUser || edit) {
+      setHasSender(true)
+      setHasReciever(true)
+      setSenderLatLang([user.sender_customer.lang, user.sender_customer.lat])
+      setSenderLatLang([user.receiver_customer.lang, user.receiver_customer.lat])
+    }
+  }, [])
 
   const defaultValues = user ? {
-    natural_code: user.natural_code,
-    name: user.name,
-    phone: user.phone,
-    tel_number: user.tel_number,
-    postal_code: user.postal_code,
-    provence: user.provence,
-    city: user.city,
-    address: user.address,
-    other_information: user.other_information,
-    texes: user.texes,
-    off_percent_status: user.off_percent_status,
-    off_percent: user.off_percent,
-    username: user.username,
-    password: '******',
+    senderCodeMelli: user.sender_customer.identity_code,
+    senderName: user.sender_customer.name,
+    senderMobile: user.sender_customer.mobile,
+    senderPhone: user.sender_customer.tel,
+    senderPhonePrefix: user.sender_customer.area_code,
+    senderCompany: user.sender_customer.companyName,
+    senderCounty: user.sender_customer.provence,
+    senderCity: user.sender_customer.city,
+    senderCodePosti: user.sender_customer.postal_code,
+    senderOtherInfo: user.sender_customer.other_information,
+    senderMainRoard: user.sender_customer.main_street,
+    senderSubRoad: user.sender_customer.side_street,
+    senderAlley: user.sender_customer.alley,
+    senderPlaque: user.sender_customer.plaque,
+    senderFloor: user.sender_customer.floor,
+    senderUnit: user.sender_customer.home_unit,
+    recieverCodeMelli: user.receiver_customer.identity_code,
+    recieverName: user.receiver_customer.name,
+    recieverMobile: user.receiver_customer.mobile,
+    recieverPhone: user.receiver_customer.tel,
+    recieverPhonePrefix: user.receiver_customer.area_code,
+    recieverCompany: user.receiver_customer.companyName,
+    recieverCounty: user.receiver_customer.provence,
+    recieverCity: user.receiver_customer.city,
+    recieverCodePosti: user.receiver_customer.postal_code,
+    recieverMainRoard: user.receiver_customer.main_street,
+    recieverSubRoad: user.receiver_customer.side_street,
+    recieverAlley: user.receiver_customer.alley,
+    recieverPlaque: user.receiver_customer.plaque,
+    recieverFloor: user.receiver_customer.floor,
+    recieverUnit: user.receiver_customer.home_unit,
+    receiverOtherInfo: user.receiver_customer.other_information,
+    weight: user.product.weight,
+    length: user.product.length,
+    width: user.product.width,
+    height: user.product.height,
+    money: user.product.product_cost,
+    car: user.product.vehicle,
+    needsSpecialCarry: user.product.special_vehicle_required,
+    SpecialBox: user.product.special_product,
+
+    // paymentMethod: user.product.paymentMethod,
+    needsEvacuate: user.product.product_unloading_required,
+    needsLoading: user.product.product_loading_required,
+    needsMovement: user.product.movement_required
   } : emptyForm
 
 
@@ -222,68 +268,191 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     defaultValues, mode: 'onChange', resolver: yupResolver(schema)
   })
 
-  const onsetSenderCustomer = () => {
-
-    console.log(sender)
-    setValue('senderName', sender.name, {shouldTouch: true})
-    setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
-    setValue('senderCompany', sender.identity_code, {shouldTouch: true})
-    setValue('senderMobile', sender.phone, {shouldTouch: true})
-    setValue('senderPhone', sender.tel_number, {shouldTouch: true})
-    setValue('senderPhonePrefix', sender.identity_code, {shouldTouch: true})
-    setValue('senderCounty', sender.identity_code, {shouldTouch: true})
-    setValue('senderCity', sender.city, {shouldTouch: true})
-    setValue('senderCodePosti', sender.identity_code, {shouldTouch: true})
-    setValue('senderMainRoard', sender.identity_code, {shouldTouch: true})
-    setValue('senderSubRoad', sender.identity_code, {shouldTouch: true})
-    setValue('senderAlley', sender.identity_code, {shouldTouch: true})
-    setValue('senderPlaque', sender.identity_code, {shouldTouch: true})
-    setValue('senderFloor', sender.identity_code, {shouldTouch: true})
-    setValue('senderUnit', sender.identity_code, {shouldTouch: true})
-
-
-    handleCloseMODAL()
-  }
-
 
   const handleClose = () => {
     toggle()
     reset(emptyForm)
   }
 
-  const onDiscount = (ev, onChange) => {
-    onChange(ev)
-    setHasDiscount(ev.target.value)
-  }
 
   const onSubmit = data => {
+    const config = {
+      "sender_customer": {
+        "identity_code": data.senderCodeMelli,
+        "name": data.senderName,
+        "companyName": data.senderCompany,
+        "mobile": data.senderMobile,
+        "tel": data.senderPhone,
+        "area_code": data.senderPhonePrefix,
+        "provence": data.senderCounty,
+        "city": data.senderCity,
+        "postal_code": data.senderCodePosti,
+        "main_street": data.senderMainRoard,
+        "side_street": data.senderSubRoad,
+        "alley": data.senderAlley,
+        "plaque": data.senderPlaque,
+        "floor": data.senderFloor,
+        "home_unit": data.senderUnit,
+        "other_information": data.senderOtherInfo,
+        "lat": sendertLatLang[1],
+        "lang": sendertLatLang[0]
+      },
+      "receiver_customer": {
+        "identity_code": data.recieverCodeMelli,
+        "name": data.recieverName,
+        "companyName": data.recieverCompany,
+        "mobile": data.recieverMobile,
+        "tel": data.recieverPhone,
+        "area_code": data.recieverPhonePrefix,
+        "provence": data.recieverCounty,
+        "city": data.recieverCity,
+        "postal_code": data.recieverCodePosti,
+        "main_street": data.recieverMainRoard,
+        "side_street": data.recieverSubRoad,
+        "alley": data.recieverAlley,
+        "plaque": data.recieverAlley,
+        "floor": data.recieverFloor,
+        "home_unit": data.recieverUnit,
+        "other_information": data.receiverOtherInfo,
+        "lat": recieverLatLang[1],
+        "lang": recieverLatLang[0]
+      },
+      "product": {
+        "weight": data.weight,
+        "length": data.length,
+        "width": data.width,
+        "height": data.height,
+        "product_cost": data.money,
+        "vehicle": data.car,
+        "special_vehicle_required": data.needsSpecialCarry,
+        "special_product": data.SpecialBox,
+        "movement_required": data.needsMovement,
+        "product_loading_required": data.needsLoading,
+        "product_unloading_required": data.needsEvacuate
+      }
+    }
     if (edit) {
-      // eslint-disable-next-line no-param-reassign
-      delete data.password
       toast.promise(
-        editUser(user.id, data)
-          .then(() => {
-            setChange(true)
-            handleClose()
-          })
+        editUser(user.order.id, config).then(() => {
+          reset(emptyForm)
+          setSenderLatLang([51.3347, 35.7219])
+          setRecieverLatLang([51.3347, 35.7219])
+        })
         , {
-          loading: 'در حال ویرایش کاربر',
-          success: 'کاربر ویرایش شد',
+          loading: 'در حال ثبت سفارش',
+          success: 'سفارش ثبت شد',
           error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     } else {
       toast.promise(
-        registerUser(data)
-          .then(() => {
-            setChange(true)
-            handleClose()
-          })
+        createOrder(config).then(() => {
+          reset(emptyForm)
+          setSenderLatLang([51.3347, 35.7219])
+          setRecieverLatLang([51.3347, 35.7219])
+        })
         , {
-          loading: 'در حال ایجاد کاربر',
-          success: 'کاربر ایجاد شد',
+          loading: 'در حال ثبت سفارش',
+          success: 'سفارش ثبت شد',
           error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     }
+  }
+
+  const onsetSenderCustomer = () => {
+    setHasSender(true)
+    setValue('senderName', sender.name, {shouldTouch: true})
+    setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
+    setValue('senderCompany', sender.company, {shouldTouch: true})
+    setValue('senderMobile', sender.phone, {shouldTouch: true})
+    setValue('senderPhone', sender.tel_number, {shouldTouch: true})
+    setValue('senderPhonePrefix', sender.area_code, {shouldTouch: true})
+    setValue('senderCounty', sender.provence, {shouldTouch: true})
+
+    setSelectedSenderOstan(ostan.find(element => element.name === sender.provence)?.id)
+    setValue('senderCity', sender.city, {shouldTouch: true})
+    setValue('senderCodePosti', sender.postal_code, {shouldTouch: true})
+    setValue('senderMainRoard', sender.main_street, {shouldTouch: true})
+    setValue('senderSubRoad', sender.side_street, {shouldTouch: true})
+    setValue('senderAlley', sender.alley, {shouldTouch: true})
+    setValue('senderPlaque', sender.plaque, {shouldTouch: true})
+    setValue('senderFloor', sender.floor, {shouldTouch: true})
+    setValue('senderUnit', sender.home_unit, {shouldTouch: true})
+    setValue('senderOtherInfo', sender.other_information, {shouldTouch: true})
+
+
+    handleCloseMODAL()
+  }
+
+  const emptySender = () => {
+    setHasSender(false)
+    setValue('senderName', '', {shouldTouch: true})
+    setValue('senderCodeMelli', '', {shouldTouch: true})
+    setValue('senderCompany', '', {shouldTouch: true})
+    setValue('senderMobile', '', {shouldTouch: true})
+    setValue('senderPhone', '', {shouldTouch: true})
+    setValue('senderPhonePrefix', '', {shouldTouch: true})
+    setValue('senderCounty', '', {shouldTouch: true})
+
+    setSelectedSenderOstan('')
+    setValue('senderCity', '', {shouldTouch: true})
+    setValue('senderCodePosti', '', {shouldTouch: true})
+    setValue('senderMainRoard', '', {shouldTouch: true})
+    setValue('senderSubRoad', '', {shouldTouch: true})
+    setValue('senderAlley', '', {shouldTouch: true})
+    setValue('senderPlaque', '', {shouldTouch: true})
+    setValue('senderFloor', '', {shouldTouch: true})
+    setValue('senderUnit', '', {shouldTouch: true})
+    setValue('senderOtherInfo', '', {shouldTouch: true})
+
+  }
+
+  const onsetRecieverCustomer = () => {
+    setHasReciever(true)
+    setValue('recieverName', reciever.name, {shouldTouch: true})
+    setValue('recieverCodeMelli', reciever.natural_code, {shouldTouch: true})
+    setValue('recieverCompany', reciever.company, {shouldTouch: true})
+    setValue('recieverMobile', reciever.phone, {shouldTouch: true})
+    setValue('recieverPhone', reciever.tel_number, {shouldTouch: true})
+    setValue('recieverPhonePrefix', reciever.area_code, {shouldTouch: true})
+    setValue('recieverCounty', reciever.provence, {shouldTouch: true})
+
+    setSelectedRecieverOstan(ostan.find(element => element.name === sender.provence)?.id)
+    setValue('recieverCity', reciever.city, {shouldTouch: true})
+    setValue('recieverCodePosti', reciever.postal_code, {shouldTouch: true})
+    setValue('recieverMainRoard', reciever.main_street, {shouldTouch: true})
+    setValue('recieverSubRoad', reciever.side_street, {shouldTouch: true})
+    setValue('recieverAlley', reciever.alley, {shouldTouch: true})
+    setValue('recieverPlaque', reciever.plaque, {shouldTouch: true})
+    setValue('recieverFloor', reciever.floor, {shouldTouch: true})
+    setValue('recieverUnit', reciever.home_unit, {shouldTouch: true})
+    setValue('recieverOtherInfo', reciever.other_information, {shouldTouch: true})
+
+
+    handleRecieverClose()
+  }
+
+  const emptyReciever = () => {
+    setHasReciever(false)
+    setValue('recieverName', '', {shouldTouch: true})
+    setValue('recieverCodeMelli', '', {shouldTouch: true})
+    setValue('recieverCompany', '', {shouldTouch: true})
+    setValue('recieverMobile', '', {shouldTouch: true})
+    setValue('recieverPhone', '', {shouldTouch: true})
+    setValue('recieverPhonePrefix', '', {shouldTouch: true})
+    setValue('recieverCounty', '', {shouldTouch: true})
+
+    setSelectedRecieverOstan('')
+    setValue('recieverCity', '', {shouldTouch: true})
+    setValue('recieverCodePosti', '', {shouldTouch: true})
+    setValue('recieverMainRoard', '', {shouldTouch: true})
+    setValue('recieverSubRoad', '', {shouldTouch: true})
+    setValue('recieverAlley', '', {shouldTouch: true})
+    setValue('recieverPlaque', '', {shouldTouch: true})
+    setValue('recieverFloor', '', {shouldTouch: true})
+    setValue('recieverUnit', '', {shouldTouch: true})
+    setValue('recieverOtherInfo', '', {shouldTouch: true})
+
+
   }
 
   return (<Drawer
@@ -307,11 +476,22 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       },
     }}>
       <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-        <Card sx={{mb: 5}}>
-          <CardHeader title='فرستنده' subheader={<Button onClick={handleOpen}>جستجوی مشتری</Button>}/>
+        <Card sx={{
+          p: 5, "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: "blue",
+          },
+          "& 	.MuiInputLabel-root.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }, mb: 5
+        }}>
+          <CardHeader title='فرستنده'
+                      subheader={hasSender ?
+                        <Button onClick={emptySender} color="error" style={{display: showUser ? 'none' : undefined}}>حذف
+                          مشتری انتخاب شده</Button> :
+                        <Button onClick={handleOpen}>جستجوی مشتری</Button>}/>
           <Modal
             open={openModal}
-            onClose={handleCloseMODAL}
+            onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
@@ -325,8 +505,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 alignItems="center"
 
               >
-                <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}
-                        disabled>انتخاب </Button>
+                <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}>انتخاب </Button>
                 <Button variant="contained" color="error" onClick={handleCloseMODAL}>بستن</Button>
               </Box>
 
@@ -344,7 +523,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='کدملی'
                         value={value}
                         onBlur={onBlur}
@@ -352,7 +531,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         error={Boolean(errors.senderCodeMelli)}
                         inputProps={{maxLength: 10}}
                         dir='ltr'
-                        disabled={showUser}
+                        disabled={hasSender}
                       />
                     )}
                   />
@@ -369,7 +548,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='نام و نام خانوادگی'
                         value={value}
                         onBlur={onBlur}
@@ -392,7 +572,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='موبایل'
                         value={value}
                         onBlur={onBlur}
@@ -401,6 +581,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         inputProps={{maxLength: 11}}
                         placeholder='09*********'
                         dir='ltr'
+                        disabled={hasSender}
                       />
                     )}
                   />
@@ -417,7 +598,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='تلفن'
                         value={value}
                         onBlur={onBlur}
@@ -425,6 +606,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         error={Boolean(errors.senderPhone)}
                         dir='ltr'
                         inputProps={{maxLength: 9}}
+                        disabled={hasSender}
                       />
                     )}
                   />
@@ -441,7 +623,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='پیش شماره'
                         value={value}
                         onBlur={onBlur}
@@ -450,6 +632,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         dir='ltr'
                         placeholder='021'
                         inputProps={{maxLength: 3}}
+                        disabled={hasSender}
                       />
                     )}
                   />
@@ -466,12 +649,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='شرکت'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.senderCompany)}
+                        disabled={hasSender}
 
                       />
                     )}
@@ -496,6 +680,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
                         value={value}
                         disableClearable
+                        disabled={hasSender}
                         renderInput={params => (
                           <TextField
                             /* eslint-disable-next-line react/jsx-props-no-spreading */
@@ -524,6 +709,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     render={({field: {value, onChange, onBlur}}) => (
                       <Autocomplete
                         onBlur={onBlur}
+                        disabled={hasSender}
                         select
                         options={shahr
                           .filter(element => element.ostan === selectedSenderOstan)
@@ -558,7 +744,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='کدپستی'
                         value={value}
                         onBlur={onBlur}
@@ -579,10 +766,11 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                   <Controller
                     name='senderOtherInfo'
                     control={control}
-                    rules={{required: true}}
+
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='سایر اطلاعات'
                         value={value}
                         onBlur={onBlur}
@@ -599,7 +787,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 </FormControl>
               </Grid>
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant='p' component='p'>
+                <Typography variant='p' component='p' mb={4}>
                   آدرس
                 </Typography>
               </Grid>
@@ -611,13 +799,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
+                        disabled={hasSender}
                         label='خیابان اصلی'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.senderMainRoard)}
-                        inputProps={{maxLength: 10}}
+
                       />
                     )}
                   />
@@ -634,13 +823,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='خیابان فرعی'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.senderSubRoad)}
-                        inputProps={{maxLength: 10}}
+
                       />
                     )}
                   />
@@ -657,13 +847,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='کوچه'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.senderAlley)}
-                        inputProps={{maxLength: 10}}
+
                       />
                     )}
                   />
@@ -680,13 +871,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='پلاک'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.senderPlaque)}
-                        inputProps={{maxLength: 10}}
+
                       />
                     )}
                   />
@@ -703,13 +895,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='طبقه'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.senderFloor)}
-                        inputProps={{maxLength: 10}}
+
                       />
                     )}
                   />
@@ -726,7 +919,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={hasSender}
+
                         label='واحد'
                         value={value}
                         onBlur={onBlur}
@@ -753,8 +947,19 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             </Grid>
           </CardContent>
         </Card>
-        <Card sx={{mb: 5}}>
-          <CardHeader title='گیرنده' subheader={<Button onClick={handleRecieverOpen}>جستجوی مشتری</Button>}/>
+        <Card sx={{
+          p: 5, "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: "blue",
+          },
+          "& 	.MuiInputLabel-root.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }, mb: 5
+        }}>
+          <CardHeader title='گیرنده'
+                      subheader={hasReciever ?
+                        <Button onClick={emptyReciever} color="error" style={{display: showUser ? 'none' : undefined}}>حذف
+                          مشتری انتخاب شده</Button> :
+                        <Button onClick={handleRecieverOpen}>جستجوی مشتری</Button>}/>
           <Modal
             open={recieverOpen}
             onClose={handleRecieverClose}
@@ -771,8 +976,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 alignItems="center"
 
               >
-                <Button variant="contained" color="primary" onClick={onsetSenderCustomer} sx={{mx: 2}}
-                        disabled>انتخاب </Button>
+                <Button variant="contained" color="primary" onClick={onsetRecieverCustomer} sx={{mx: 2}}
+                >انتخاب </Button>
                 <Button variant="contained" color="error" onClick={handleRecieverClose}>بستن</Button>
               </Box>
 
@@ -790,7 +995,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='کدملی'
                         value={value}
                         onBlur={onBlur}
@@ -798,6 +1003,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         error={Boolean(errors.recieverCodeMelli)}
                         inputProps={{maxLength: 10}}
                         dir='ltr'
+                        disabled={hasReciever}
                       />
                     )}
                   />
@@ -814,13 +1020,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='نام و نام خانوادگی'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.recieverName)}
                         inputProps={{maxLength: 50}}
+                        disabled={hasReciever}
                       />
                     )}
                   />
@@ -837,7 +1044,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='موبایل'
                         value={value}
                         onBlur={onBlur}
@@ -846,6 +1053,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         inputProps={{maxLength: 11}}
                         placeholder='09*********'
                         dir='ltr'
+                        disabled={hasReciever}
                       />
                     )}
                   />
@@ -862,7 +1070,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='تلفن'
                         value={value}
                         onBlur={onBlur}
@@ -870,6 +1078,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         error={Boolean(errors.recieverPhone)}
                         dir='ltr'
                         inputProps={{maxLength: 9}}
+                        disabled={hasReciever}
                       />
                     )}
                   />
@@ -886,7 +1095,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='پیش شماره'
                         value={value}
                         onBlur={onBlur}
@@ -895,6 +1104,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         dir='ltr'
                         placeholder='021'
                         inputProps={{maxLength: 3}}
+                        disabled={hasReciever}
                       />
                     )}
                   />
@@ -911,12 +1121,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='شرکت'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.recieverCompany)}
+                        disabled={hasReciever}
                       />
                     )}
                   />
@@ -939,6 +1150,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         options={ostan.map(element => element.name)}
                         onChange={(event, values, value) => onChangeRecieverOstan(event, onChange, values, value)}
                         value={value}
+                        disabled={hasReciever}
                         disableClearable
                         renderInput={params => (
                           <TextField
@@ -948,6 +1160,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                             variant='outlined'
                             onChange={onChange}
                             error={Boolean(errors.recieverCounty)}
+                            disabled={hasReciever}
                           />
                         )}
                       />
@@ -967,6 +1180,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     render={({field: {value, onChange, onBlur}}) => (
                       <Autocomplete
                         onBlur={onBlur}
+                        disabled={hasReciever}
                         select
                         options={shahr
                           .filter(element => element.ostan === selectedRecieverOstan)
@@ -1000,8 +1214,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='کدپستی'
+                        disabled={hasReciever}
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
@@ -1024,8 +1239,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='سایر اطلاعات'
+                        disabled={hasReciever}
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
@@ -1053,8 +1269,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='خیابان اصلی'
+                        disabled={hasReciever}
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
@@ -1076,8 +1293,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='خیابان فرعی'
+                        disabled={hasReciever}
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
@@ -1099,7 +1317,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
+                        disabled={hasReciever}
                         label='کوچه'
                         value={value}
                         onBlur={onBlur}
@@ -1122,7 +1341,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
+                        disabled={hasReciever}
                         label='پلاک'
                         value={value}
                         onBlur={onBlur}
@@ -1145,7 +1365,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
+                        disabled={hasReciever}
                         label='طبقه'
                         value={value}
                         onBlur={onBlur}
@@ -1168,8 +1389,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+
                         label='واحد'
+                        disabled={hasReciever}
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
@@ -1208,13 +1430,14 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={showUser}
                         label='وزن (گرم)'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
                         error={Boolean(errors.weight)}
                         dir='ltr'
+                        disabled={showUser}
                       />
                     )}
                   />
@@ -1230,7 +1453,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={showUser}
                         label='طول (سانتی متر)'
                         value={value}
                         onBlur={onBlur}
@@ -1252,7 +1475,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={showUser}
                         label='عرض (سانتی متر)'
                         value={value}
                         onBlur={onBlur}
@@ -1274,7 +1497,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={showUser}
                         label='ارتفاع (سانتی متر)'
                         value={value}
                         onBlur={onBlur}
@@ -1296,7 +1519,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
-                        autoFocus
+                        disabled={showUser}
                         label='ارزش کالا (تومان)'
                         value={value}
                         onBlur={onBlur}
@@ -1317,6 +1540,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <Autocomplete
+                        disabled={showUser}
                         onBlur={onBlur}
                         select
                         options={cars}
@@ -1352,13 +1576,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                       <>
                         <InputLabel>نیاز به حمل ویژه</InputLabel>
                         <Select
-                          autoFocus
+                          disabled={showUser}
                           label='نیاز به حمل ویژه'
                           value={value}
                           onBlur={onBlur}
                           onChange={onChange}
                           error={Boolean(errors.needsSpecialCarry)}
-                          defaultValue={false}
+
                         >
                           <MenuItem value>دارد</MenuItem>
                           <MenuItem value={false}>ندارد</MenuItem>
@@ -1377,18 +1601,17 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     fullWidth
                     name='SpecialBox'
                     control={control}
-                    rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <>
                         <InputLabel>بار خاص</InputLabel>
                         <Select
-                          autoFocus
+                          disabled={showUser}
                           label='بار خاص'
                           value={value}
                           onBlur={onBlur}
                           onChange={onChange}
                           error={Boolean(errors.SpecialBox)}
-                          defaultValue={false}
+
                         >
                           <MenuItem value>دارد</MenuItem>
                           <MenuItem value={false}>ندارد</MenuItem>
@@ -1424,7 +1647,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                         disableClearable
                         renderInput={params => (
                           <TextField
-
+                            disabled={showUser}
                             /* eslint-disable-next-line react/jsx-props-no-spreading */
                             {...params}
                             label='نحوه پرداخت'
@@ -1452,13 +1675,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                       <>
                         <InputLabel>نیازمند جابجابی</InputLabel>
                         <Select
-                          autoFocus
+                          disabled={showUser}
                           label='نیازمند جابجایی'
                           value={value}
                           onBlur={onBlur}
                           onChange={onChange}
                           error={Boolean(errors.needsMovement)}
-                          defaultValue={false}
+
                         >
                           <MenuItem value>دارد</MenuItem>
                           <MenuItem value={false}>ندارد</MenuItem>
@@ -1482,13 +1705,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                       <>
                         <InputLabel>نیازمند بارگیری</InputLabel>
                         <Select
-                          autoFocus
+                          disabled={showUser}
                           label='نیازمند بارگیری'
                           value={value}
                           onBlur={onBlur}
                           onChange={onChange}
                           error={Boolean(errors.needsLoading)}
-                          defaultValue={false}
+
                         >
                           <MenuItem value>دارد</MenuItem>
                           <MenuItem value={false}>ندارد</MenuItem>
@@ -1512,13 +1735,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                       <>
                         <InputLabel>نیازمند تخلیه</InputLabel>
                         <Select
-                          autoFocus
+                          disabled={showUser}
                           label='نیازمند تخلیه'
                           value={value}
                           onBlur={onBlur}
                           onChange={onChange}
                           error={Boolean(errors.needsEvacuate)}
-                          defaultValue={false}
+
                         >
                           <MenuItem value>دارد</MenuItem>
                           <MenuItem value={false}>ندارد</MenuItem>
@@ -1535,10 +1758,12 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           </CardContent>
         </Card>
 
-        <Button size='large' type='submit' variant='contained' sx={{m: 1}} disabled>
+        <Button size='large' type='submit' variant='contained' sx={{m: 1}} disabled
+                style={{display: showUser ? 'none' : undefined}}>
           محاسبه قیمت
         </Button>
-        <Button size='large' type='success' variant='contained' sx={{m: 1}}>
+        <Button size='large' type='success' variant='contained' sx={{m: 1}}
+                style={{display: showUser ? 'none' : undefined}}>
           ثبت سفارش
         </Button>
       </form>

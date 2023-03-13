@@ -29,7 +29,7 @@ const DialogForm = () => {
           <DialogContentText sx={{ mb: 3 }}>
             To subscribe to this website, please enter your email address here. We will send updates occasionally.
           </DialogContentText>
-          <TextField id='name' autoFocus fullWidth type='email' label='Email Address' />
+          <TextField id='name'  fullWidth type='email' label='Email Address' />
         </DialogContent>
         <DialogActions className='dialog-actions-dense'>
           <Button onClick={handleClose}>Disagree</Button>

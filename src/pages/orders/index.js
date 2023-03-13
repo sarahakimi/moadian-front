@@ -36,37 +36,107 @@ function ACLPage() {
   const [downloadData, setDownloadData] = useState([])
 
   const headers = [
-    {key: "id", label: "شناسه"},
-    {key: "name", label: "تام کاربر"},
-    {key: "username", label: "نام کاربری"},
-    {key: "phone", label: "موبایل"},
-    {key: "tel_number", label: "شماره تلفن"},
-    {key: "postal_code", label: "کدپستی"},
-    {key: "natural_code", label: "کدملی"},
-    {key: "provence", label: "استان"},
-    {key: "city", label: "شهر"},
-    {key: "address", label: "ادرس"},
-    {key: "created_at", label: "تاریخ ایجاد"},
-    {key: "other_information", label: "سایر اطلاعات"},
-    {key: "texes", label: "شامل مالیات"},
-    {key: "off_percent_status", label: "شامل تخفیف"},
-    {key: "off_percent", label: "درصد تخفیف"}
+    {key: 'createdAt', label: 'تاریخ ثبت'},
+    {key: 'price', label: 'مبلغ سفارش'},
+    {key: 'state', label: 'وضعیت'},
+    {key: "senderCodeMelli", label: "کدملی فرستنده"},
+    {key: "senderName", label: "نام فرستنده"},
+    {key: "senderMobile", label: "موبایل فرستنده"},
+    {key: 'senderPhone', label: "تلفن فرستنده"},
+    {key: 'senderPhonePrefix', label: "پیش شماره تلفن فرستنده"},
+    {key: 'senderCompany', label: "شرکت فرستنده"},
+    {key: 'senderCounty', label: "استان فرستنده"},
+    {key: 'senderCity', label: "شهر فرستنده"},
+    {key: 'senderCodePosti', label: "کدپستی فرستنده"},
+    {key: 'senderOtherInfo', label: "سایر اطلاعات فرستنده"},
+    {key: 'senderMainRoard', label: "خیابان اصلی فرستنده"},
+    {key: 'senderSubRoad', label: "خیابان فرعی فرستنده"},
+    {key: 'senderAlley', label: "کوچه فرستنده"},
+    {key: 'senderPlaque', label: "پلاک فرستنده"},
+    {key: 'senderFloor', label: "طبقه فرستنده"},
+    {key: 'senderUnit', label: "واحد فرستنده"},
+    {key: 'recieverCodeMelli', label: "کدملی گیرنده"},
+    {key: 'recieverName', label: "نام گیرنده"},
+    {key: 'recieverMobile', label: "موبایل گیرنده"},
+    {key: 'recieverPhone', label: "تلفن گیرنده"},
+    {key: 'recieverPhonePrefix', label: "پیش شماره گیرنده"},
+    {key: 'recieverCompany', label: "شرکت گیرنده"},
+    {key: 'recieverCounty', label: "استان گیرنده"},
+    {key: 'recieverCity', label: "شهر گیرنده"},
+    {key: 'recieverCodePosti', label: "کدپستی گیرنده"},
+    {key: 'recieverMainRoard', label: "خیابان اصلی گیرنده"},
+    {key: 'recieverSubRoad', label: "خیابان فرعی گیرنده"},
+    {key: 'recieverAlley', label: "کوچه گیرنده"},
+    {key: 'recieverPlaque', label: "پلاک گیرنده"},
+    {key: 'recieverFloor', label: "طبقه گیرنده"},
+    {key: 'recieverUnit', label: "واحد گیرنده"},
+    {key: 'receiverOtherInfo', label: "سایر اطلاعات گیرنده"},
+    {key: 'weight', label: "وزن"},
+    {key: 'length', label: "طول"},
+    {key: 'width', label: "عرض"},
+    {key: 'height', label: "ارتفاع"},
+    {key: 'money', label: "ارزش بنا به اظهار فرستنده"},
+    {key: 'car', label: "نوع ماشین حمل کننده"},
+    {key: 'needsSpecialCarry', label: "نیازمند حمل ویژه"},
+    {key: 'SpecialBox', label: "بار خاص"},
+    {key: 'paymentMethod', label: "نحوه پرداخت"},
+    {key: 'needsEvacuate', label: 'نیازمند تخلیه'},
+    {key: 'needsLoading', label: 'نیازمند بارگیری'},
+    {key: 'needsMovement', label: 'نیازمند جابجایی'}
   ];
 
   const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
     setDownloadData(response.data
-      .map((element) => {
-        const hasDiscount = element.off_percent_status ? "می باشد" : "نمی باشد"
-        const hasTexes = element.texes ? "می باشد" : "نمی باشد"
+      .map((user) => ({
+        senderCodeMelli: user.sender_customer.identity_code,
+        senderName: user.sender_customer.name,
+        senderMobile: user.sender_customer.mobile,
+        senderPhone: user.sender_customer.tel,
+        senderPhonePrefix: user.sender_customer.area_code,
+        senderCompany: user.sender_customer.companyName,
+        senderCounty: user.sender_customer.provence,
+        senderCity: user.sender_customer.city,
+        senderCodePosti: user.sender_customer.postal_code,
+        senderOtherInfo: user.sender_customer.other_information,
+        senderMainRoard: user.sender_customer.main_street,
+        senderSubRoad: user.sender_customer.side_street,
+        senderAlley: user.sender_customer.alley,
+        senderPlaque: user.sender_customer.plaque,
+        senderFloor: user.sender_customer.floor,
+        senderUnit: user.sender_customer.home_unit,
+        recieverCodeMelli: user.receiver_customer.identity_code,
+        recieverName: user.receiver_customer.name,
+        recieverMobile: user.receiver_customer.mobile,
+        recieverPhone: user.receiver_customer.tel,
+        recieverPhonePrefix: user.receiver_customer.area_code,
+        recieverCompany: user.receiver_customer.companyName,
+        recieverCounty: user.receiver_customer.provence,
+        recieverCity: user.receiver_customer.city,
+        recieverCodePosti: user.receiver_customer.postal_code,
+        recieverMainRoard: user.receiver_customer.main_street,
+        recieverSubRoad: user.receiver_customer.side_street,
+        recieverAlley: user.receiver_customer.alley,
+        recieverPlaque: user.receiver_customer.plaque,
+        recieverFloor: user.receiver_customer.floor,
+        recieverUnit: user.receiver_customer.home_unit,
+        receiverOtherInfo: user.receiver_customer.other_information,
+        weight: user.product.weight,
+        length: user.product.length,
+        width: user.product.width,
+        height: user.product.height,
+        money: user.product.product_cost,
+        car: user.product.vehicle,
+        needsSpecialCarry: user.product.special_vehicle_required,
+        SpecialBox: user.product.special_product ? "می باشد" : "نمی باشد",
 
-        return ({
-          ...element,
-          created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
-          off_percent_status: hasDiscount,
-          texes: hasTexes
-
-        })
-      })
+        // paymentMethod: user.product.paymentMethod,
+        needsEvacuate: user.product.product_unloading_required ? "می باشد" : "نمی باشد",
+        needsLoading: user.product.product_loading_required ? "می باشد" : "نمی باشد",
+        needsMovement: user.product.movement_required ? "می باشد" : "نمی باشد",
+        createdAt: moment(user.order.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
+        price: user.order.price,
+        state: user.order.state
+      }))
     )
 
   }), {
@@ -79,7 +149,7 @@ function ACLPage() {
   const toggleShowUserDrawer = () => setShowUser(!showUser)
 
   const deleteFunction = company => {
-    toast.promise(deleteUser(company.id).then(setChange(true)), {
+    toast.promise(deleteUser(company.order.id).then(setChange(true)), {
         loading: 'در حال حذف سفارش',
         success: 'با موفقیت حذف شد',
         error: (err) => err.response.data.message ? err.response.data.message : "خطایی رخ داده است",

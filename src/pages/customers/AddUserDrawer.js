@@ -235,7 +235,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='کدملی'
               value={value}
               onBlur={onBlur}
@@ -255,7 +255,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='نام و نام خانوادگی'
               value={value}
               onBlur={onBlur}
@@ -272,7 +272,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='موبایل'
               value={value}
               onBlur={onBlur}
@@ -292,7 +292,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='پیش شماره(کد سه رقمی استان)'
               value={value}
               onBlur={onBlur}
@@ -311,7 +311,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='(بدون پیش شماره) شماره تلفن'
               value={value}
               onBlur={onBlur}
@@ -330,7 +330,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='کدپستی'
               value={value}
               onBlur={onBlur}
@@ -350,7 +350,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='نام شرکت'
               value={value}
               onBlur={onBlur}
@@ -435,7 +435,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='خیابان اصلی'
               value={value}
               onBlur={onBlur}
@@ -453,7 +453,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='خیابان فرعی'
               value={value}
               onBlur={onBlur}
@@ -471,7 +471,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='کوچه'
               value={value}
               onBlur={onBlur}
@@ -489,7 +489,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='پلاک'
               value={value}
               onBlur={onBlur}
@@ -507,7 +507,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='طبقه'
               value={value}
               onBlur={onBlur}
@@ -526,7 +526,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='واحد'
               value={value}
               onBlur={onBlur}
@@ -545,7 +545,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='سایر اطلاعات'
               value={value}
               onBlur={onBlur}
@@ -569,7 +569,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               <>
                 <InputLabel>شامل مالیات</InputLabel>
                 <Select
-                  autoFocus
+
                   label='شامل مالیات'
                   value={value}
                   onBlur={onBlur}
@@ -598,7 +598,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 <InputLabel>شامل تخفیف</InputLabel>
                 <Select
                   disabled={showUser}
-                  autoFocus
+
                   label='شامل تخفیف'
                   value={value}
                   onBlur={onBlur}
@@ -621,7 +621,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='درصد تخفیف'
               value={value}
               onBlur={onBlur}
@@ -644,7 +644,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
-              autoFocus
+
               label='نام کاربری'
               value={value}
               onBlur={onBlur}

@@ -117,7 +117,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='نام شرکت'
                   value={value}
                   onBlur={onBlur}
@@ -135,7 +135,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
               rules={{required: true}}
               render={({field: {value, onChange, onBlur}}) => (
                 <TextField
-                  autoFocus
+
                   label='اعتبار اکانت (روز)'
                   value={value}
                   onBlur={onBlur}
@@ -184,7 +184,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
           <DialogContentText id='alert-dialog-description'>شرکت {company.name} ویرایش شد.</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} autoFocus>
+          <Button onClick={handleDialogClose}>
             متوجه شدم
           </Button>
         </DialogActions>
