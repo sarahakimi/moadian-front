@@ -159,7 +159,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           WebkitTextFillColor: "rgba(76,78,100,0.87)",
         }
       }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} autoComplete='off' >
           <FormControl fullWidth sx={{mb: 4}}>
             <Controller
               fullWidth

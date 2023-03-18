@@ -317,7 +317,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             render={({field: {onChange, onBlur}}) => (<>
               <InputLabel id='demo-multiple-name-label'>دسترسی ها</InputLabel>
               <Select
-                disabled={edit}
+                disabled={showUser}
                 onBlur={onBlur}
                 labelId='demo-multiple-name-label'
                 id='demo-multiple-name'

@@ -42,14 +42,15 @@ function ACLPage() {
     label: "شماره تلفن"
   }, {key: "fax", label: "فکس"}, {key: "provence", label: "استان"}, {key: "city", label: "شهر"}];
 
-  const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
+  const downloadApi = () => {
+    toast.promise(fetchData(sortModel).then(response => {
       setDownloadData(response.data)
     })
     , {
       loading: 'در حال دانلود',
       success: 'دانلود انجام شد',
       error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.از خالی نبودن موارد دانلود مطمئن شوید.",
-    })
+    })}
 
   const deleteFunction = hub => {
     toast.promise(deleteUser(hub.id).then(setChange(true)), {

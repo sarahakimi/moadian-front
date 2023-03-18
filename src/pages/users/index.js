@@ -44,7 +44,9 @@ function ACLPage() {
     {key: "created_at", label: "تاریخ ایجاد"},
   ];
 
-  const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
+  const downloadApi = () => toast.promise(
+    fetchData(sortModel).then(response => {
+
     setDownloadData(response.data.map((element) => ({
         ...element,
         created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')

@@ -63,14 +63,15 @@ function App(props) {
   const guestGuard = Component.guestGuard ?? false
   const aclAbilities = Component.acl ?? defaultACLObj
 
-  return (
+
+return (
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
           <title> زمین بار</title>
           <meta
             name='description'
-            content={`${themeConfig.templateName} – اپلیکیشن زمسین بار اپلیکیشنی برا یحمل و نقل زمینی است`}
+            content={`${themeConfig.templateName} – اپلیکیشن زمین بار اپلیکیشنی برا یحمل و نقل زمینی است`}
           />
           <meta name='keywords' content=',شرکت حساب رایانه زمین  بار, حساب رایانه, بار, زمین'/>
           <meta name='viewport' content='initial-scale=1, width=device-width'/>
@@ -87,6 +88,7 @@ function App(props) {
                       <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
                         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
                         {getLayout(<Component {...pageProps} />)}
+
                       </AclGuard>
                     </Guard>
                   </WindowWrapper>

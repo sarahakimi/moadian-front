@@ -82,7 +82,8 @@ function ACLPage() {
     {key: 'paymentMethod', label: "نحوه پرداخت"},
     {key: 'needsEvacuate', label: 'نیازمند تخلیه'},
     {key: 'needsLoading', label: 'نیازمند بارگیری'},
-    {key: 'needsMovement', label: 'نیازمند جابجایی'}
+    {key: 'needsMovement', label: 'نیازمند جابجایی'},
+    {key: 'isSuburb', label: 'برون شهری'}
   ];
 
   const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
@@ -126,7 +127,7 @@ function ACLPage() {
         height: user.product.height,
         money: user.product.product_cost,
         car: user.product.vehicle,
-        needsSpecialCarry: user.product.special_vehicle_required,
+        needsSpecialCarry: user.product.special_vehicle_required ? "می باشد" : "نمی باشد",
         SpecialBox: user.product.special_product ? "می باشد" : "نمی باشد",
 
         // paymentMethod: user.product.paymentMethod,
@@ -135,7 +136,8 @@ function ACLPage() {
         needsMovement: user.product.movement_required ? "می باشد" : "نمی باشد",
         createdAt: moment(user.order.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
         price: user.order.price,
-        state: user.order.state
+        state: user.order.state,
+        isSuburb: user.product.is_suburb ? "می باشد" : "نمی باشد",
       }))
     )
 

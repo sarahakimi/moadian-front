@@ -106,16 +106,15 @@ const schema = yup.object().shape({
   recieverFloor: yup.string().required('طبقه الزامی است').matches(/d*/, 'باید عدد باشد'),
   recieverUnit: yup.string().required('واحد الزامی است').matches(/d*/, 'باید عدد باشد'),
   receiverOtherInfo: yup.string(),
-  weight: yup.string().required('وزن الزامی است').matches(/d*/, 'وزن باید عدد باشد').min(1, 'حداقل باید 1 گرم باشد'),
-  length: yup.string().required('طول الزامی است').matches(/d*/, 'طول باید عدد باشد').min(1, 'حداقل باید 1 سانتی متر باشد'),
-  width: yup.string().required('عرض الزامی است').matches(/d*/, 'عرض باید عدد باشد').min(1, 'حداقل باید 1 سانتی متر باشد'),
-  height: yup.string()
+  weight: yup.number().required('وزن الزامی است').min(1, 'حداقل باید 1 گرم باشد'),
+  length: yup.number().required('طول الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد'),
+  width: yup.number().required('عرض الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد'),
+  height: yup.number()
     .required('ارتفاع الزامی است')
-    .matches(/d*/, 'ارتفاع باید عدد باشد')
     .min(1, 'حداقل باید 1 سانتی متر باشد'),
-  money: yup.string()
+  money: yup.number()
     .required('ارزش کالا الزامی است')
-    .matches(/d*/, 'ارزش کالا باید عدد باشد')
+
     .min(1, 'حداقل باید 1 تومان باشد'),
   car: yup.string().required('وسیله حمل کننده الزامی است'),
   needsSpecialCarry: yup.boolean(),
@@ -123,7 +122,8 @@ const schema = yup.object().shape({
   paymentMethod: yup.string().required('الزامی است'),
   needsEvacuate: yup.boolean(),
   needsLoading: yup.boolean(),
-  needsMovement: yup.boolean()
+  needsMovement: yup.boolean(),
+  isSuburb:yup.boolean()
 })
 const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
@@ -180,18 +180,19 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     recieverFloor: "",
     recieverUnit: "",
     receiverOtherInfo: "",
-    weight: "",
-    length: "",
-    width: "",
-    height: "",
-    money: "",
+    weight: 0,
+    length: 0,
+    width: 0,
+    height: 0,
+    money: 0,
     car: "",
     needsSpecialCarry: false,
     SpecialBox: false,
     paymentMethod: "",
     needsEvacuate: false,
     needsLoading: false,
-    needsMovement: false
+    needsMovement: false,
+    isSuburb:false
   }
 
   function onChangeSenderOstan(event, onChange, values) {
@@ -219,7 +220,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     senderMobile: user.sender_customer.mobile,
     senderPhone: user.sender_customer.tel,
     senderPhonePrefix: user.sender_customer.area_code,
-    senderCompany: user.sender_customer.companyName,
+    senderCompany: user.sender_customer.company_name,
     senderCounty: user.sender_customer.provence,
     senderCity: user.sender_customer.city,
     senderCodePosti: user.sender_customer.postal_code,
@@ -235,7 +236,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     recieverMobile: user.receiver_customer.mobile,
     recieverPhone: user.receiver_customer.tel,
     recieverPhonePrefix: user.receiver_customer.area_code,
-    recieverCompany: user.receiver_customer.companyName,
+    recieverCompany: user.receiver_customer.company_name,
     recieverCounty: user.receiver_customer.provence,
     recieverCity: user.receiver_customer.city,
     recieverCodePosti: user.receiver_customer.postal_code,
@@ -254,11 +255,11 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     car: user.product.vehicle,
     needsSpecialCarry: user.product.special_vehicle_required,
     SpecialBox: user.product.special_product,
-
-    // paymentMethod: user.product.paymentMethod,
+    paymentMethod: user.product.payment_method,
     needsEvacuate: user.product.product_unloading_required,
     needsLoading: user.product.product_loading_required,
-    needsMovement: user.product.movement_required
+    needsMovement: user.product.movement_required,
+    isSuburb:user.product.is_suburb
   } : emptyForm
 
 
@@ -280,7 +281,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       "sender_customer": {
         "identity_code": data.senderCodeMelli,
         "name": data.senderName,
-        "companyName": data.senderCompany,
+        "company_name": data.senderCompany,
         "mobile": data.senderMobile,
         "tel": data.senderPhone,
         "area_code": data.senderPhonePrefix,
@@ -295,12 +296,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "home_unit": data.senderUnit,
         "other_information": data.senderOtherInfo,
         "lat": sendertLatLang[1],
-        "lang": sendertLatLang[0]
+        "lang": sendertLatLang[0],
+        "full_address":`${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`
       },
       "receiver_customer": {
         "identity_code": data.recieverCodeMelli,
         "name": data.recieverName,
-        "companyName": data.recieverCompany,
+        "company_name": data.recieverCompany,
         "mobile": data.recieverMobile,
         "tel": data.recieverPhone,
         "area_code": data.recieverPhonePrefix,
@@ -315,7 +317,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "home_unit": data.recieverUnit,
         "other_information": data.receiverOtherInfo,
         "lat": recieverLatLang[1],
-        "lang": recieverLatLang[0]
+        "lang": recieverLatLang[0],
+        "full_address":`${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`
       },
       "product": {
         "weight": data.weight,
@@ -328,7 +331,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "special_product": data.SpecialBox,
         "movement_required": data.needsMovement,
         "product_loading_required": data.needsLoading,
-        "product_unloading_required": data.needsEvacuate
+        "product_unloading_required": data.needsEvacuate,
+        "payment_method":data.paymentMethod,
+        "isSuburb":data.isSuburb
       }
     }
     if (edit) {
@@ -1643,6 +1648,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     rules={{required: true}}
                     render={({field: {value, onChange, onBlur}}) => (
                       <Autocomplete
+                        disabled={showUser}
                         onBlur={onBlur}
                         select
                         options={paymentMethod}
@@ -1755,6 +1761,36 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                   />
                   {errors.needsEvacuate && (
                     <FormHelperText sx={{color: 'error.main'}}>{errors.needsEvacuate.message}</FormHelperText>
+                  )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                <FormControl fullWidth>
+                  <Controller
+                    fullWidth
+                    name='isSuburb'
+                    control={control}
+                    rules={{required: true}}
+                    render={({field: {value, onChange, onBlur}}) => (
+                      <>
+                        <InputLabel>سفارش برون شهری</InputLabel>
+                        <Select
+                          disabled={showUser}
+                          label='سفارش برون شهری'
+                          value={value}
+                          onBlur={onBlur}
+                          onChange={onChange}
+                          error={Boolean(errors.needsEvacuate)}
+
+                        >
+                          <MenuItem value>می باشد</MenuItem>
+                          <MenuItem value={false}>نمی باشد</MenuItem>
+                        </Select>
+                      </>
+                    )}
+                  />
+                  {errors.isSuburb && (
+                    <FormHelperText sx={{color: 'error.main'}}>{errors.isSuburb.message}</FormHelperText>
                   )}
                 </FormControl>
               </Grid>

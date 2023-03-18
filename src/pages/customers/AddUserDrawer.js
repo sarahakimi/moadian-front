@@ -57,6 +57,7 @@ const schema = yup.object().shape({
     .matches(/d*/, ' تلفن باید عدد باشد'),
   postal_code: yup
     .string()
+    .min(10, "باید ۱۰ رقم باشد")
     .required('کدپستی الزامی است')
     .matches(/d*/, ' کدپستی باید عدد باشد'),
   provence: yup
@@ -90,7 +91,7 @@ const schema = yup.object().shape({
   alley: yup
     .string()
     .required('کوچه الزامی است'),
-  company: yup.string()
+  company_name: yup.string()
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -346,7 +347,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
-            name='company'
+            name='company_name'
             control={control}
             rules={{required: true}}
             render={({field: {value, onChange, onBlur}}) => (<TextField
@@ -355,12 +356,12 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               value={value}
               onBlur={onBlur}
               onChange={onChange}
-              error={Boolean(errors.company)}
+              error={Boolean(errors.company_name)}
               disabled={showUser}
             />)}
           />
-          {errors.company &&
-            <FormHelperText sx={{color: 'error.main'}}>{errors.company.message}</FormHelperText>}
+          {errors.company_name &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.company_name.message}</FormHelperText>}
         </FormControl>
         <Typography fullWidth sx={{mb: 2}}>آدرس</Typography>
         <FormControl fullWidth sx={{mb: 4}}>

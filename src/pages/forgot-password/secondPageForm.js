@@ -52,7 +52,7 @@ export default function SecondPageForm({setPage, firstFormData}) {
   const onSubmit = data => {
     toast.promise(
       http
-        .post('auth/user/forget_password', data,)
+        .post('auth/user/forget_password', {...data, ...firstFormData},)
         .then(() => {
           reset(defaultValues)
           window.location = `${window.location.origin}/login`

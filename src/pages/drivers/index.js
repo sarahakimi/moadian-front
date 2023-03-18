@@ -48,7 +48,7 @@ function ACLPage() {
   ];
 
   const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
-    setDownloadData(response.data.map((element) => ({
+    setDownloadData(response.data.filter(element => element.verified === true).map((element) => ({
       ...element,
       created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
     })))
@@ -194,7 +194,7 @@ function ACLPage() {
     fetchData(sortModel).then(response => {
       if (response.data === null) {
         setData([])
-      } else setData(response.data)
+      } else setData(response.data.filter(element=>element.verified===true))
       if (change) setChange(false)
     }).catch((err) => {
       const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"

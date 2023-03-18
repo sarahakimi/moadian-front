@@ -93,16 +93,15 @@ const schema = yup.object().shape({
   recieverFloor: yup.string().required('طبقه الزامی است').matches(/d*/, 'باید عدد باشد'),
   recieverUnit: yup.string().required('واحد الزامی است').matches(/d*/, 'باید عدد باشد'),
   receiverOtherInfo: yup.string(),
-  weight: yup.string().required('وزن الزامی است').matches(/d*/, 'وزن باید عدد باشد').min(1, 'حداقل باید 1 گرم باشد'),
-  length: yup.string().required('طول الزامی است').matches(/d*/, 'طول باید عدد باشد').min(1, 'حداقل باید 1 سانتی متر باشد'),
-  width: yup.string().required('عرض الزامی است').matches(/d*/, 'عرض باید عدد باشد').min(1, 'حداقل باید 1 سانتی متر باشد'),
-  height: yup.string()
+  weight: yup.number().required('وزن الزامی است').min(1, 'حداقل باید 1 گرم باشد'),
+  length: yup.number().required('طول الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد'),
+  width: yup.number().required('عرض الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد'),
+  height: yup.number()
     .required('ارتفاع الزامی است')
-    .matches(/d*/, 'ارتفاع باید عدد باشد')
     .min(1, 'حداقل باید 1 سانتی متر باشد'),
-  money: yup.string()
+  money: yup.number()
     .required('ارزش کالا الزامی است')
-    .matches(/d*/, 'ارزش کالا باید عدد باشد')
+
     .min(1, 'حداقل باید 1 تومان باشد'),
   car: yup.string().required('وسیله حمل کننده الزامی است'),
   needsSpecialCarry: yup.boolean(),
@@ -110,48 +109,9 @@ const schema = yup.object().shape({
   paymentMethod: yup.string().required('الزامی است'),
   needsEvacuate: yup.boolean(),
   needsLoading: yup.boolean(),
-  needsMovement: yup.boolean()
+  needsMovement: yup.boolean(),
+  isSuburb:yup.boolean()
 })
-
-const defaultValues = {
-  senderCodeMelli: '',
-  senderName: '',
-  senderMobile: '',
-  senderPhone: '',
-  senderPhonePrefix: '',
-  senderCounty: '',
-  senderCity: '',
-  senderCodePosti: '',
-  recieverCodeMelli: '',
-  recieverName: '',
-  recieverMobile: '',
-  recieverPhone: '',
-  recieverPhonePrefix: '',
-  recieverCounty: '',
-  recieverCodePosti: '',
-  senderMainRoard: "",
-  senderSubRoad: "",
-  senderAlley: "",
-  senderPlaque: "",
-  senderFloor: "",
-  senderUnit: "",
-  senderCompany: '',
-  recieverMainRoard: '',
-  recieverSubRoad: '',
-  recieverAlley: '',
-  recieverPlaque: '',
-  recieverFloor: '',
-  recieverCompany: '',
-  recieverUnit: '',
-  receiverOtherInfo: '',
-  recieverCity: '',
-  needsEvacuate: false,
-  needsLoading: false,
-  needsMovement: false,
-  needsSpecialCarry: false,
-  SpecialBox: false,
-}
-
 
 const emptyForm = {
   senderCodeMelli: "",
@@ -186,18 +146,68 @@ const emptyForm = {
   recieverFloor: "",
   recieverUnit: "",
   receiverOtherInfo: "",
-  weight: "",
-  length: "",
-  width: "",
-  height: "",
-  money: "",
+  weight: 0,
+  length: 0,
+  width: 0,
+  height: 0,
+  money: 0,
   car: "",
   needsSpecialCarry: false,
   SpecialBox: false,
   paymentMethod: "",
   needsEvacuate: false,
   needsLoading: false,
-  needsMovement: false
+  needsMovement: false,
+  isSuburb:false
+}
+
+
+const defaultValues = {
+  senderCodeMelli: "",
+  senderName: "",
+  senderMobile: "",
+  senderPhone: "",
+  senderPhonePrefix: "",
+  senderCompany: "",
+  senderCounty: "",
+  senderCity: "",
+  senderCodePosti: "",
+  senderOtherInfo: "",
+  senderMainRoard: "",
+  senderSubRoad: "",
+  senderAlley: "",
+  senderPlaque: "",
+  senderFloor: "",
+  senderUnit: "",
+  recieverCodeMelli: "",
+  recieverName: "",
+  recieverMobile: "",
+  recieverPhone: "",
+  recieverPhonePrefix: "",
+  recieverCompany: "",
+  recieverCounty: "",
+  recieverCity: "",
+  recieverCodePosti: "",
+  recieverMainRoard: "",
+  recieverSubRoad: "",
+  recieverAlley: "",
+  recieverPlaque: "",
+  recieverFloor: "",
+  recieverUnit: "",
+  receiverOtherInfo: "",
+  weight: 0,
+  length: 0,
+  width: 0,
+  height: 0,
+  money: 0,
+  car: "",
+  needsSpecialCarry: false,
+  SpecialBox: false,
+  paymentMethod: "",
+  needsEvacuate: false,
+  needsLoading: false,
+  needsMovement: false,
+  isSuburb:false
 }
 const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
@@ -248,7 +258,7 @@ function ACLPage() {
       "sender_customer": {
         "identity_code": data.senderCodeMelli,
         "name": data.senderName,
-        "companyName": data.senderCompany,
+        "company_name": data.senderCompany,
         "mobile": data.senderMobile,
         "tel": data.senderPhone,
         "area_code": data.senderPhonePrefix,
@@ -263,12 +273,13 @@ function ACLPage() {
         "home_unit": data.senderUnit,
         "other_information": data.senderOtherInfo,
         "lat": sendertLatLang[1],
-        "lang": sendertLatLang[0]
+        "lang": sendertLatLang[0],
+        "full_address":`${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`
       },
       "receiver_customer": {
         "identity_code": data.recieverCodeMelli,
         "name": data.recieverName,
-        "companyName": data.recieverCompany,
+        "company_name": data.recieverCompany,
         "mobile": data.recieverMobile,
         "tel": data.recieverPhone,
         "area_code": data.recieverPhonePrefix,
@@ -283,7 +294,8 @@ function ACLPage() {
         "home_unit": data.recieverUnit,
         "other_information": data.receiverOtherInfo,
         "lat": recieverLatLang[1],
-        "lang": recieverLatLang[0]
+        "lang": recieverLatLang[0],
+        "full_address":`${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`
       },
       "product": {
         "weight": data.weight,
@@ -296,7 +308,9 @@ function ACLPage() {
         "special_product": data.SpecialBox,
         "movement_required": data.needsMovement,
         "product_loading_required": data.needsLoading,
-        "product_unloading_required": data.needsEvacuate
+        "product_unloading_required": data.needsEvacuate,
+        "payment_method":data.paymentMethod,
+        "isSuburb":data.isSuburb
       }
     }
     toast.promise(
@@ -317,7 +331,7 @@ function ACLPage() {
     setHasSender(true)
     setValue('senderName', sender.name, {shouldTouch: true})
     setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
-    setValue('senderCompany', sender.company, {shouldTouch: true})
+    setValue('senderCompany', sender.company_name, {shouldTouch: true})
     setValue('senderMobile', sender.phone, {shouldTouch: true})
     setValue('senderPhone', sender.tel_number, {shouldTouch: true})
     setValue('senderPhonePrefix', sender.area_code, {shouldTouch: true})
@@ -365,7 +379,7 @@ function ACLPage() {
     setHasReciever(true)
     setValue('recieverName', reciever.name, {shouldTouch: true})
     setValue('recieverCodeMelli', reciever.natural_code, {shouldTouch: true})
-    setValue('recieverCompany', reciever.company, {shouldTouch: true})
+    setValue('recieverCompany', reciever.company_name, {shouldTouch: true})
     setValue('recieverMobile', reciever.phone, {shouldTouch: true})
     setValue('recieverPhone', reciever.tel_number, {shouldTouch: true})
     setValue('recieverPhonePrefix', reciever.area_code, {shouldTouch: true})
@@ -1571,6 +1585,7 @@ function ACLPage() {
                   render={({field: {value, onChange, onBlur}}) => (
                     <Autocomplete
                       onBlur={onBlur}
+
                       select
                       options={paymentMethod}
                       onChange={(event, values,) => onChange(values)}
@@ -1682,6 +1697,36 @@ function ACLPage() {
                 />
                 {errors.needsEvacuate && (
                   <FormHelperText sx={{color: 'error.main'}}>{errors.needsEvacuate.message}</FormHelperText>
+                )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+              <FormControl fullWidth>
+                <Controller
+                  fullWidth
+                  name='isSuburb'
+                  control={control}
+                  rules={{required: true}}
+                  render={({field: {value, onChange, onBlur}}) => (
+                    <>
+                      <InputLabel>سفارش برون شهری</InputLabel>
+                      <Select
+
+                        label='سفارش برون شهری'
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        error={Boolean(errors.needsEvacuate)}
+
+                      >
+                        <MenuItem value>می باشد</MenuItem>
+                        <MenuItem value={false}>نمی باشد</MenuItem>
+                      </Select>
+                    </>
+                  )}
+                />
+                {errors.isSuburb && (
+                  <FormHelperText sx={{color: 'error.main'}}>{errors.isSuburb.message}</FormHelperText>
                 )}
               </FormControl>
             </Grid>

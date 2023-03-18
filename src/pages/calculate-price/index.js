@@ -247,7 +247,7 @@ function ACLPage() {
               درصد افزوده برون شهری
             </Grid>
             <Grid item md={2} lg={2} xl={2} sx={{textAlign: "center"}}>
-              درون شهری
+              بار عادی
             </Grid>
             <Grid item md={5} lg={5} xl={5} sx={{textAlign: "center"}}>
               <FormControl fullWidth>
@@ -294,7 +294,7 @@ function ACLPage() {
               </FormControl>
             </Grid>
             <Grid item md={2} lg={2} xl={2} sx={{textAlign: "center"}}>
-              برون شهری
+              بار خاص
             </Grid>
             <Grid item md={5} lg={5} xl={5} sx={{textAlign: "center"}}>
               <FormControl fullWidth>
@@ -695,7 +695,7 @@ function ACLPage() {
                   control={control}
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (<TextField
-                    
+
                     label="تخلیه(درصد)"
                     value={value}
                     onBlur={onBlur}
