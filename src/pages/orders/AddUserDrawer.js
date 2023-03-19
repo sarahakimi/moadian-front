@@ -485,6 +485,58 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       },
     }}>
       <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
+        {showUser && <Card sx={{
+          p: 5, "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          },
+          "& 	.MuiInputLabel-root.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }, mb: 5
+        }}>
+
+          <CardHeader title='اطلاعات سفارش'/>
+          <CardContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                <TextField
+                  label='شماره سفارش'
+                  value={user.order.id}
+                  dir='ltr'
+                  disabled
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                <TextField
+                  label='کد رهگیری'
+                  value={user.order.code}
+                  dir='ltr'
+                  disabled
+                  fullWidth
+                  multiline
+                  lines={2}
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                <TextField
+                  label='وضعیت'
+                  value={user.order.state}
+                  disabled
+                  fullWidth
+                />
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                <TextField
+                  label='هزینه'
+                  value={user.order.price}
+                  disabled
+                  fullWidth
+                />
+              </Grid>
+            </Grid>
+          </CardContent>
+
+        </Card> }
         <Card sx={{
           p: 5, "& .MuiInputBase-input.Mui-disabled": {
             WebkitTextFillColor: "blue",
@@ -1426,7 +1478,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             </Grid>
           </CardContent>
         </Card>
-        <Card sx={{mb: 5}}>
+        <Card sx={{
+          p: 5, "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }, "& 	.MuiInputLabel-root.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }, mb: 5,
+        }}>
           <CardHeader title='مرسوله'/>
           <CardContent>
             <Grid container spacing={2}>
@@ -1636,7 +1694,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             </Grid>
           </CardContent>
         </Card>
-        <Card sx={{mb: 5}}>
+        <Card sx={{
+          p: 5, "& .MuiInputBase-input.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }, "& 	.MuiInputLabel-root.Mui-disabled": {
+            WebkitTextFillColor: "rgba(76,78,100,0.87)",
+          }, mb: 5,
+        }}>
           <CardHeader title='پرداخت'/>
           <CardContent>
             <Grid container spacing={2}>

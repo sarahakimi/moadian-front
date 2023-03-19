@@ -11,7 +11,6 @@ import Button from '@mui/material/Button'
 
 // ** Icons Imports
 import {Controller, useForm} from "react-hook-form";
-import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import * as yup from "yup";
@@ -19,6 +18,7 @@ import {Autocomplete} from "@mui/material";
 import {ostan, shahr} from "iran-cities-json";
 import * as tus from "tus-js-client";
 import toast from "react-hot-toast";
+import {yupResolver} from '@hookform/resolvers/yup'
 import {useAuth} from "../../hooks/useAuth";
 import {editHub, fetchData} from "./requests";
 

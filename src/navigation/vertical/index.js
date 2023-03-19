@@ -15,7 +15,7 @@ import {
   CreditCardMultipleOutline,
   DatabaseArrowLeftOutline,
   DatabaseEye,
-  HumanMale,
+  HumanMale, MagnifyScan,
   OfficeBuildingOutline
 } from "mdi-material-ui";
 
@@ -39,6 +39,13 @@ const navigation = () => [
     icon: ViewListOutline,
     title: 'سفارشات',
     path: '/orders',
+    action: 'read',
+    subject: 'every-page',
+  },
+  {
+    icon: MagnifyScan,
+    title: 'رهگیری سفارش',
+    path: '/tracking',
     action: 'read',
     subject: 'every-page',
   },

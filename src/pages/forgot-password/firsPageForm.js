@@ -15,7 +15,7 @@ import ChevronLeft from "mdi-material-ui/ChevronLeft";
 import {styled} from "@mui/material/styles";
 import * as yup from "yup";
 import {useEffect, useState} from "react";
-import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import {yupResolver} from '@hookform/resolvers/yup'
 import toast from "react-hot-toast";
 import http from "../../services/http";
 

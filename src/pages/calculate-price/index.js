@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid'
 import {Button, Card, CardHeader} from "@mui/material";
 import CardContent from "@mui/material/CardContent";
 import {Controller, useForm} from "react-hook-form";
-import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from "yup";
 import TextField from "@mui/material/TextField";
 import FormHelperText from "@mui/material/FormHelperText";

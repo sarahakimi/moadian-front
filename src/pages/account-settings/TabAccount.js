@@ -13,7 +13,7 @@ import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import {yupResolver} from "@hookform/resolvers/yup/dist/yup";
+import {yupResolver} from '@hookform/resolvers/yup'
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import {useAuth} from "../../hooks/useAuth";
@@ -285,7 +285,7 @@ function TabAccount() {
 
         </Grid>
       </form>
-      
+
     </CardContent>
   )
 }

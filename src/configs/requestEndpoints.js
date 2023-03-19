@@ -28,7 +28,8 @@ export default {
   pricinPerSizeOfCar: (size) => `pricing/size_of_car/${size}`,
   pricingOtherOptions: "pricing/other_options",
   getPricingSizeOfCar: "pricing/size_of_car",
-  singleOrder: (id) => `ordering/admin/${id}`
+  singleOrder: (id) => `ordering/admin/${id}`,
+  getOrder: (id) => `ordering/${id}`,
 
 
 }
