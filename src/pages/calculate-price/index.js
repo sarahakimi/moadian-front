@@ -147,7 +147,7 @@ function ACLPage() {
         const carData = {
           "name": "سواری",
           "max_volume": data.savariHakm,
-          "max_weight": data.savariHakm
+          "max_weight": data.savariVazn
         }
         editPerCar(car.id, carData).catch((err) => {
           toast.dismiss(toastId)
