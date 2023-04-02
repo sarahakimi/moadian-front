@@ -37,3 +37,7 @@ export const changePassword = async (data) => {
 
   return response;
 };
+
+export default function Home1() {
+  return <div/>;
+}
