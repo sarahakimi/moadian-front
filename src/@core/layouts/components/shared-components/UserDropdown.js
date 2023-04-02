@@ -17,6 +17,8 @@ import CogOutline from 'mdi-material-ui/CogOutline'
 import LogoutVariant from 'mdi-material-ui/LogoutVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
 import {useAuth} from 'hooks/useAuth'
+import toast from "react-hot-toast";
+
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({theme}) => ({
@@ -53,9 +55,16 @@ function UserDropdown(props) {
     setAnchorEl(null)
   }
 
+
   const handleLogout = () => {
-    logout()
-    handleDropdownClose()
+
+    toast.promise(logout(), {
+      loading: 'در حال خروج ', success: 'خارج شدید', error: (err) => {
+        handleDropdownClose()
+
+        return err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است."
+      }
+    })
   }
 
   const styles = {
@@ -161,6 +170,7 @@ function UserDropdown(props) {
           خروج
         </MenuItem>
       </Menu>
+
     </>
   )
 }

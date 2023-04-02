@@ -34,7 +34,7 @@ const Accordion = styled(MuiAccordion)(({ theme }) => ({
   }
 }))
 
-const PricingFooter = props => {
+function PricingFooter(props) {
   // ** Props
   const { data } = props
 
@@ -45,9 +45,7 @@ const PricingFooter = props => {
     setExpanded(isExpanded ? panel : false)
   }
 
-  const renderAccordion = () => {
-    return data?.faq.map(item => {
-      return (
+  const renderAccordion = () => data?.faq.map(item => (
         <Accordion key={item.id} elevation={0} expanded={expanded === item.id} onChange={handleChange(item.id)}>
           <AccordionSummary
             expandIcon={<ChevronDown />}
@@ -60,18 +58,11 @@ const PricingFooter = props => {
             <Typography>{item.answer}</Typography>
           </AccordionDetails>
         </Accordion>
-      )
-    })
-  }
+      ))
 
   return (
     <CardContent>
-      <Box sx={{ mb: 12, textAlign: 'center' }}>
-        <Typography variant='h5' sx={{ mb: 2.5 }}>
-          FAQs
-        </Typography>
-        <Typography variant='body2'>Let us help answer the most common questions.</Typography>
-      </Box>
+      <Box sx={{ mb: 12, textAlign: 'center' }} />
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
         <Box>{renderAccordion()}</Box>
       </Box>

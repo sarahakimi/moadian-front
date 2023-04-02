@@ -133,7 +133,7 @@ function Index() {
         <Typography variant='h6' sx={{ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important'}}>
           {themeConfig.templateName}
         </Typography>
-      </Box>} subheader="کد رهگیری مرسوبه خود را وارد کنید"/>
+      </Box>} subheader="کد رهگیری مرسوله خود را وارد کنید"/>
       <CardContent>
         <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
           <Grid container spacing={2} mb={6}>

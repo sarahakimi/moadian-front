@@ -30,6 +30,7 @@ export default {
   getPricingSizeOfCar: "pricing/size_of_car",
   singleOrder: (id) => `ordering/admin/${id}`,
   getOrder: (id) => `ordering/${id}`,
+  logout: "auth/user/logout"
 
 
 }

@@ -3,6 +3,7 @@ import {useRouter} from 'next/router'
 import authConfig from 'configs/auth'
 import http from 'services/http'
 import toast from "react-hot-toast";
+import urls from "configs/requestEndpoints"
 
 const defaultProvider = {
   user: null,
@@ -94,13 +95,15 @@ function AuthProvider({children}) {
       })
   }
 
-  const handleLogout = () => {
-    setUser(null)
-    setIsInitialized(false)
-    window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    router.push('/login')
-  }
+  const handleLogout = () => http.post(urls.logout, {}, {
+      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+    }).then(() => {
+      setUser(null)
+      setIsInitialized(false)
+      window.localStorage.removeItem('userData')
+      window.localStorage.removeItem(authConfig.storageTokenKeyName)
+      router.push('/login')
+    })
 
   const values = {
     user,
