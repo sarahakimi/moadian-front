@@ -32,7 +32,12 @@ export default {
   getOrder: (id) => `ordering/${id}`,
   logout: "auth/user/logout",
   loginHistory: "trafficHistory/all",
-  operationHistory: "actionHistory/all"
+  operationHistory: "actionHistory/all",
+  validatePhoneByToken: 'user/validate_phone_by_token',
+  resetPassword: "auth/user/reset_password",
+  getAllCompanies: "company/all",
+  getAllHubs: "hub/all",
+  forgotPassword: "auth/user/forget_password",
 
 
 }

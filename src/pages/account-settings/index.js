@@ -6,9 +6,9 @@ import TabPanel from '@mui/lab/TabPanel'
 import TabContext from '@mui/lab/TabContext'
 import {styled} from '@mui/material/styles'
 import MuiTab from '@mui/material/Tab'
-
 import AccountOutline from 'mdi-material-ui/AccountOutline'
-
+import LockOpenOutline from "mdi-material-ui/LockOpenOutline"
+import TabSecurity from "./TabSecurity"
 import TabAccount from './TabAccount'
 
 // ** Third Party Styles Imports
@@ -56,24 +56,24 @@ function AccountSettings() {
               </Box>
             }
           />
-          {/* <Tab */}
-          {/*  value='security' */}
-          {/*  label={ */}
-          {/*    <Box sx={{display: 'flex', alignItems: 'center'}}> */}
-          {/*      <LockOpenOutline sx={{fontSize: '1.125rem'}}/> */}
-          {/*      <TabName>امنیت</TabName> */}
-          {/*    </Box> */}
-          {/*  } */}
-          {/* /> */}
+          <Tab
+            value='security'
+            label={
+              <Box sx={{display: 'flex', alignItems: 'center'}}>
+                <LockOpenOutline sx={{fontSize: '1.125rem'}}/>
+                <TabName>امنیت</TabName>
+              </Box>
+            }
+          />
 
         </TabList>
 
         <TabPanel sx={{p: 0}} value='account'>
           <TabAccount/>
         </TabPanel>
-        {/* <TabPanel sx={{p: 0}} value='security'> */}
-        {/*  <TabSecurity/> */}
-        {/* </TabPanel> */}
+        <TabPanel sx={{p: 0}} value='security'>
+          <TabSecurity/>
+        </TabPanel>
       </TabContext>
     </Card>
   )

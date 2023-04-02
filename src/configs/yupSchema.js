@@ -50,5 +50,11 @@ export default {
   needsEvacuate: yup.boolean(),
   needsLoading: yup.boolean(),
   needsMovement: yup.boolean(),
-  isSuburb:yup.boolean()
+  isSuburb: yup.boolean(),
+  username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید 4 کاراکتر باشد'),
+  password: yup.string().required('رمز عبور الزامی است').min(8, 'حداقل باید 8 کاراکتر باشد'),
+  vehicle: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
+  vehicle_plaque: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
+  vehicle_card_id: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
+  otp: yup.string().required(' الزامی است').min(5, "باید ۵ رقم باشد").max(5, "باید ۵ رقم باشد"),
 }

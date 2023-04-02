@@ -1,5 +1,4 @@
 import {useState} from 'react'
-import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 import InputLabel from '@mui/material/InputLabel'
@@ -10,151 +9,149 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import InputAdornment from '@mui/material/InputAdornment'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
+import toast from "react-hot-toast";
+import {Controller, useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import yupschema from "configs/yupSchema";
+import TextField from "@mui/material/TextField";
+import FormHelperText from "@mui/material/FormHelperText";
+import * as yup from "yup";
+import {changePassword, sendSms} from "./requests";
 
-// import * as yup from "yup";
 
-// const schema = yup.object().shape({
-//   password: yup.string()
-//     .required('رمز عبور الزامی است')
-//     .min(8, 'رمز عبور باید حداقل 8 کاراکتر باشد.')
-//     .max(32, 'مز عبور باید حداکثر 32 کاراکتر باشد.'),
-//   password: yup.string()
-//     .required('رمز عبور الزامی است')
-//     .min(8, 'رمز عبور باید حداقل 8 کاراکتر باشد.')
-//     .max(32, 'مز عبور باید حداکثر 32 کاراکتر باشد.'),
-//
-// })
+const schema = yup.object().shape({
+  otp: yupschema.otp,
+  password: yupschema.password
+})
 
 function TabSecurity() {
-  // ** States
-  const [values, setValues] = useState({
-    newPassword: '',
-    currentPassword: '',
-    showNewPassword: false,
-    confirmNewPassword: '',
-    showCurrentPassword: false,
-    showConfirmNewPassword: false
+  const [sentSms, setSentSms] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  const emptyForm = {
+    otp: null,
+    password: null
+  }
+
+  const defaultValues = emptyForm
+
+
+  const {
+    control,
+    setError,
+    handleSubmit,
+    formState: {errors}
+  } = useForm({
+    defaultValues,
+    mode: 'onChange',
+    resolver: yupResolver(schema)
   })
 
-  // Handle Current Password
-  const handleCurrentPasswordChange = prop => event => {
-    setValues({...values, [prop]: event.target.value})
+  const sendOtp = () => {
+    toast.promise(
+      sendSms()
+        .then(() => {
+          setSentSms(true)
+        })
+      , {
+        loading: 'در حال ارسال کد',
+        success: 'ارسال شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است."
+      })
   }
 
-  const handleClickShowCurrentPassword = () => {
-    setValues({...values, showCurrentPassword: !values.showCurrentPassword})
+  const onSubmit = data => {
+
+    toast.promise(
+      changePassword(data)
+        .then(() => {
+
+          setSentSms(false)
+        }), {
+        loading: 'در حال تغییر کلمه عبور',
+        success: 'کلمه عبور تغییر کرد',
+        error: (err) => {
+
+          setError("otp", {type: 'custom', message: err?.response?.data?.message});
+
+          return err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است."
+        }
+      })
   }
 
-  const handleMouseDownCurrentPassword = event => {
-    event.preventDefault()
-  }
-
-  // Handle New Password
-  const handleNewPasswordChange = prop => event => {
-    setValues({...values, [prop]: event.target.value})
-  }
-
-  const handleClickShowNewPassword = () => {
-    setValues({...values, showNewPassword: !values.showNewPassword})
-  }
-
-  const handleMouseDownNewPassword = event => {
-    event.preventDefault()
-  }
-
-  // Handle Confirm New Password
-  const handleConfirmNewPasswordChange = prop => event => {
-    setValues({...values, [prop]: event.target.value})
-  }
-
-  const handleClickShowConfirmNewPassword = () => {
-    setValues({...values, showConfirmNewPassword: !values.showConfirmNewPassword})
-  }
-
-  const handleMouseDownConfirmNewPassword = event => {
-    event.preventDefault()
-  }
-
-  return (
-    <form>
+return (
+    <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
       <CardContent>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6} sx={{mt: 5, mb: [0, 6]}}>
             <Grid container spacing={6}>
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor='account-settings-current-password'>کلمه عبور فعلی</InputLabel>
-                  <OutlinedInput
-                    label='کلمه عبور فعلی'
-                    value={values.currentPassword}
-                    id='account-settings-current-password'
-                    type={values.showCurrentPassword ? 'text' : 'password'}
-                    onChange={handleCurrentPasswordChange('currentPassword')}
-                    endAdornment={
-                      <InputAdornment position='end'>
-                        <IconButton
-                          edge='end'
-                          aria-label='toggle password visibility'
-                          onClick={handleClickShowCurrentPassword}
-                          onMouseDown={handleMouseDownCurrentPassword}
-                        >
-                          {values.showCurrentPassword ? <EyeOutline/> : <EyeOffOutline/>}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </Grid>
+              {sentSms ? <>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth sx={{mb: 4}}>
+                      <Controller
+                        name='otp'
+                        control={control}
+                        render={({field: {value, onChange, onBlur}}) => (
+                          <TextField
+                            autoFocus
+                            label='کد ارسال شده'
+                            value={value}
+                            onBlur={onBlur}
+                            onChange={onChange}
+                            error={Boolean(errors.otp)}
+                            inputProps={{maxLength: 5}}
+                          />
+                        )}
+                      />
+                      {errors.otp && (
+                        <FormHelperText sx={{color: 'error.main'}}>{errors.otp.message}</FormHelperText>
+                      )}
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <FormControl fullWidth sx={{mb: 4}}>
+                      <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
+                        کلمه عبور
+                      </InputLabel>
+                      <Controller
+                        name='password'
+                        control={control}
+                        rules={{required: true}}
+                        render={({field: {value, onChange, onBlur}}) => (
+                          <OutlinedInput
+                            value={value}
+                            onBlur={onBlur}
+                            label='Password'
+                            onChange={onChange}
+                            id='auth-login-v2-password'
+                            error={Boolean(errors.password)}
+                            type={showPassword ? 'text' : 'password'}
+                            endAdornment={
+                              <InputAdornment position='end'>
+                                <IconButton
+                                  edge='end'
+                                  onMouseDown={e => e.preventDefault()}
+                                  onClick={() => setShowPassword(!showPassword)}
+                                >
+                                  {showPassword ? <EyeOutline/> : <EyeOffOutline/>}
+                                </IconButton>
+                              </InputAdornment>
+                            }
+                          />
+                        )}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Button variant='contained' type='submit' fullWidth>
+                    ذخیره تغییرات
+                  </Button>
+                </>
 
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor='account-settings-new-password'>کلمه عبور جدید</InputLabel>
-                  <OutlinedInput
-                    label='کلمه عبور جدید'
-                    value={values.newPassword}
-                    id='account-settings-new-password'
-                    onChange={handleNewPasswordChange('newPassword')}
-                    type={values.showNewPassword ? 'text' : 'password'}
-                    endAdornment={
-                      <InputAdornment position='end'>
-                        <IconButton
-                          edge='end'
-                          onClick={handleClickShowNewPassword}
-                          aria-label='toggle password visibility'
-                          onMouseDown={handleMouseDownNewPassword}
-                        >
-                          {values.showNewPassword ? <EyeOutline/> : <EyeOffOutline/>}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel htmlFor='account-settings-confirm-new-password'>تکرار کلمه عبور جدید</InputLabel>
-                  <OutlinedInput
-                    label='تکرار کلمه عبور جدید'
-                    value={values.confirmNewPassword}
-                    id='account-settings-confirm-new-password'
-                    type={values.showConfirmNewPassword ? 'text' : 'password'}
-                    onChange={handleConfirmNewPasswordChange('confirmNewPassword')}
-                    endAdornment={
-                      <InputAdornment position='end'>
-                        <IconButton
-                          edge='end'
-                          aria-label='toggle password visibility'
-                          onClick={handleClickShowConfirmNewPassword}
-                          onMouseDown={handleMouseDownConfirmNewPassword}
-                        >
-                          {values.showConfirmNewPassword ? <EyeOutline/> : <EyeOffOutline/>}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-              </Grid>
+                : <Grid item xs={12}>
+                  <Button color="info" fullWidth
+                          variant="contained"
+                          onClick={sendOtp}>{sentSms ? "ارسال مجدد کد تایید" : "ارسال کد تایید"}</Button>
+                </Grid>}
             </Grid>
           </Grid>
 
@@ -164,19 +161,6 @@ function TabSecurity() {
         </Grid>
 
 
-        <Box>
-          <Button variant='contained' sx={{mr: 4}}>
-            ذخیره تغییرات
-          </Button>
-          <Button
-            type='reset'
-            variant='outlined'
-            color='secondary'
-            onClick={() => setValues({...values, currentPassword: '', newPassword: '', confirmNewPassword: ''})}
-          >
-            بازگردانی فرم
-          </Button>
-        </Box>
       </CardContent>
     </form>
   )
