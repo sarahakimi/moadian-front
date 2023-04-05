@@ -22,7 +22,7 @@ export const getHubs = async () => {
 
 export const sendSms = async () => {
   const response = await http
-    .get(urls.validatePhoneByToken, {}, {
+    .post(urls.validatePhoneByToken, {}, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
