@@ -14,7 +14,7 @@ import {useState} from "react";
 import Box from '@mui/material/Box';
 import toast from "react-hot-toast";
 import Map from "./map";
-import {createOrder} from "./requests";
+import {calculatePrice, createOrder} from "./requests";
 import Table from "./table"
 
 const style = {
@@ -110,7 +110,7 @@ const schema = yup.object().shape({
   needsEvacuate: yup.boolean(),
   needsLoading: yup.boolean(),
   needsMovement: yup.boolean(),
-  isSuburb:yup.boolean()
+  isSuburb: yup.boolean()
 })
 
 const emptyForm = {
@@ -158,7 +158,7 @@ const emptyForm = {
   needsEvacuate: false,
   needsLoading: false,
   needsMovement: false,
-  isSuburb:false
+  isSuburb: false
 }
 
 
@@ -207,7 +207,7 @@ const defaultValues = {
   needsEvacuate: false,
   needsLoading: false,
   needsMovement: false,
-  isSuburb:false
+  isSuburb: false
 }
 const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
@@ -227,6 +227,7 @@ function ACLPage() {
   const handleRecieverClose = () => setRecieverOpen(false);
   const [hasSender, setHasSender] = useState(false)
   const [hasReciever, setHasReciever] = useState(false)
+  const [submitType, setSubmitType] = useState("")
 
   const {
     control,
@@ -254,6 +255,8 @@ function ACLPage() {
 
 
   const onSubmit = data => {
+
+
     const config = {
       "sender_customer": {
         "identity_code": data.senderCodeMelli,
@@ -274,7 +277,7 @@ function ACLPage() {
         "other_information": data.senderOtherInfo,
         "lat": sendertLatLang[1],
         "lang": sendertLatLang[0],
-        "full_address":`${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`
+        "full_address": `${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`
       },
       "receiver_customer": {
         "identity_code": data.recieverCodeMelli,
@@ -295,7 +298,7 @@ function ACLPage() {
         "other_information": data.receiverOtherInfo,
         "lat": recieverLatLang[1],
         "lang": recieverLatLang[0],
-        "full_address":`${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`
+        "full_address": `${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`
       },
       "product": {
         "weight": data.weight,
@@ -309,22 +312,44 @@ function ACLPage() {
         "movement_required": data.needsMovement,
         "product_loading_required": data.needsLoading,
         "product_unloading_required": data.needsEvacuate,
-        "payment_method":data.paymentMethod,
-        "isSuburb":data.isSuburb
+        "payment_method": data.paymentMethod,
+        "isSuburb": data.isSuburb
       }
     }
-    toast.promise(
-      createOrder(config).then(() => {
-        reset(emptyForm)
-        setSenderLatLang([51.3347, 35.7219])
-        setRecieverLatLang([51.3347, 35.7219])
-      })
-      , {
-        loading: 'در حال ثبت سفارش',
-        success: 'سفارش ثبت شد',
-        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
-      })
+    if (submitType === "submit") {
+      toast.promise(
+        createOrder(config).then(() => {
+          reset(emptyForm)
+          setSenderLatLang([51.3347, 35.7219])
+          setRecieverLatLang([51.3347, 35.7219])
+          setHasReciever(false)
+          setHasSender(false)
+        })
+        , {
+          loading: 'در حال ثبت سفارش',
+          success: 'سفارش ثبت شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+        })
 
+    } else if (submitType === "calculate") {
+      toast.promise(
+        calculatePrice(config).then((response) => {
+          toast((t) => (
+            <Box flex>
+              قیمت محاسبه شده <b>{response.data}</b> تومان می باشد
+              <Button onClick={() => toast.dismiss(t.id)}>
+                بستن
+              </Button>
+            </Box>
+          ));
+        })
+        , {
+          loading: 'در حال محاسبه قیمت',
+          success: 'قیمت محاسبه شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+        })
+
+    }
   }
 
   const onsetSenderCustomer = () => {
@@ -422,6 +447,10 @@ function ACLPage() {
     setValue('recieverOtherInfo', '', {shouldTouch: true})
 
 
+  }
+
+  const clickedOnSubmit = (type) => {
+    setSubmitType(type)
   }
 
   return (
@@ -1505,7 +1534,7 @@ function ACLPage() {
                     />
                   )}
                 />
-                {errors.recieverCity && (
+                {errors.car && (
                   <FormHelperText sx={{color: 'error.main'}}>{errors.car.message}</FormHelperText>
                 )}
               </FormControl>
@@ -1733,13 +1762,14 @@ function ACLPage() {
           </Grid>
         </CardContent>
       </Card>
-
-      <Button size='large' type='submit' variant='contained' sx={{m: 1}} disabled>
-        محاسبه قیمت
-      </Button>
-      <Button size='large' type='success' variant='contained' sx={{m: 1}}>
+      <Button size='large' type='submit' variant='contained' sx={{m: 1}} onClick={() => clickedOnSubmit('submit')}>
         ثبت سفارش
       </Button>
+      <Button size='large' type='submit' variant='contained' color="info" sx={{m: 1}}
+              onClick={() => clickedOnSubmit('calculate')}>
+        محاسبه قیمت
+      </Button>
+
     </form>
   )
 }

@@ -19,7 +19,7 @@ import {ostan, shahr} from "iran-cities-json";
 import toast from "react-hot-toast";
 import Table from "../newOrder/table";
 import Map from "../newOrder/map";
-import {createOrder} from "../newOrder/requests";
+import {calculatePrice, createOrder} from "../newOrder/requests";
 import {editUser} from "./requests";
 
 const Header = styled(Box)(({theme}) => ({
@@ -145,7 +145,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const [selectedRecieverOstan, setSelectedRecieverOstan] = useState('')
   const [hasSender, setHasSender] = useState(false)
   const [hasReciever, setHasReciever] = useState(false)
-
+  const [submitType, setSubmitType] = useState("")
 
   const emptyForm = {
     senderCodeMelli: "",
@@ -350,21 +350,42 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           success: 'سفارش ثبت شد',
           error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
-    } else {
-      toast.promise(
-        createOrder(config).then(() => {
-          reset(emptyForm)
-          setSenderLatLang([51.3347, 35.7219])
-          setRecieverLatLang([51.3347, 35.7219])
-          setChange(true)
-          toggle()
-        })
-        , {
-          loading: 'در حال ثبت سفارش',
-          success: 'سفارش ثبت شد',
-          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
-        })
-    }
+    } else if (submitType === "submit") {
+
+        toast.promise(
+          createOrder(config).then(() => {
+            reset(emptyForm)
+            setSenderLatLang([51.3347, 35.7219])
+            setRecieverLatLang([51.3347, 35.7219])
+            setHasReciever(false)
+            setHasSender(false)
+          })
+          , {
+            loading: 'در حال ثبت سفارش',
+            success: 'سفارش ثبت شد',
+            error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+          })
+
+      } else if (submitType === "calculate") {
+        toast.promise(
+          calculatePrice(config).then((response) => {
+            toast((t) => (
+              <Box flex>
+                قیمت محاسبه شده <b>{response.data}</b> تومان می باشد
+                <Button onClick={() => toast.dismiss(t.id)}>
+                  بستن
+                </Button>
+              </Box>
+            ));
+          })
+          , {
+            loading: 'در حال محاسبه قیمت',
+            success: 'قیمت محاسبه شد',
+            error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+          })
+
+      }
+
   }
 
   const onsetSenderCustomer = () => {
@@ -464,7 +485,11 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
   }
 
-  return (<Drawer
+  const clickedOnSubmit = (type) => {
+    setSubmitType(type)
+  }
+
+return (<Drawer
     open={open}
     anchor='left'
     variant='temporary'
@@ -1628,7 +1653,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     )}
                   />
                   {errors.recieverCity && (
-                    <FormHelperText sx={{color: 'error.main'}}>{errors.car.message}</FormHelperText>
+                    <FormHelperText sx={{color: 'error.main'}}>{errors.car?.message}</FormHelperText>
                   )}
                 </FormControl>
               </Grid>
@@ -1862,13 +1887,12 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           </CardContent>
         </Card>
 
-        <Button size='large' type='submit' variant='contained' sx={{m: 1}} disabled
-                style={{display: showUser ? 'none' : undefined}}>
-          محاسبه قیمت
-        </Button>
-        <Button size='large' type='success' variant='contained' sx={{m: 1}}
-                style={{display: showUser ? 'none' : undefined}}>
+        <Button size='large' type='submit' variant='contained' sx={{m: 1}} onClick={() => clickedOnSubmit('submit')} style={{display: showUser ? 'none' : undefined}}>
           ثبت سفارش
+        </Button>
+        <Button size='large' type='submit' variant='contained' color="info" sx={{m: 1}}
+                onClick={() => clickedOnSubmit('calculate')} style={{display: showUser ? 'none' : undefined}}>
+          محاسبه قیمت
         </Button>
       </form>
     </Box>

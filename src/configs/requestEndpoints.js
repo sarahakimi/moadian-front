@@ -38,6 +38,6 @@ export default {
   getAllCompanies: "company/all",
   getAllHubs: "hub/all",
   forgotPassword: "auth/user/forget_password",
-
+  calculatePrice:"ordering/pricing"
 
 }
