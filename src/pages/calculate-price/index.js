@@ -353,7 +353,7 @@ function ACLPage() {
               وسیله مقلیه
             </Grid>
             <Grid item md={5} lg={5} xl={5} sx={{textAlign: "center", backgroundColor: '#EEEEEE'}}>
-              حداگثر حجم(سانتی متر مکعب)
+              حداکثر حجم(سانتی متر مکعب)
             </Grid>
             <Grid item md={5} lg={5} xl={5} sx={{textAlign: "center", backgroundColor: '#EEEEEE'}}>
               حداکثر وزن(گرم)
