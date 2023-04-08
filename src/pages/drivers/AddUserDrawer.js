@@ -50,7 +50,9 @@ const schema = yup.object().shape({
   vehicle: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
   vehicle_plaque: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
   vehicle_card_id: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
-  vehicle_type: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید')
+  vehicle_type: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
+
+
 
 })
 
@@ -67,7 +69,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     vehicle: '',
     vehicle_plaque: '',
     vehicle_card_id: '',
-    vehicle_type: ''
+    vehicle_type: '',
+
   }
 
   const defaultValues = user
@@ -80,7 +83,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       vehicle: user.vehicle,
       vehicle_plaque: user.vehicle_plaque,
       vehicle_card_id: user.vehicle_card_id,
-      vehicle_type: user.vehicle_type
+      vehicle_type: user.vehicle_type,
 
     }
     : emptyForm
@@ -380,6 +383,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               )}
             />
           </FormControl>}
+
 
 
           <Box sx={{display: 'flex', alignItems: 'center'}}>

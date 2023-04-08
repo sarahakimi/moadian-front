@@ -23,6 +23,7 @@ import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import {ostan, shahr} from "iran-cities-json";
 import toast from "react-hot-toast";
 import {editUser, registerUser} from "./requests";
+import yupSchema from "../../configs/yupSchema";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -91,7 +92,9 @@ const schema = yup.object().shape({
   alley: yup
     .string()
     .required('کوچه الزامی است'),
-  company_name: yup.string()
+  company_name: yup.string(),
+  level_code:yupSchema.level_code,
+  header_code:yupSchema.header_code,
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -125,7 +128,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     floor: '',
     home_unit: '',
     plaque: '',
-    alley: ''
+    alley: '',
+    level_code: "",
+    header_code: ""
 
   }
 
@@ -156,7 +161,10 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     home_unit: user.home_unit,
     plaque: user.plaque,
     alley: user.alley,
-    company: user.company
+    company: user.company,
+    level_code: user.level_code,
+    header_code: user.header_code,
+    money:user.money
 
   } : emptyForm
 
@@ -686,6 +694,62 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           />
           {errors.password && <FormHelperText sx={{color: 'error.main'}}>{errors.password.message}</FormHelperText>}
         </FormControl>}
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='level_code'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (
+              <TextField
+
+                label='کد سطح'
+                value={value}
+                onBlur={onBlur}
+                onChange={onChange}
+                error={Boolean(errors.level_code)}
+                disabled={showUser}
+              />
+            )}
+          />
+          {errors.level_code && <FormHelperText sx={{color: 'error.main'}}>{errors.level_code.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='header_code'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (
+              <TextField
+
+                label='کد سرفصل'
+                value={value}
+                onBlur={onBlur}
+                onChange={onChange}
+                error={Boolean(errors.header_code)}
+                disabled={showUser}
+              />
+            )}
+          />
+          {errors.header_code && <FormHelperText sx={{color: 'error.main'}}>{errors.header_code.message}</FormHelperText>}
+        </FormControl>
+        <FormControl fullWidth sx={{mb: 4}}>
+          <Controller
+            name='money'
+            control={control}
+            rules={{required: true}}
+            render={({field: {value, onChange, onBlur}}) => (
+              <TextField
+                label='اعتبار'
+                value={value}
+                onBlur={onBlur}
+                onChange={onChange}
+
+                disabled={edit || showUser}
+              />
+            )}
+          />
+
+        </FormControl>
         {!showUser && (<Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>
           ذخیره
         </Button>)}
