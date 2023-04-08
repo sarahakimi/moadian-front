@@ -30,7 +30,7 @@ function ACLPage() {
   const [openEdit, setOpenEdit] = useState(false)
   const [showUser, setShowUser] = useState(false)
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [sortModel, setSortModel] = useState({page: 1, page_size: 10, sort_by: 'id desc', serach: ''})
+  const [sortModel, setSortModel] = useState({page: 1, sort_by: 'id desc', serach: ''})
   const [data, setData] = useState([])
   const [change, setChange] = useState(false)
   const [downloadData, setDownloadData] = useState([])
@@ -129,8 +129,7 @@ function ACLPage() {
         car: user.product.vehicle,
         needsSpecialCarry: user.product.special_vehicle_required ? "می باشد" : "نمی باشد",
         SpecialBox: user.product.special_product ? "می باشد" : "نمی باشد",
-
-        // paymentMethod: user.product.paymentMethod,
+        paymentMethod: user.product.payment_method,
         needsEvacuate: user.product.product_unloading_required ? "می باشد" : "نمی باشد",
         needsLoading: user.product.product_loading_required ? "می باشد" : "نمی باشد",
         needsMovement: user.product.movement_required ? "می باشد" : "نمی باشد",
@@ -307,7 +306,7 @@ function ACLPage() {
   ]
   useEffect(() => {
     setDownloadData([])
-    fetchData(sortModel).then(response => {
+    fetchData({}).then(response => {
       if (response.data === null) {
         setData([])
       } else setData(response.data.map(element => ({id: element.order.id, ...element})))
@@ -317,7 +316,7 @@ function ACLPage() {
       toast.error(errorMessage)
     })
 
-  }, [sortModel, setDownloadData, change])
+  }, [setDownloadData, change])
 
 
   return (
@@ -327,7 +326,7 @@ function ACLPage() {
           <TableHeader toggle={toggleAddUserDrawer} data={downloadData}
                        api={downloadApi} headers={headers} name="سفارش"/>
           <GridContainer sx={{p: 4, m: 1}}>
-            <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel}/>
+            <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} selfFilter/>
           </GridContainer>
         </Card>
       </Grid>

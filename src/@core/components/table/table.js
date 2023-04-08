@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {DataGrid, faIR, GridToolbarFilterButton} from "@mui/x-data-grid";
 
-function Table({data, columns, sortModel, setSortModel}) {
+function Table({data, columns, sortModel, setSortModel, selfFilter}) {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(0)
 
@@ -43,11 +43,11 @@ function Table({data, columns, sortModel, setSortModel}) {
       disableSelectionOnClick
       rowsPerPageOptions={[10, 25, 50]}
       sx={{'& .MuiDataGrid-columnHeaders': {borderRadius: 0}}}
-      paginationMode='server'
+      paginationMode={!selfFilter && 'server'}
       onPageSizeChange={handlePageSizeChange}
       localeText={faIR.components.MuiDataGrid.defaultProps.localeText}
       disableColumnSelector
-      sortingMode='server'
+      sortingMode={!selfFilter && 'server'}
       onSortModelChange={handleSortModelChange}
       onPageChange={handlePageChange}
       page={page}

@@ -33,11 +33,13 @@ export default {
   logout: "auth/user/logout",
   loginHistory: "trafficHistory/all",
   operationHistory: "actionHistory/all",
-  validatePhoneByToken: 'user/validate_phone_by_token',
+  validatePhoneByToken: 'auth/user/validate_phone_by_token',
   resetPassword: "auth/user/reset_password",
   getAllCompanies: "company/all",
   getAllHubs: "hub/all",
   forgotPassword: "auth/user/forget_password",
-  calculatePrice:"ordering/pricing"
+  calculatePrice:"ordering/pricing",
+
+
 
 }
