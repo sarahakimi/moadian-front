@@ -146,6 +146,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const [hasSender, setHasSender] = useState(false)
   const [hasReciever, setHasReciever] = useState(false)
   const [submitType, setSubmitType] = useState("")
+  const [senderId, setSenderId] = useState(0)
+  const [recieverIde, setRecieverId] = useState(0)
 
   const emptyForm = {
     senderCodeMelli: "",
@@ -277,6 +279,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
 
   const onSubmit = data => {
+    const senderCustomerid = hasSender ? {"customer_id": senderId} : {}
+    const recieverCustomerId = hasReciever ? {"customer_id": recieverIde} : {}
+
     const config = {
       "sender_customer": {
         "identity_code": data.senderCodeMelli,
@@ -297,7 +302,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "other_information": data.senderOtherInfo,
         "lat": sendertLatLang[1],
         "lang": sendertLatLang[0],
-        "full_address":`${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`
+        "full_address":`${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`,
+        ...senderCustomerid
       },
       "receiver_customer": {
         "identity_code": data.recieverCodeMelli,
@@ -318,7 +324,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "other_information": data.receiverOtherInfo,
         "lat": recieverLatLang[1],
         "lang": recieverLatLang[0],
-        "full_address":`${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`
+        "full_address":`${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`,
+        ...recieverCustomerId
       },
       "product": {
         "weight": data.weight,
@@ -390,6 +397,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
   const onsetSenderCustomer = () => {
     setHasSender(true)
+    setSenderId(sender.id)
     setValue('senderName', sender.name, {shouldTouch: true})
     setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
     setValue('senderCompany', sender.company, {shouldTouch: true})
@@ -438,6 +446,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
   const onsetRecieverCustomer = () => {
     setHasReciever(true)
+    setRecieverId(reciever.id)
     setValue('recieverName', reciever.name, {shouldTouch: true})
     setValue('recieverCodeMelli', reciever.natural_code, {shouldTouch: true})
     setValue('recieverCompany', reciever.company, {shouldTouch: true})
