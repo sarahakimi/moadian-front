@@ -40,17 +40,27 @@ function ACLPage() {
     {key: "name", label: "تام کاربر"},
     {key: "username", label: "نام کاربری"},
     {key: "phone", label: "موبایل"},
+    {key: "area_code", label: "پیش شماره"},
     {key: "tel_number", label: "شماره تلفن"},
     {key: "postal_code", label: "کدپستی"},
     {key: "natural_code", label: "کدملی"},
     {key: "provence", label: "استان"},
     {key: "city", label: "شهر"},
+    {key: "main_street", label: "خیابان اصلی"},
+    {key: "side_street", label: "خیابان فرعی"},
+    {key: "alley", label: "کوچه"},
+    {key: "floor", label: "طبقه"},
+    {key: "home_unit", label: "واحد"},
     {key: "address", label: "ادرس"},
     {key: "created_at", label: "تاریخ ایجاد"},
     {key: "other_information", label: "سایر اطلاعات"},
     {key: "texes", label: "شامل مالیات"},
     {key: "off_percent_status", label: "شامل تخفیف"},
-    {key: "off_percent", label: "درصد تخفیف"}
+    {key: "off_percent", label: "درصد تخفیف"},
+    {key: "company", label: "شرکت"},
+    {key: "header_code", label: "کد سرفصل"},
+    {key: "level_code", label: "کد سطح"},
+    {key: "money", label: "اعتبار"}
   ];
 
   const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
@@ -187,21 +197,22 @@ function ACLPage() {
         </Box>
       )
     },
-    {
-      flex: 0.2,
-      field: 'address',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'ادرس',
-      hideable: false,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {row.address}
-          </Typography>
-        </Box>
-      )
-    },
+
+    // {
+    //   flex: 0.2,
+    //   field: 'address',
+    //   minWidth: 150,
+    //   filterOperators,
+    //   headerName: 'ادرس',
+    //   hideable: false,
+    //   renderCell: ({row}) => (
+    //     <Box sx={{display: 'flex', alignItems: 'center'}}>
+    //       <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
+    //         {row.address}
+    //       </Typography>
+    //     </Box>
+    //   )
+    // },
     {
       flex: 0.1,
       minWidth: 50,

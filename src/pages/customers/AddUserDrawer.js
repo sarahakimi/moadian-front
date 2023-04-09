@@ -732,7 +732,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           />
           {errors.header_code && <FormHelperText sx={{color: 'error.main'}}>{errors.header_code.message}</FormHelperText>}
         </FormControl>
-        <FormControl fullWidth sx={{mb: 4}}>
+        {(user && showUser) &&<FormControl fullWidth sx={{mb: 4}}>
           <Controller
             name='money'
             control={control}
@@ -749,7 +749,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             )}
           />
 
-        </FormControl>
+        </FormControl>}
         {!showUser && (<Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>
           ذخیره
         </Button>)}
