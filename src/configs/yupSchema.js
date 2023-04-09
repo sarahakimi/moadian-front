@@ -57,4 +57,6 @@ export default {
   vehicle_plaque: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
   vehicle_card_id: yup.string().required(' الزامی است').min(3, 'به درستی وارد نمایید'),
   otp: yup.string().required(' الزامی است').min(5, "باید ۵ رقم باشد").max(5, "باید ۵ رقم باشد"),
+  header_code: yup.string(),
+  level_code:yup.string(),
 }
