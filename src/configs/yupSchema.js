@@ -59,4 +59,5 @@ export default {
   otp: yup.string().required(' الزامی است').min(5, "باید ۵ رقم باشد").max(5, "باید ۵ رقم باشد"),
   header_code: yup.string(),
   level_code:yup.string(),
+  percent:yup.number().min(0, "باید عدد طبیعی باشد").max(100, "درصد باید عددی بین 0 و 100 باشد").typeError("باید عدد باشد").required("الزامی است")
 }

@@ -13,7 +13,7 @@ function ExportButton({api, headers, data}) {
   }
 
   useEffect(() => {
-    if (data.length) {
+    if (data?.length > 0) {
       setInitiateDownload(true)
     }
   }, [data, initiateDownload])
