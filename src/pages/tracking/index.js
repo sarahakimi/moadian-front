@@ -25,10 +25,11 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 
+
 import {IconExpandMore} from "@aws-amplify/ui-react";
 
-import Loading from "../../@core/components/loading/loading";
-import http from "../../services/http";
+import Loading from "@core/components/loading/loading";
+import http from "services/http";
 
 
 const QontoConnector = styled(StepConnector)(({theme}) => ({

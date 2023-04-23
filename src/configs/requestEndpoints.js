@@ -39,6 +39,9 @@ export default {
   getAllHubs: "hub/all",
   forgotPassword: "auth/user/forget_password",
   calculatePrice:"ordering/pricing",
+  getBackups:"backup/all",
+  getBackupNow:"backup/now",
+
 
 
 

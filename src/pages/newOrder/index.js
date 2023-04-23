@@ -10,7 +10,7 @@ import * as yup from 'yup'
 import {Controller, useForm} from 'react-hook-form'
 import {yupResolver} from '@hookform/resolvers/yup'
 import {Autocomplete, Card, CardContent, CardHeader, FormLabel, Grid, MenuItem, Modal, Select} from '@mui/material'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
 import toast from "react-hot-toast";
 import Map from "./map";
@@ -255,6 +255,14 @@ function ACLPage() {
     setSelectedRecieverOstan(ostan.find(element => element.name === event.target.innerText)?.id)
   }
 
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setSenderLatLang([ pos.coords.longitude, pos.coords.latitude])
+      setRecieverLatLang([ pos.coords.longitude, pos.coords.latitude])
+
+    });
+
+  }, [setSenderLatLang]);
 
   const onSubmit = data => {
 

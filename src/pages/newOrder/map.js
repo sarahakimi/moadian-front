@@ -1,16 +1,14 @@
-import * as React from "react";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import MapboxLanguage from '@mapbox/mapbox-gl-language';
 
+
 function MapboxMap({latLang, setLatLang}) {
   const [, setMap] = useState();
-  const mapNode = React.useRef(null);
+  const mapNode = useRef(null);
 
-  React.useEffect(() => {
-
-
+  useEffect(() => {
     const node = mapNode.current;
     if (typeof window === "undefined" || node === null) return;
     if (mapboxgl.getRTLTextPluginStatus() === 'unavailable') {
@@ -19,20 +17,23 @@ function MapboxMap({latLang, setLatLang}) {
         null,
         true // Lazy load the plugin
       );
+
     }
+
 
     const mapboxMap = new mapboxgl.Map({
       container: node,
       accessToken: process.env.NEXT_PUBLIC_MAPBOX_TOKEN,
       style: "mapbox://styles/mapbox/streets-v11",
       center: latLang,
-      zoom: 10,
+      zoom:10,
     });
 
 
     mapboxMap.addControl(new MapboxLanguage({
       defaultLanguage: 'mul'
     }));
+
     setMap(mapboxMap);
 
     const marker = new mapboxgl.Marker({
@@ -48,8 +49,9 @@ function MapboxMap({latLang, setLatLang}) {
 
     marker.on('dragend', onDragEnd);
 
-   
-  }, []);
+
+
+  }, [latLang]);
 
   return <div ref={mapNode} style={{width: "100%", height: "100%"}}/>;
 }
