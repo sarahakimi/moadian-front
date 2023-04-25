@@ -10,10 +10,11 @@ export const fetchData = async (sortModel) => {
   return response;
 };
 
-export const getBackupNow = async (sortModel) => {
+export const getBackupNow = async () => {
   const response = await http
-    .get(urls.getBackupNow, sortModel, {
-      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+    .get(urls.getBackupNow, {}, {
+      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,
+      responseType: 'blob'
     })
 
   return response;

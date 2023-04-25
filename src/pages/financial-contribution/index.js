@@ -173,7 +173,7 @@ function ACLPage() {
           <TableHeader toggle={toggleAddUserDrawer} data={downloadData}
                        api={downloadApi} headers={headers} name="قیمت"/>
           <GridContainer sx={{p: 4, m: 1}}>
-            <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel}/>
+            <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} noFilter/>
           </GridContainer>
         </Card>
       </Grid>

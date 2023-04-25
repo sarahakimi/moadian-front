@@ -15,7 +15,8 @@ import TableHeader from "@core/components/table-header/TableHeader";
 import Button from "@mui/material/Button";
 import CardContent from "@mui/material/CardContent";
 import {fetchData, getBackupNow} from "./requests";
-import {editUser} from "../representatives/requests";
+
+const FileDownload = require('js-file-download');
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -63,8 +64,8 @@ function ACLPage() {
 
   const columns = [
     {
-      flex: 0.25,
-      field: 'created_at',
+      flex: 1,
+      field: 'id',
       minWidth: 200,
       headerName: 'تاریخ و ساعت',
       filterable: false,
@@ -72,49 +73,30 @@ function ACLPage() {
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {moment(row.created_at, 'YYYY/MM/DD HH:mm:ss').locale('fa').format('YYYY/MM/DD HH:mm:ss')}
+            {moment(row.time, 'YYYY/MM/DD HH:mm:ss').locale('fa').format('YYYY/MM/DD HH:mm:ss')}
 
           </Typography>
         </Box>
       )
     },
     {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'username',
-      headerName: 'نام کاربری',
-      filterOperators,
+      flex: 1,
+      field: 'time',
+      minWidth: 200,
+      headerName: 'تاریخ و ساعت',
+      filterable: false,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
-            <Typography noWrap component='a' variant='subtitle2' sx={{color: 'text.primary', textDecoration: 'none'}}>
-              {row.username}
-            </Typography>
-          </Box>
-        </Box>
-      )
-    },
-    {
-      flex: 0.25,
-      minWidth: 230,
-      field: 'name',
-      headerName: 'نام و نام خانوادگی',
-      hideable: false,
-      filterOperators,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
-            <Typography noWrap component='a' variant='subtitle2' sx={{color: 'text.primary', textDecoration: 'none'}}>
-              {row.name}
-            </Typography>
-          </Box>
-        </Box>
-      )
-    },
+          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
+            {moment(row.time, 'YYYY/MM/DD HH:mm:ss').locale('fa').format('YYYY/MM/DD HH:mm:ss')}
 
+          </Typography>
+        </Box>
+      )
+    },
     {
-      flex: 0.25,
+      flex: 1,
       field: 'traffic_type',
       minWidth: 150,
       headerName: 'عملیات',
@@ -149,7 +131,7 @@ function ACLPage() {
     toast.promise(
       getBackupNow()
         .then((response) => {
-          alert(response.data)
+          FileDownload(response.data, 'report.csv');
         })
       , {
         loading: 'در حال دانلود فایل پشتیبان گیری',
@@ -180,7 +162,7 @@ function ACLPage() {
               </>
             </TableHeader>
             <GridContainer sx={{p: 4, m: 1}}>
-              <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel}/>
+              <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} />
             </GridContainer>
           </CardContent>
         </Card>

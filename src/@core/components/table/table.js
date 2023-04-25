@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {DataGrid, faIR, GridToolbarFilterButton} from "@mui/x-data-grid";
 
-function Table({data, columns, sortModel, setSortModel, selfFilter}) {
+function Table({data, columns, sortModel, setSortModel, selfFilter, noFilter}) {
   const [pageSize, setPageSize] = useState(10)
   const [page, setPage] = useState(0)
 
@@ -53,7 +53,7 @@ function Table({data, columns, sortModel, setSortModel, selfFilter}) {
       page={page}
       rowCount={50}
       onFilterModelChange={handleFilterChange}
-      components={{
+      components={!noFilter && {
         Toolbar: GridToolbarFilterButton,
       }}
     />

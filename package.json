@@ -57,6 +57,7 @@
     "iran-cities": "^0.0.5",
     "iran-cities-json": "^2.0.0",
     "jalali-moment": "^3.3.11",
+    "js-file-download": "^0.4.12",
     "jsonwebtoken": "8.5.1",
     "keen-slider": "6.6.5",
     "mapbox-gl": "^2.12.1",
