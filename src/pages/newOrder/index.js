@@ -16,7 +16,6 @@ import toast from "react-hot-toast";
 import Map from "./map";
 import {calculatePrice, createOrder} from "./requests";
 import Table from "./table"
-import yupSchema from "../../configs/yupSchema";
 
 const style = {
   position: 'absolute',

@@ -179,7 +179,7 @@ function ACLPage() {
     formData.append("file", file);
     toast.promise(
       applyBackup(file)
-        .then((response) => {
+        .then(() => {
           alert("hi")
         })
       , {
