@@ -9,8 +9,7 @@ export const AppAbility = Ability
  */
 const defineRulesFor = (role) => {
   const {can, rules} = new AbilityBuilder(AppAbility)
-  console.log(role)
-  if (role[0] !== 11) {
+  if (!role) {
     can('read', 'every-page')
   } else {
     can('read', 'acl-page')

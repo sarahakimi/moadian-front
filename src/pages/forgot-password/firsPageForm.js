@@ -97,7 +97,6 @@ export default function FirstPageForm({setPage, setFirstFormData}) {
           setPage(2)
         })
         .catch(err => {
-          console.log(err)
           setError("phone", {type: 'custom', message: err.response.data.message});
         }), {
         loading: 'در حال ثبت فرم',

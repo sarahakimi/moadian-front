@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
@@ -14,7 +14,7 @@ import TableHeader from "@core/components/table-header/TableHeader";
 
 import Button from "@mui/material/Button";
 import CardContent from "@mui/material/CardContent";
-import {fetchData, getBackupNow} from "./requests";
+import {applyBackup, applyBackupById, downloadBackup, fetchData, getBackupNow} from "./requests";
 
 const FileDownload = require('js-file-download');
 
@@ -61,19 +61,39 @@ function ACLPage() {
     ['contains' /* add more over time */].includes(value),
   );
 
+  const getBackupbyId = (row) => {
+    toast.promise(
+      downloadBackup(row.id)
+        .then((response) => {
+          FileDownload(response.data, `report${row.time}.BAK`);
+        })
+      , {
+        loading: 'در حال دانلود فایل پشتیبان گیری',
+        success: 'دانلود انجام شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+      })
+  }
+
+  const setBackupById = (id) => toast.promise(
+    applyBackupById(id), {
+      loading: 'در حال اعمال',
+      success: 'فایل پشتیبان گیری اعمال شد',
+      error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.از خالی نبودن موارد دانلود مطمئن شوید.",
+    })
+
 
   const columns = [
     {
       flex: 1,
       field: 'id',
       minWidth: 200,
-      headerName: 'تاریخ و ساعت',
+      headerName: 'شماره',
       filterable: false,
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {moment(row.time, 'YYYY/MM/DD HH:mm:ss').locale('fa').format('YYYY/MM/DD HH:mm:ss')}
+            {row.id}
 
           </Typography>
         </Box>
@@ -90,8 +110,22 @@ function ACLPage() {
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
             {moment(row.time, 'YYYY/MM/DD HH:mm:ss').locale('fa').format('YYYY/MM/DD HH:mm:ss')}
-
           </Typography>
+        </Box>
+      )
+    },
+    {
+      flex: 1,
+      field: 'apply',
+      minWidth: 150,
+      headerName: 'عملیات',
+      filterOperators,
+      hideable: false,
+      renderCell: ({row}) => (
+        <Box sx={{display: 'flex', alignItems: 'center'}}>
+          <Button onClick={() => setBackupById(row.id)}>
+            اعمال فایل
+          </Button>
         </Box>
       )
     },
@@ -104,9 +138,9 @@ function ACLPage() {
       hideable: false,
       renderCell: ({row}) => (
         <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {row.traffic_type}
-          </Typography>
+          <Button onClick={() => getBackupbyId(row)}>
+            دانلود
+          </Button>
         </Box>
       )
     }
@@ -131,7 +165,7 @@ function ACLPage() {
     toast.promise(
       getBackupNow()
         .then((response) => {
-          FileDownload(response.data, 'report.csv');
+          FileDownload(response.data, 'report.BAK');
         })
       , {
         loading: 'در حال دانلود فایل پشتیبان گیری',
@@ -140,8 +174,24 @@ function ACLPage() {
       })
   }
 
-  const onChangeInpuFile=(ev)=>{
-    console.log(ev.target.value)
+  const uploadFile = ( file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    toast.promise(
+      applyBackup(file)
+        .then((response) => {
+          alert("hi")
+        })
+      , {
+        loading: 'در حال دانلود فایل پشتیبان گیری',
+        success: 'دانلود انجام شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+      })
+  };
+
+  const onChangeInpuFile = (ev) => {
+    const file = ev.target.files[0];
+    uploadFile(file);
   }
 
   return (
@@ -157,12 +207,12 @@ function ACLPage() {
                 </Button>
                 <Button variant="outlined" component="label">
                   اعمال فایل پشتیبان گیری
-                  <input hidden accept="*" type="file"  onChange={onChangeInpuFile}/>
+                  <input hidden accept=".Bak" type="file" onChange={onChangeInpuFile}/>
                 </Button>
               </>
             </TableHeader>
             <GridContainer sx={{p: 4, m: 1}}>
-              <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} />
+              <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel}/>
             </GridContainer>
           </CardContent>
         </Card>

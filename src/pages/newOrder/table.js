@@ -170,7 +170,6 @@ function Table({setCustomer}) {
   ]
 
   const handlePageSizeChange = newPageSize => {
-    console.log(newPageSize)
     setPageSize(newPageSize)
     setSortModel({...sortModel, ...{page_size: newPageSize}})
   }

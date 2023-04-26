@@ -81,7 +81,6 @@ function ACLPage() {
       toast.error(errorMessage)
     })
     getPerCar().then((response) => {
-      console.log(response.data)
       setCarsRespnse(response.data)
       response.data.forEach((car) => {
         if (car.name === "سواری") {
@@ -113,8 +112,8 @@ function ACLPage() {
       toast.error(errorMessage)
     })
     getOtherOptions().then((response) => {
-      setValue('maliat', response.data.tax, {shouldValidate: true})
-      setValue('arzeshAfzoode ', response.data.adding_price, {shouldValidate: true})
+      setValue('maliat', response.data.tax_adding_price, {shouldValidate: true})
+      setValue('arzeshAfzoode', response.data.toll, {shouldValidate: true})
       setValue('jabejai', response.data.movement, {shouldValidate: true})
       setValue('bargiri', response.data.loading, {shouldValidate: true})
       setValue('takhlie', response.data.un_loading, {shouldValidate: true})
@@ -212,8 +211,8 @@ function ACLPage() {
     })
 
     const otherinfoData = {
-      "tax": data.maliat,
-      "adding_price": data.arzeshAfzoode,
+      "tax_adding_price": data.maliat,
+      "toll": data.arzeshAfzoode,
       "movement": data.jabejai,
       "loading": data.bargiri,
       "un_loading": data.takhlie
@@ -609,7 +608,7 @@ function ACLPage() {
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (<TextField
 
-                    label="مالیات(درصد)"
+                    label="مالیات و ارزش افزوده(درصد)"
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
@@ -630,7 +629,7 @@ function ACLPage() {
                   control={control}
                   rules={{required: true}}
                   render={({field: {value, onChange, onBlur}}) => (<TextField
-                    label="ارزش افزوده(درصد)"
+                    label="عوارض(درصد)"
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}

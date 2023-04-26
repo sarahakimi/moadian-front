@@ -24,6 +24,7 @@ import {ostan, shahr} from "iran-cities-json";
 import toast from "react-hot-toast";
 import {editUser, registerUser} from "./requests";
 import yupSchema from "../../configs/yupSchema";
+import Map from "../newOrder/map";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -93,8 +94,8 @@ const schema = yup.object().shape({
     .string()
     .required('کوچه الزامی است'),
   company_name: yup.string(),
-  level_code:yupSchema.level_code,
-  header_code:yupSchema.header_code,
+  level_code: yupSchema.level_code,
+  header_code: yupSchema.header_code,
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -102,6 +103,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   // eslint-disable-next-line camelcase
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [hasDiscount, setHasDiscount] = useState(false)
+  const [LatLang, setLatLang] = useState([51.3347, 35.7219])
   useEffect(() => {
     if (edit) {
       setHasDiscount(user.off_percent_status)
@@ -164,7 +166,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     company: user.company,
     level_code: user.level_code,
     header_code: user.header_code,
-    money:user.money
+    money: user.money
 
   } : emptyForm
 
@@ -185,34 +187,52 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     setHasDiscount(ev.target.value)
   }
 
+  useEffect(() => {
+    if (user) {
+      if (user.lang !== 0 && user.lat !== 0) {
+        setLatLang([user.lang, user.lat])
+      }
+    } else {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setLatLang([pos.coords.longitude, pos.coords.latitude])
+
+      });
+    }
+
+  }, [setLatLang]);
+
   const onSubmit = data => {
     if (edit) {
-      toast.promise(
-        editUser(user.id, {address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data})
-          .then(() => {
-            setChange(true)
-            handleClose()
-          })
-        , {
-          loading: 'در حال ویرایش کاربر',
-          success: 'کاربر ویرایش شد',
-          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
-        })
+      toast.promise(editUser(user.id, {
+        address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data,
+        lat: LatLang[1],
+        lang: LatLang[0]
+      })
+        .then(() => {
+          setChange(true)
+          handleClose()
+        }), {
+        loading: 'در حال ویرایش کاربر',
+        success: 'کاربر ویرایش شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+      })
       // eslint-disable-next-line no-param-reassign
       delete data.password
 
     } else {
-      toast.promise(
-        registerUser({address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data})
-          .then(() => {
-            setChange(true)
-            handleClose()
-          })
-        , {
-          loading: 'در حال ایجاد کاربر',
-          success: 'کاربر ایجاد شد',
-          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
-        })
+      toast.promise(registerUser({
+        address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data,
+        lat: LatLang[1],
+        lang: LatLang[0]
+      })
+        .then(() => {
+          setChange(true)
+          handleClose()
+        }), {
+        loading: 'در حال ایجاد کاربر',
+        success: 'کاربر ایجاد شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+      })
     }
   }
 
@@ -231,8 +251,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     <Box sx={{
       p: 5, "& .MuiInputBase-input.Mui-disabled": {
         WebkitTextFillColor: "rgba(76,78,100,0.87)",
-      },
-      "& 	.MuiInputLabel-root.Mui-disabled": {
+      }, "& 	.MuiInputLabel-root.Mui-disabled": {
         WebkitTextFillColor: "rgba(76,78,100,0.87)",
       },
     }}>
@@ -378,8 +397,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             name='provence'
             control={control}
             rules={{required: true}}
-            render={({field: {onChange, value, onBlur}}) => (
-              <Autocomplete
+            render={({field: {onChange, value, onBlur}}) => (<Autocomplete
                 disabled={showUser}
                 onBlur={onBlur}
                 select
@@ -387,30 +405,24 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 disableClearable
                 onChange={(event, values, value) => onChangeSenderOstan(event, onChange, values, value)}
                 value={value}
-                renderInput={params => (
-                  <TextField
+                renderInput={params => (<TextField
                     /* eslint-disable-next-line react/jsx-props-no-spreading */
                     {...params}
                     label='استان'
                     variant='outlined'
                     onChange={onChange}
                     error={Boolean(errors.provence)}
-                  />
-                )}
-              />
-            )}
+                  />)}
+              />)}
           />
-          {errors.provence && (
-            <FormHelperText sx={{color: 'error.main'}}>{errors.provence.message}</FormHelperText>
-          )}
+          {errors.provence && (<FormHelperText sx={{color: 'error.main'}}>{errors.provence.message}</FormHelperText>)}
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
             name='city'
             control={control}
             rules={{required: true}}
-            render={({field: {value, onChange, onBlur}}) => (
-              <Autocomplete
+            render={({field: {value, onChange, onBlur}}) => (<Autocomplete
                 disabled={showUser}
                 onBlur={onBlur}
                 select
@@ -420,22 +432,17 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                   .map(element => element.name)}
                 onChange={(event, values) => onChange(values)}
                 value={value}
-                renderInput={params => (
-                  <TextField
+                renderInput={params => (<TextField
                     /* eslint-disable-next-line react/jsx-props-no-spreading */
                     {...params}
                     label='شهر'
                     variant='outlined'
                     onChange={onChange}
                     error={Boolean(errors.city)}
-                  />
-                )}
-              />
-            )}
+                  />)}
+              />)}
           />
-          {errors.city && (
-            <FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>
-          )}
+          {errors.city && (<FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>)}
         </FormControl>
 
         <FormControl fullWidth sx={{mb: 4}}>
@@ -489,8 +496,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               disabled={showUser}
             />)}
           />
-          {errors.alley &&
-            <FormHelperText sx={{color: 'error.main'}}>{errors.alley.message}</FormHelperText>}
+          {errors.alley && <FormHelperText sx={{color: 'error.main'}}>{errors.alley.message}</FormHelperText>}
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
@@ -507,8 +513,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               disabled={showUser}
             />)}
           />
-          {errors.plaque &&
-            <FormHelperText sx={{color: 'error.main'}}>{errors.plaque.message}</FormHelperText>}
+          {errors.plaque && <FormHelperText sx={{color: 'error.main'}}>{errors.plaque.message}</FormHelperText>}
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
@@ -526,8 +531,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               dir="ltr"
             />)}
           />
-          {errors.floor &&
-            <FormHelperText sx={{color: 'error.main'}}>{errors.floor.message}</FormHelperText>}
+          {errors.floor && <FormHelperText sx={{color: 'error.main'}}>{errors.floor.message}</FormHelperText>}
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
@@ -545,8 +549,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               dir="ltr"
             />)}
           />
-          {errors.home_unit &&
-            <FormHelperText sx={{color: 'error.main'}}>{errors.home_unit.message}</FormHelperText>}
+          {errors.home_unit && <FormHelperText sx={{color: 'error.main'}}>{errors.home_unit.message}</FormHelperText>}
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
@@ -574,8 +577,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             name='texes'
             control={control}
             rules={{required: true}}
-            render={({field: {value, onChange, onBlur}}) => (
-              <>
+            render={({field: {value, onChange, onBlur}}) => (<>
                 <InputLabel>شامل مالیات</InputLabel>
                 <Select
 
@@ -589,12 +591,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                   <MenuItem value>می باشد</MenuItem>
                   <MenuItem value={false}>نمی باشد</MenuItem>
                 </Select>
-              </>
-            )}
+              </>)}
           />
-          {errors.texes && (
-            <FormHelperText sx={{color: 'error.main'}}>{errors.texes.message}</FormHelperText>
-          )}
+          {errors.texes && (<FormHelperText sx={{color: 'error.main'}}>{errors.texes.message}</FormHelperText>)}
         </FormControl>
         <FormControl fullWidth sx={{mb: 4}}>
           <Controller
@@ -602,8 +601,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             name='off_percent_status'
             control={control}
             rules={{required: true}}
-            render={({field: {value, onChange, onBlur}}) => (
-              <>
+            render={({field: {value, onChange, onBlur}}) => (<>
                 <InputLabel>شامل تخفیف</InputLabel>
                 <Select
                   disabled={showUser}
@@ -617,12 +615,10 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                   <MenuItem value>می باشد</MenuItem>
                   <MenuItem value={false}>نمی باشد</MenuItem>
                 </Select>
-              </>
-            )}
+              </>)}
           />
           {errors.off_percent_status && (
-            <FormHelperText sx={{color: 'error.main'}}>{errors.off_percent_status.message}</FormHelperText>
-          )}
+            <FormHelperText sx={{color: 'error.main'}}>{errors.off_percent_status.message}</FormHelperText>)}
         </FormControl>
         {(hasDiscount || showUser || edit) && <FormControl fullWidth sx={{mb: 4}}>
           <Controller
@@ -699,8 +695,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             name='level_code'
             control={control}
             rules={{required: true}}
-            render={({field: {value, onChange, onBlur}}) => (
-              <TextField
+            render={({field: {value, onChange, onBlur}}) => (<TextField
 
                 label='کد سطح'
                 value={value}
@@ -708,8 +703,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 onChange={onChange}
                 error={Boolean(errors.level_code)}
                 disabled={showUser}
-              />
-            )}
+              />)}
           />
           {errors.level_code && <FormHelperText sx={{color: 'error.main'}}>{errors.level_code.message}</FormHelperText>}
         </FormControl>
@@ -718,8 +712,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             name='header_code'
             control={control}
             rules={{required: true}}
-            render={({field: {value, onChange, onBlur}}) => (
-              <TextField
+            render={({field: {value, onChange, onBlur}}) => (<TextField
 
                 label='کد سرفصل'
                 value={value}
@@ -727,29 +720,30 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                 onChange={onChange}
                 error={Boolean(errors.header_code)}
                 disabled={showUser}
-              />
-            )}
+              />)}
           />
-          {errors.header_code && <FormHelperText sx={{color: 'error.main'}}>{errors.header_code.message}</FormHelperText>}
+          {errors.header_code &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.header_code.message}</FormHelperText>}
         </FormControl>
-        {(user && showUser) &&<FormControl fullWidth sx={{mb: 4}}>
+        {(user && showUser) && <FormControl fullWidth sx={{mb: 4}}>
           <Controller
             name='money'
             control={control}
             rules={{required: true}}
-            render={({field: {value, onChange, onBlur}}) => (
-              <TextField
+            render={({field: {value, onChange, onBlur}}) => (<TextField
                 label='اعتبار'
                 value={value}
                 onBlur={onBlur}
                 onChange={onChange}
 
                 disabled={edit || showUser}
-              />
-            )}
+              />)}
           />
 
         </FormControl>}
+        <Box sx={{height: 400, mb:4}}>
+          <Map latLang={LatLang} setLatLang={setLatLang}/>
+        </Box>
         {!showUser && (<Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>
           ذخیره
         </Button>)}

@@ -16,7 +16,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import {ostan, shahr} from "iran-cities-json";
 import * as tus from "tus-js-client";
 import toast from "react-hot-toast";
-import Avatar from "../../@core/components/mui/avatar";
+import Avatar from "@core/components/mui/avatar";
 import {editUser, registerUser} from "./requests";
 
 
@@ -45,6 +45,9 @@ const schema = yup.object().shape({
   telephone: yup
     .string()
     .required('تلفن الزامی است').matches(/^[0-9]*$/, ' باید عدد باشد'),
+  address: yup.string().required("الزامی است").typeError("به درستی وارد نمایید").min(5,"به درستی وازد نمایید"),
+  economic_code: yup.string().required("الزامی است").typeError("به درستی وارد نمایید").min(2,"به درستی وازد نمایید"),
+
 
 })
 
@@ -65,6 +68,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     telephone: '',
     provence: '',
     city: '',
+    address:'',
+    economic_code:'',
   }
   const defaultValues = user || emptyForm
 
@@ -338,6 +343,44 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
             {errors.city && (
               <FormHelperText sx={{color: 'error.main'}}>{errors.city.message}</FormHelperText>
             )}
+          </FormControl>
+          <FormControl fullWidth sx={{mb: 4}}>
+            <Controller
+              name='address'
+              control={control}
+              rules={{required: true}}
+              render={({field: {value, onChange, onBlur}}) => (
+                <TextField
+                  label='آدرس'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.address)}
+                  disabled={showUser}
+                  multiline
+                  rows={2}
+                />
+              )}
+            />
+            {errors.address && <FormHelperText sx={{color: 'error.main'}}>{errors.address.message}</FormHelperText>}
+          </FormControl>
+          <FormControl fullWidth sx={{mb: 4}}>
+            <Controller
+              name='economic_code'
+              control={control}
+              rules={{required: true}}
+              render={({field: {value, onChange, onBlur}}) => (
+                <TextField
+                  label='کد اقتصادی'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.economic_code)}
+                  disabled={showUser}
+                />
+              )}
+            />
+            {errors.economic_code && <FormHelperText sx={{color: 'error.main'}}>{errors.economic_code.message}</FormHelperText>}
           </FormControl>
 
           {!showUser && <Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>

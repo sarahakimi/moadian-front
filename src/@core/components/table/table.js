@@ -6,7 +6,6 @@ function Table({data, columns, sortModel, setSortModel, selfFilter, noFilter}) {
   const [page, setPage] = useState(0)
 
   const handlePageSizeChange = newPageSize => {
-    console.log(newPageSize)
     setPageSize(newPageSize)
     setSortModel({...sortModel, ...{page_size: newPageSize}})
   }

@@ -22,8 +22,9 @@ import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import {ostan, shahr} from "iran-cities-json";
 import toast from "react-hot-toast";
+import yupSchema from "configs/yupSchema";
 import {editUser, registerUser} from "./requests";
-import yupSchema from "../../configs/yupSchema";
+import Map from "../newOrder/map";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -93,8 +94,8 @@ const schema = yup.object().shape({
     .string()
     .required('کوچه الزامی است'),
   company_name: yup.string(),
-  level_code:yupSchema.level_code,
-  header_code:yupSchema.header_code,
+  level_code: yupSchema.level_code,
+  header_code: yupSchema.header_code,
 })
 
 function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
@@ -102,6 +103,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   // eslint-disable-next-line camelcase
   const [selectedSenderOstan, setSelectedSenderOstan] = useState('')
   const [hasDiscount, setHasDiscount] = useState(false)
+  const [LatLang, setLatLang] = useState([51.3347, 35.7219])
   useEffect(() => {
     if (edit) {
       setHasDiscount(user.off_percent_status)
@@ -164,10 +166,23 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     company: user.company,
     level_code: user.level_code,
     header_code: user.header_code,
-    money:user.money
+    money: user.money
 
   } : emptyForm
 
+  useEffect(() => {
+    if (user) {
+      if (user.lang !== 0 && user.lat !== 0) {
+        setLatLang([user.lang, user.lat])
+      }
+    } else {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setLatLang([pos.coords.longitude, pos.coords.latitude])
+
+      });
+    }
+
+  }, [setLatLang]);
 
   const {
     reset, control, handleSubmit, formState: {errors}
@@ -188,14 +203,18 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const onSubmit = data => {
     if (edit) {
       toast.promise(
-        editUser(user.id, {address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data})
+        editUser(user.id, {
+          address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data,
+          lat: LatLang[1],
+          lang: LatLang[0]
+        })
           .then(() => {
             setChange(true)
             handleClose()
           })
         , {
-          loading: 'در حال ویرایش کاربر',
-          success: 'کاربر ویرایش شد',
+          loading: 'در حال ویرایش نماینده',
+          success: 'نماینده ویرایش شد',
           error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
       // eslint-disable-next-line no-param-reassign
@@ -203,14 +222,18 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
     } else {
       toast.promise(
-        registerUser({address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data})
+        registerUser({
+          address: `${data.main_street}- خیابان ${data.side_street} -کوچه ${data.alley} - پلاک ${data.plaque} - طبقه ${data.floor} - واحد ${data.home_unit}`, ...data,
+          lat: LatLang[1],
+          lang: LatLang[0]
+        })
           .then(() => {
             setChange(true)
             handleClose()
           })
         , {
-          loading: 'در حال ایجاد کاربر',
-          success: 'کاربر ایجاد شد',
+          loading: 'در حال ایجاد نماینده',
+          success: 'نماینده ایجاد شد',
           error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
         })
     }
@@ -730,9 +753,10 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
               />
             )}
           />
-          {errors.header_code && <FormHelperText sx={{color: 'error.main'}}>{errors.header_code.message}</FormHelperText>}
+          {errors.header_code &&
+            <FormHelperText sx={{color: 'error.main'}}>{errors.header_code.message}</FormHelperText>}
         </FormControl>
-        {(user && showUser) &&<FormControl fullWidth sx={{mb: 4}}>
+        {(user && showUser) && <FormControl fullWidth sx={{mb: 4}}>
           <Controller
             name='money'
             control={control}
@@ -750,6 +774,9 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           />
 
         </FormControl>}
+        <Box sx={{height: 400, mb:4}}>
+          <Map latLang={LatLang} setLatLang={setLatLang}/>
+        </Box>
         {!showUser && (<Button size='large' type='submit' variant='contained' sx={{mr: 3}} fullWidth>
           ذخیره
         </Button>)}

@@ -38,16 +38,17 @@ export default {
   getAllCompanies: "company/all",
   getAllHubs: "hub/all",
   forgotPassword: "auth/user/forget_password",
-  calculatePrice:"ordering/pricing",
-  getBackups:"backup/all",
-  getBackupNow:"backup/now",
-  connection_to_finance:"pricing/connection_to_finance",
-  customer_percent:"pricing/customer_percent",
-  singleFinancialOrder:(id)=>`pricing/customer_percent/${id}`,
-  createFinancialPrice:"pricing/customer_percent"
-
-
-
+  calculatePrice: "ordering/pricing",
+  getBackups: "backup/all",
+  getBackupNow: "backup/now",
+  connection_to_finance: "pricing/connection_to_finance",
+  customer_percent: "pricing/customer_percent",
+  singleFinancialOrder: (id) => `pricing/customer_percent/${id}`,
+  createFinancialPrice: "pricing/customer_percent",
+  downloadBackupById: (id) => `backup/${id}`,
+  uploadBackup: 'backup/apply',
+  applyBackupById: (id) => `backup/apply/${id}`,
+  roles:'user/roles'
 
 
 }

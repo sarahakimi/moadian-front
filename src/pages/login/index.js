@@ -307,7 +307,6 @@ function LoginPage() {
                             {companies.map((company, idx) => (
                               <MenuItem key={idx}
                                         value={idx}>
-                                {console.log(company.company)}
                                 شرکت {company.company?.companyName} ,هاب {company.hub?.hubName}
                               </MenuItem>
                             ))}

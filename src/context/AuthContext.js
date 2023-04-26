@@ -29,7 +29,6 @@ function AuthProvider({children}) {
     const initAuth = async () => {
       setIsInitialized(true)
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
-      console.log('stored', storedToken)
       if (storedToken) {
         setLoading(true)
         await http
@@ -81,12 +80,22 @@ function AuthProvider({children}) {
             }
           )
           .then(async response => {
+            http
+              .get(
+                urls.roles,
+                {},
+                {
+                  Authorization: `Bearer ${window.localStorage.getItem(authConfig.storageTokenKeyName)}`
+                }
+              ).then(async (resp) => {
+              const adminId = resp.data.filter(el => el.value === 1)
+              const {returnUrl} = router.query
+              setUser({...response.data, isSuperAdmin: response.data.roles.includes(adminId[0].id)})
+              await window.localStorage.setItem('userData', JSON.stringify({...response.data, isSuperAdmin: response.data.roles.includes(adminId[0].id)}))
+              const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+              router.replace(redirectURL)
+            })
 
-            const {returnUrl} = router.query
-            setUser({...response.data})
-            await window.localStorage.setItem('userData', JSON.stringify(response.data))
-            const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-            router.replace(redirectURL)
 
           })
       })
@@ -96,14 +105,14 @@ function AuthProvider({children}) {
   }
 
   const handleLogout = () => http.post(urls.logout, {}, {
-      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-    }).then(() => {
-      setUser(null)
-      setIsInitialized(false)
-      window.localStorage.removeItem('userData')
-      window.localStorage.removeItem(authConfig.storageTokenKeyName)
-      router.push('/login')
-    })
+    Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+  }).then(() => {
+    setUser(null)
+    setIsInitialized(false)
+    window.localStorage.removeItem('userData')
+    window.localStorage.removeItem(authConfig.storageTokenKeyName)
+    router.push('/login')
+  })
 
   const values = {
     user,

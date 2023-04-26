@@ -5,7 +5,7 @@ import {useAuth} from 'hooks/useAuth'
 
 
 export const getHomeRoute = role => {
-  if (role[0] === 11) return '/superadmin'
+  if (role) return '/superadmin'
 
   return '/dashboards'
 }
@@ -21,7 +21,7 @@ function Home() {
     }
 
     if (auth.user && auth.user.roles) {
-      const homeRoute = getHomeRoute(auth.user.roles)
+      const homeRoute = getHomeRoute(auth.user.isSuperAdmin)
 
       router.replace(homeRoute)
     }

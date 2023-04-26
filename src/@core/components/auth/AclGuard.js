@@ -31,7 +31,7 @@ function AclGuard({ aclAbilities, children, guestGuard }) {
 
   // User is logged in, build ability for the user based on his role
   if (auth.user && auth.user.roles && !ability) {
-    setAbility(buildAbilityFor(auth.user.roles, aclAbilities.subject))
+    setAbility(buildAbilityFor(auth.user.isSuperAdmin, aclAbilities.subject))
   }
 
   // Check the access of current user and render pages

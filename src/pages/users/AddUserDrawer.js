@@ -102,7 +102,6 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         if (response.data != null) {
           setRoles(response.data.filter(role => role.name !== "ادمین ویژه"))
         } else setRoles([])
-        console.log(roles)
       })
       .catch(err => {
         const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"

@@ -119,7 +119,6 @@ function ACLPage() {
     setFilter(filterModel)
     if (Object.keys(filterModel).length !== 0 && filterModel.items[0]?.value !== undefined) {
       setSortModel({...sortModel, ...{search: `${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`}})
-      console.log(`${filterModel.items[0].columnField}|${filterModel.items[0]?.value}`)
     } else {
       setSortModel({...sortModel, ...{search: ''}})
     }

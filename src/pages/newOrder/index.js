@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import Map from "./map";
 import {calculatePrice, createOrder} from "./requests";
 import Table from "./table"
+import yupSchema from "../../configs/yupSchema";
 
 const style = {
   position: 'absolute',
@@ -110,7 +111,8 @@ const schema = yup.object().shape({
   needsEvacuate: yup.boolean(),
   needsLoading: yup.boolean(),
   needsMovement: yup.boolean(),
-  isSuburb: yup.boolean()
+  isSuburb: yup.boolean(),
+  operator_name: yup.string().typeError("به درستی وارد نمایید")
 })
 
 const emptyForm = {
@@ -158,7 +160,8 @@ const emptyForm = {
   needsEvacuate: false,
   needsLoading: false,
   needsMovement: false,
-  isSuburb: false
+  isSuburb: false,
+  operator_name:''
 }
 
 
@@ -207,7 +210,7 @@ const defaultValues = {
   needsEvacuate: false,
   needsLoading: false,
   needsMovement: false,
-  isSuburb: false
+  isSuburb: false,
 }
 const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
@@ -257,8 +260,8 @@ function ACLPage() {
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((pos) => {
-      setSenderLatLang([ pos.coords.longitude, pos.coords.latitude])
-      setRecieverLatLang([ pos.coords.longitude, pos.coords.latitude])
+      setSenderLatLang([pos.coords.longitude, pos.coords.latitude])
+      setRecieverLatLang([pos.coords.longitude, pos.coords.latitude])
 
     });
 
@@ -369,6 +372,9 @@ function ACLPage() {
   const onsetSenderCustomer = () => {
     setHasSender(true)
     setSenderId(sender.id)
+    if (sender.lang !== 0 && sender.lat !== 0) {
+      setSenderLatLang([sender.lang, sender.lat])
+    }
     setValue('senderName', sender.name, {shouldTouch: true})
     setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
     setValue('senderCompany', sender.company_name, {shouldTouch: true})
@@ -412,12 +418,19 @@ function ACLPage() {
     setValue('senderFloor', '', {shouldTouch: true})
     setValue('senderUnit', '', {shouldTouch: true})
     setValue('senderOtherInfo', '', {shouldTouch: true})
+    setSenderLatLang([51.3347, 35.7219])
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setSenderLatLang([pos.coords.longitude, pos.coords.latitude])
+    });
 
   }
 
   const onsetRecieverCustomer = () => {
     setHasReciever(true)
     setRecieverId(reciever.id)
+    if (reciever.lang !== 0 && reciever.lat !== 0) {
+      setRecieverLatLang([reciever.lang, reciever.lat])
+    }
     setValue('recieverName', reciever.name, {shouldTouch: true})
     setValue('recieverCodeMelli', reciever.natural_code, {shouldTouch: true})
     setValue('recieverCompany', reciever.company_name, {shouldTouch: true})
@@ -461,7 +474,11 @@ function ACLPage() {
     setValue('recieverFloor', '', {shouldTouch: true})
     setValue('recieverUnit', '', {shouldTouch: true})
     setValue('recieverOtherInfo', '', {shouldTouch: true})
+    setRecieverLatLang([51.3347, 35.7219])
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setRecieverLatLang([pos.coords.longitude, pos.coords.latitude])
 
+    });
 
   }
 

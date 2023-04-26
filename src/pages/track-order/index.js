@@ -107,7 +107,6 @@ function Index() {
         toast.dismiss(toastid)
         if (response.data === null) setData({})
         else setData(response.data)
-        console.log(response.data)
       })
       .catch(err => {
         setLoading(false)

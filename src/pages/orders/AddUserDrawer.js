@@ -123,7 +123,7 @@ const schema = yup.object().shape({
   needsEvacuate: yup.boolean(),
   needsLoading: yup.boolean(),
   needsMovement: yup.boolean(),
-  isSuburb:yup.boolean()
+  isSuburb: yup.boolean()
 })
 const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
@@ -194,7 +194,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     needsEvacuate: false,
     needsLoading: false,
     needsMovement: false,
-    isSuburb:false
+    isSuburb: false
   }
 
   function onChangeSenderOstan(event, onChange, values) {
@@ -261,7 +261,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     needsEvacuate: user.product.product_unloading_required,
     needsLoading: user.product.product_loading_required,
     needsMovement: user.product.movement_required,
-    isSuburb:user.product.is_suburb
+    isSuburb: user.product.is_suburb
   } : emptyForm
 
 
@@ -302,7 +302,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "other_information": data.senderOtherInfo,
         "lat": sendertLatLang[1],
         "lang": sendertLatLang[0],
-        "full_address":`${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`,
+        "full_address": `${data.senderMainRoard}- خیابان ${data.senderSubRoad} -کوچه ${data.senderAlley} - پلاک ${data.senderPlaque} - طبقه ${data.senderFloor} - واحد ${data.senderUnit}`,
         ...senderCustomerid
       },
       "receiver_customer": {
@@ -324,7 +324,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "other_information": data.receiverOtherInfo,
         "lat": recieverLatLang[1],
         "lang": recieverLatLang[0],
-        "full_address":`${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`,
+        "full_address": `${data.recieverMainRoard}- خیابان ${data.recieverSubRoad} -کوچه ${data.recieverAlley} - پلاک ${data.recieverPlaque} - طبقه ${data.recieverFloor} - واحد ${data.recieverUnit}`,
         ...recieverCustomerId
       },
       "product": {
@@ -339,8 +339,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "movement_required": data.needsMovement,
         "product_loading_required": data.needsLoading,
         "product_unloading_required": data.needsEvacuate,
-        "payment_method":data.paymentMethod,
-        "isSuburb":data.isSuburb
+        "payment_method": data.paymentMethod,
+        "isSuburb": data.isSuburb
       }
     }
     if (edit) {
@@ -359,45 +359,48 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         })
     } else if (submitType === "submit") {
 
-        toast.promise(
-          createOrder(config).then(() => {
-            reset(emptyForm)
-            setSenderLatLang([51.3347, 35.7219])
-            setRecieverLatLang([51.3347, 35.7219])
-            setHasReciever(false)
-            setHasSender(false)
-          })
-          , {
-            loading: 'در حال ثبت سفارش',
-            success: 'سفارش ثبت شد',
-            error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
-          })
+      toast.promise(
+        createOrder(config).then(() => {
+          reset(emptyForm)
+          setSenderLatLang([51.3347, 35.7219])
+          setRecieverLatLang([51.3347, 35.7219])
+          setHasReciever(false)
+          setHasSender(false)
+        })
+        , {
+          loading: 'در حال ثبت سفارش',
+          success: 'سفارش ثبت شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+        })
 
-      } else if (submitType === "calculate") {
-        toast.promise(
-          calculatePrice(config).then((response) => {
-            toast((t) => (
-              <Box flex>
-                قیمت محاسبه شده <b>{response.data}</b> تومان می باشد
-                <Button onClick={() => toast.dismiss(t.id)}>
-                  بستن
-                </Button>
-              </Box>
-            ));
-          })
-          , {
-            loading: 'در حال محاسبه قیمت',
-            success: 'قیمت محاسبه شد',
-            error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
-          })
+    } else if (submitType === "calculate") {
+      toast.promise(
+        calculatePrice(config).then((response) => {
+          toast((t) => (
+            <Box flex>
+              قیمت محاسبه شده <b>{response.data}</b> تومان می باشد
+              <Button onClick={() => toast.dismiss(t.id)}>
+                بستن
+              </Button>
+            </Box>
+          ));
+        })
+        , {
+          loading: 'در حال محاسبه قیمت',
+          success: 'قیمت محاسبه شد',
+          error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+        })
 
-      }
+    }
 
   }
 
   const onsetSenderCustomer = () => {
     setHasSender(true)
     setSenderId(sender.id)
+    if (sender.lang !== 0 && sender.lat !== 0) {
+      setSenderLatLang([sender.lang, sender.lat])
+    }
     setValue('senderName', sender.name, {shouldTouch: true})
     setValue('senderCodeMelli', sender.natural_code, {shouldTouch: true})
     setValue('senderCompany', sender.company, {shouldTouch: true})
@@ -441,12 +444,18 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     setValue('senderFloor', '', {shouldTouch: true})
     setValue('senderUnit', '', {shouldTouch: true})
     setValue('senderOtherInfo', '', {shouldTouch: true})
-
+    setSenderLatLang([51.3347, 35.7219])
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setSenderLatLang([pos.coords.longitude, pos.coords.latitude])
+    });
   }
 
   const onsetRecieverCustomer = () => {
     setHasReciever(true)
     setRecieverId(reciever.id)
+    if (reciever.lang !== 0 && reciever.lat !== 0) {
+      setRecieverLatLang([reciever.lang, reciever.lat])
+    }
     setValue('recieverName', reciever.name, {shouldTouch: true})
     setValue('recieverCodeMelli', reciever.natural_code, {shouldTouch: true})
     setValue('recieverCompany', reciever.company, {shouldTouch: true})
@@ -490,6 +499,11 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     setValue('recieverFloor', '', {shouldTouch: true})
     setValue('recieverUnit', '', {shouldTouch: true})
     setValue('recieverOtherInfo', '', {shouldTouch: true})
+    setRecieverLatLang([51.3347, 35.7219])
+    navigator.geolocation.getCurrentPosition((pos) => {
+      setRecieverLatLang([pos.coords.longitude, pos.coords.latitude])
+
+    });
 
 
   }
@@ -498,7 +512,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     setSubmitType(type)
   }
 
-return (<Drawer
+  return (<Drawer
     open={open}
     anchor='left'
     variant='temporary'
@@ -567,10 +581,18 @@ return (<Drawer
                   fullWidth
                 />
               </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                <TextField
+                  label='نام متصدی'
+                  value={user.order.operator_name}
+                  disabled
+                  fullWidth
+                />
+              </Grid>
             </Grid>
           </CardContent>
 
-        </Card> }
+        </Card>}
         <Card sx={{
           p: 5, "& .MuiInputBase-input.Mui-disabled": {
             WebkitTextFillColor: "blue",
@@ -1896,7 +1918,8 @@ return (<Drawer
           </CardContent>
         </Card>
 
-        <Button size='large' type='submit' variant='contained' sx={{m: 1}} onClick={() => clickedOnSubmit('submit')} style={{display: showUser ? 'none' : undefined}}>
+        <Button size='large' type='submit' variant='contained' sx={{m: 1}} onClick={() => clickedOnSubmit('submit')}
+                style={{display: showUser ? 'none' : undefined}}>
           ثبت سفارش
         </Button>
         <Button size='large' type='submit' variant='contained' color="info" sx={{m: 1}}

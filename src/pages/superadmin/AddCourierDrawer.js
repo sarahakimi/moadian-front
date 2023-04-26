@@ -69,7 +69,7 @@ function SidebarAddCourier({open, toggle, setChange, company, edit}) {
       password: '',
       adminName: ''
     }
-  console.log(defaultValues)
+
 
   const {
     reset,
