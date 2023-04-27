@@ -106,16 +106,15 @@ const schema = yup.object().shape({
   recieverFloor: yup.string().required('طبقه الزامی است').matches(/d*/, 'باید عدد باشد'),
   recieverUnit: yup.string().required('واحد الزامی است').matches(/d*/, 'باید عدد باشد'),
   receiverOtherInfo: yup.string(),
-  weight: yup.number().required('وزن الزامی است').min(1, 'حداقل باید 1 گرم باشد'),
-  length: yup.number().required('طول الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد'),
-  width: yup.number().required('عرض الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد'),
+  weight: yup.number().required('وزن الزامی است').min(1, 'حداقل باید 1 گرم باشد').typeError("باید عدد باشد"),
+  length: yup.number().required('طول الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد').typeError("باید عدد باشد"),
+  width: yup.number().required('عرض الزامی است').min(1, 'حداقل باید 1 سانتی متر باشد').typeError("باید عدد باشد"),
   height: yup.number()
     .required('ارتفاع الزامی است')
-    .min(1, 'حداقل باید 1 سانتی متر باشد'),
+    .min(1, 'حداقل باید 1 سانتی متر باشد').typeError("باید عدد باشد"),
   money: yup.number()
     .required('ارزش کالا الزامی است')
-
-    .min(1, 'حداقل باید 1 تومان باشد'),
+    .min(1, 'حداقل باید 1 تومان باشد').typeError("باید عدد باشد"),
   car: yup.string().required('وسیله حمل کننده الزامی است'),
   needsSpecialCarry: yup.boolean(),
   SpecialBox: yup.boolean(),
@@ -366,6 +365,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           setRecieverLatLang([51.3347, 35.7219])
           setHasReciever(false)
           setHasSender(false)
+          setChange(true)
+          toggle()
         })
         , {
           loading: 'در حال ثبت سفارش',

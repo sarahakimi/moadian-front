@@ -12,8 +12,11 @@ import Table from "@core/components/table/table";
 
 import TableHeader from "@core/components/table-header/TableHeader";
 import RowOptions from "@core/components/row-options/row-options";
+import Button from "@mui/material/Button";
+import FileDownload from "js-file-download";
 import AddUserDrawer from './AddUserDrawer'
-import {deleteUser, fetchData} from "./requests";
+import {deleteUser, downloadOrder, fetchData} from "./requests";
+
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -162,6 +165,20 @@ function ACLPage() {
     ['contains' /* add more over time */].includes(value),
   );
 
+  const getOrder = (id) => {
+    toast.promise(
+      downloadOrder(id)
+        .then((response) => {
+          FileDownload(response.data, `سفارش${id}.pdf`);
+        })
+      , {
+        loading: 'در حال دانلود سفارش',
+        success: 'دانلود انجام شد',
+        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+      })
+  }
+
+
 
   const columns = [
     {
@@ -288,7 +305,6 @@ function ACLPage() {
         </Box>
       )
     },
-
     {
       flex: 0.1,
       minWidth: 50,
@@ -302,7 +318,22 @@ function ACLPage() {
                                          toggleEditUserDrawer={toggleEditUserDrawer}
                                          setSelectedCompany={setSelectedCompany} setChange={setChange}
                                          selectedCompany={selectedCompany} deleteFunction={deleteFunction}/>
-    }
+    },
+    {
+      flex: 0.2,
+      field: 'download',
+      minWidth: 100,
+      filterOperators,
+      headerName: 'مرحله',
+      hideable: false,
+      renderCell: ({row}) => (
+        <Box sx={{display: 'flex', alignItems: 'center'}}>
+          <Button onClick={()=> getOrder(row.order.id)}>
+            دانلود
+          </Button>
+        </Box>
+      )
+    },
   ]
   useEffect(() => {
     setDownloadData([])
@@ -312,7 +343,7 @@ function ACLPage() {
       } else setData(response.data.map(element => ({id: element.order.id, ...element})))
       if (change) setChange(false)
     }).catch((err) => {
-      const errorMessage = err.response.data.message ? err.response.data.message : "خطایی رخ داده است"
+      const errorMessage = err?.response?.data?.message ? err.response.data.message : "خطایی رخ داده است"
       toast.error(errorMessage)
     })
 

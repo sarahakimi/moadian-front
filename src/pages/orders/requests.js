@@ -38,6 +38,16 @@ export const editUser = async (id, data) => {
   return response;
 };
 
+export const downloadOrder = async (id) => {
+  const response = await http
+    .get(urls.downloadPdf(id), {}, {
+      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,
+      responseType: 'blob'
+    })
+
+  return response;
+};
+
 export default function Home1() {
   return <div/>;
 }
