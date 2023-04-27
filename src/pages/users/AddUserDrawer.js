@@ -100,7 +100,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       })
       .then(async response => {
         if (response.data != null) {
-          setRoles(response.data.filter(role => role.name !== "ادمین ویژه"))
+          setRoles(response.data.filter(role => role.value !== 1))
         } else setRoles([])
       })
       .catch(err => {
@@ -334,7 +334,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                   </Box>
                 )}
               >
-                {roles.slice(1, roles.length - 1).map(role => (
+                {roles.map(role => (
                   <MenuItem key={role.id} value={role.id} disabled={showUser}>
                     {role.name}
                   </MenuItem>))}
