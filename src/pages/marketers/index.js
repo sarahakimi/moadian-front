@@ -63,7 +63,7 @@ function ACLPage() {
     {key: "money", label: "اعتبار"}
   ];
 
-  const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
+  const downloadApi = () => toast.promise(fetchData({sort_by: sortModel.sort_by, serach: sortModel.serach}).then(response => {
     setDownloadData(response.data
       .map((element) => {
         const hasDiscount = element.off_percent_status ? "می باشد" : "نمی باشد"

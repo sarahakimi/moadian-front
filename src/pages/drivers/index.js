@@ -47,7 +47,7 @@ function ACLPage() {
 
   ];
 
-  const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
+  const downloadApi = () => toast.promise(fetchData({sort_by: sortModel.sort_by, serach: sortModel.serach}).then(response => {
     setDownloadData(response.data.filter(element => element.verified === true).map((element) => ({
       ...element,
       created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')

@@ -58,6 +58,13 @@ const navigation = () => [
     subject: 'every-page',
   },
   {
+    icon: Account,
+    title: 'کاربران',
+    path: '/admin/users',
+    action: 'read',
+    subject: 'admin',
+  },
+  {
     icon: AccountSupervisor,
     title: 'مشتریان',
     path: '/customers',
@@ -93,6 +100,13 @@ const navigation = () => [
     subject: 'every-page',
   },
   {
+    icon: StoreOutline,
+    title: 'هاب',
+    path: '/admin/hub',
+    action: 'read',
+    subject: 'admin',
+  },
+  {
     path: '/superadmin',
     action: 'read',
     subject: 'acl-page',
@@ -103,6 +117,20 @@ const navigation = () => [
     path: '/couriers',
     action: 'read',
     subject: 'every-page',
+    icon: OfficeBuildingOutline,
+    title: ' شرکت ها'
+  },
+  {
+    icon: MagnifyScan,
+    title: 'رهگیری سفارش',
+    path: '/admin/tracking',
+    action: 'read',
+    subject: 'admin',
+  },
+  {
+    path: '/admin/couriers',
+    action: 'read',
+    subject: 'admin',
     icon: OfficeBuildingOutline,
     title: ' شرکت ها'
   },
@@ -119,6 +147,13 @@ const navigation = () => [
     subject: 'every-page',
     title: 'پروفایل کاربری',
     path: '/account-settings'
+  },
+  {
+    icon: AccountOutline,
+    action: 'read',
+    subject: 'admin',
+    title: 'پروفایل کاربری',
+    path: '/admin/account-settings'
   },
   {
     icon: CogOutline,
@@ -149,6 +184,13 @@ const navigation = () => [
     path: '/backup'
   },
   {
+    icon: BackupRestore,
+    action: 'read',
+    subject: 'admin',
+    title: 'پشتیبان گیری',
+    path: '/admin/backup'
+  },
+  {
     icon: DatabaseEye,
     action: 'read',
     subject: 'every-page',
@@ -156,11 +198,25 @@ const navigation = () => [
     path: '/login-history'
   },
   {
+    icon: DatabaseEye,
+    action: 'read',
+    subject: 'admin',
+    title: 'تاریخچه ورود و خروج',
+    path: '/admin/login-history'
+  },
+  {
     icon: DatabaseArrowLeftOutline,
     action: 'read',
     subject: 'every-page',
     title: 'تاریخچه عملیات',
     path: '/operation-history'
+  },
+  {
+    icon: DatabaseArrowLeftOutline,
+    action: 'read',
+    subject: 'admin',
+    title: 'تاریخچه عملیات',
+    path: '/admin/operation-history'
   },
 
 ]

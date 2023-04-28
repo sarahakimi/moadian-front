@@ -89,7 +89,7 @@ function ACLPage() {
     {key: 'isSuburb', label: 'برون شهری'}
   ];
 
-  const downloadApi = () => toast.promise(fetchData(sortModel).then(response => {
+  const downloadApi = () => toast.promise(fetchData({sort_by: sortModel.sort_by, serach: sortModel.serach}).then(response => {
     setDownloadData(response.data
       .map((user) => ({
         senderCodeMelli: user.sender_customer.identity_code,

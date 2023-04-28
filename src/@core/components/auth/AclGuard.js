@@ -1,23 +1,23 @@
 // ** React Imports
-import { useState } from 'react'
+import {useState} from 'react'
 
 // ** Next Imports
-import { useRouter } from 'next/router'
+import {useRouter} from 'next/router'
 
 // ** Context Imports
-import { AbilityContext } from 'layouts/components/acl/Can'
+import {AbilityContext} from 'layouts/components/acl/Can'
 
 // ** Config Import
-import { buildAbilityFor } from 'configs/acl'
+import {buildAbilityFor} from 'configs/acl'
 
 // ** Component Import
 import NotAuthorized from 'pages/401'
 import BlankLayout from '@core/layouts/BlankLayout'
 
 // ** Hooks
-import { useAuth } from 'hooks/useAuth'
+import {useAuth} from 'hooks/useAuth'
 
-function AclGuard({ aclAbilities, children, guestGuard }) {
+function AclGuard({aclAbilities, children, guestGuard}) {
   const [ability, setAbility] = useState(undefined)
 
   // ** Hooks
@@ -31,7 +31,7 @@ function AclGuard({ aclAbilities, children, guestGuard }) {
 
   // User is logged in, build ability for the user based on his role
   if (auth.user && auth.user.roles && !ability) {
-    setAbility(buildAbilityFor(auth.user.isSuperAdmin, aclAbilities.subject))
+    setAbility(buildAbilityFor(auth.user.isSuperAdmin, auth.user.hub_id, aclAbilities.subject))
   }
 
   // Check the access of current user and render pages
@@ -42,7 +42,7 @@ function AclGuard({ aclAbilities, children, guestGuard }) {
   // Render Not Authorized component if the current user has limited access
   return (
     <BlankLayout>
-      <NotAuthorized />
+      <NotAuthorized/>
     </BlankLayout>
   )
 }

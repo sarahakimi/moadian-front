@@ -53,6 +53,7 @@ function TabAccount() {
   const {
     control,
     reset,
+    setValue,
     formState: {errors}
   } = useForm({
     defaultValues: useMemo(() => formData, [setFormData]),
@@ -210,7 +211,7 @@ function TabAccount() {
               {errors.username && <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>}
             </FormControl>
           </Grid>
-          {formData.hub_id !== 0 &&
+          {formData.hub_id !== 0 ?
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth sx={{mb: 4}}>
                 <Controller
@@ -226,24 +227,29 @@ function TabAccount() {
                       onChange={onChange}
                       input={<OutlinedInput label='Name'/>}
                       error={Boolean(errors.hub_id)}
+
                       disabled
                       InputLabelProps={{shrink: true}}
+                      defaultValue={user.hub_id}
                     >
                       {/* eslint-disable-next-line camelcase */}
                       {hub_ids.map(hub_id => (// eslint-disable-next-line camelcase
-                        <MenuItem key={hub_id.id} value={parseInt(hub_id.id, 10)}>
+                        <MenuItem key={hub_id.id} value={hub_id.id}>
                           {/* eslint-disable-next-line camelcase */}
                           {hub_id.name}
                         </MenuItem>))}
-                      <MenuItem key={0} value={0}>
-                        بدون هاب(ادمین اصلی شرکت)
-                      </MenuItem>
                     </Select>
                   </>)}
                 />
                 {errors.hub_id && <FormHelperText sx={{color: 'error.main'}}>{errors.hub_id.message}</FormHelperText>}
               </FormControl>
-            </Grid>}
+            </Grid>: <TextField
+              label='هاب'
+              value="بدون هاب (ادمسن اصلی شرکت"
+              error={Boolean(errors.name)}
+              disabled
+              InputLabelProps={{shrink: true}}
+            />}
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth sx={{mb: 4}}>
               <Controller

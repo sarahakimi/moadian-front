@@ -229,8 +229,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
           setChange(true)
           handleClose()
         }), {
-        loading: 'در حال ایجاد کاربر',
-        success: 'کاربر ایجاد شد',
+        loading: 'در حال ایجاد مشتری',
+        success: 'مشتری ایجاد شد',
         error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
       })
     }

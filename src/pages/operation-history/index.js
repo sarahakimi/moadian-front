@@ -39,7 +39,7 @@ function ACLPage() {
   ];
 
   const downloadApi = () => toast.promise(
-    fetchData(sortModel).then(response => {
+    fetchData({sort_by: sortModel.sort_by, serach: sortModel.serach}).then(response => {
 
       setDownloadData(response.data.map((element) => ({
         ...element,

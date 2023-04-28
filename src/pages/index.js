@@ -4,8 +4,9 @@ import Spinner from '@core/components/spinner'
 import {useAuth} from 'hooks/useAuth'
 
 
-export const getHomeRoute = role => {
+export const getHomeRoute = (role, hubId) => {
   if (role) return '/superadmin'
+  if (hubId===0) return "/admin/backup"
 
   return '/dashboards'
 }
@@ -21,7 +22,7 @@ function Home() {
     }
 
     if (auth.user && auth.user.roles) {
-      const homeRoute = getHomeRoute(auth.user.isSuperAdmin)
+      const homeRoute = getHomeRoute(auth.user.isSuperAdmin, auth.user.hub_id)
 
       router.replace(homeRoute)
     }
