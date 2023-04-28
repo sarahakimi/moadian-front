@@ -53,7 +53,6 @@ function TabAccount() {
   const {
     control,
     reset,
-    setValue,
     formState: {errors}
   } = useForm({
     defaultValues: useMemo(() => formData, [setFormData]),
