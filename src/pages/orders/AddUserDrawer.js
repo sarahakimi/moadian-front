@@ -212,23 +212,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
 
   const [packaging, setapackaging] = useState([])
 
-  useEffect(() => {
-    fetchPackaging({}).then(response => {
-      if (response.data === null) {
-        setapackaging([])
-      } else setapackaging([{id: -1, name: "بدون بسته بندی", price: 0}, ...response.data])
-    }).catch((err) => {
-      const errorMessage = err.response?.data?.message ? err.response.data.message : "خطایی رخ داده است"
-      setError("packaging", "خطا در دریافت بسته بندی.مجددا بارگزاری نمایید")
-      toast.error(errorMessage)
-    })
-    if (showUser || edit) {
-      setHasSender(true)
-      setHasReciever(true)
-      setSenderLatLang([user.sender_customer.lang, user.sender_customer.lat])
-      setSenderLatLang([user.receiver_customer.lang, user.receiver_customer.lat])
-    }
-  }, [])
+
 
   const pack = user.product?.packagin_price_id ? user.product?.packaging_price_id : -1
 
@@ -287,6 +271,24 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   } = useForm({
     defaultValues, mode: 'onChange', resolver: yupResolver(schema)
   })
+
+  useEffect(() => {
+    fetchPackaging({}).then(response => {
+      if (response.data === null) {
+        setapackaging([])
+      } else setapackaging([{id: -1, name: "بدون بسته بندی", price: 0}, ...response.data])
+    }).catch((err) => {
+      const errorMessage = err.response?.data?.message ? err.response.data.message : "خطایی رخ داده است"
+      setError("packaging", "خطا در دریافت بسته بندی.مجددا بارگزاری نمایید")
+      toast.error(errorMessage)
+    })
+    if (showUser || edit) {
+      setHasSender(true)
+      setHasReciever(true)
+      setSenderLatLang([user.sender_customer.lang, user.sender_customer.lat])
+      setSenderLatLang([user.receiver_customer.lang, user.receiver_customer.lat])
+    }
+  }, [])
 
 
   const handleClose = () => {

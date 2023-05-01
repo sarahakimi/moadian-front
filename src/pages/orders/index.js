@@ -13,7 +13,6 @@ import download from "downloadjs";
 import TableHeader from "@core/components/table-header/TableHeader";
 import RowOptions from "@core/components/row-options/row-options";
 import Button from "@mui/material/Button";
-import FileDownload from "js-file-download";
 import AddUserDrawer from './AddUserDrawer'
 import {deleteUser, downloadOrder, fetchData} from "./requests";
 

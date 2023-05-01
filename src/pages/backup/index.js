@@ -14,7 +14,7 @@ import TableHeader from "@core/components/table-header/TableHeader";
 
 import Button from "@mui/material/Button";
 import CardContent from "@mui/material/CardContent";
-import {applyBackup, applyBackupById, downloadBackup, fetchData, getBackupNow} from "./requests";
+import { applyBackupById, downloadBackup, fetchData, getBackupNow} from "./requests";
 
 const FileDownload = require('js-file-download');
 

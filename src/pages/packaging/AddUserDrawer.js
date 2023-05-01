@@ -14,7 +14,7 @@ import Close from 'mdi-material-ui/Close'
 import {Dialog, DialogActions, DialogContent, DialogTitle} from '@mui/material'
 import DialogContentText from "@mui/material/DialogContentText";
 import toast from "react-hot-toast";
-import yupSchema from "configs/yupSchema";
+
 import {editUser, registerUser} from "./requests";
 
 
