@@ -9,7 +9,7 @@ import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
 import toast from "react-hot-toast";
 import Table from "@core/components/table/table";
-
+import download from "downloadjs";
 import TableHeader from "@core/components/table-header/TableHeader";
 import RowOptions from "@core/components/row-options/row-options";
 import Button from "@mui/material/Button";
@@ -169,7 +169,9 @@ function ACLPage() {
     toast.promise(
       downloadOrder(id)
         .then((response) => {
-          FileDownload(response.data, `سفارش${id}.pdf`);
+          // FileDownload(response.data, 'report.pdf');
+          const content = response.headers['content-type'];
+          download(response.data, "file.pdf", content)
         })
       , {
         loading: 'در حال دانلود سفارش',

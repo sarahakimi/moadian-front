@@ -17,10 +17,12 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import {ostan, shahr} from "iran-cities-json";
 import toast from "react-hot-toast";
+import OutlinedInput from "@mui/material/OutlinedInput";
 import Table from "../newOrder/table";
 import Map from "../newOrder/map";
 import {calculatePrice, createOrder} from "../newOrder/requests";
 import {editUser} from "./requests";
+import {fetchPackaging} from "../packaging/requests";
 
 const Header = styled(Box)(({theme}) => ({
   display: 'flex',
@@ -122,7 +124,8 @@ const schema = yup.object().shape({
   needsEvacuate: yup.boolean(),
   needsLoading: yup.boolean(),
   needsMovement: yup.boolean(),
-  isSuburb: yup.boolean()
+  isSuburb: yup.boolean(),
+  packaging: yup.number().typeError("به درستی انتخاب نمایید")
 })
 const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
@@ -193,7 +196,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     needsEvacuate: false,
     needsLoading: false,
     needsMovement: false,
-    isSuburb: false
+    isSuburb: false,
+    packaging: -1
   }
 
   function onChangeSenderOstan(event, onChange, values) {
@@ -206,7 +210,18 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     setSelectedRecieverOstan(ostan.find(element => element.name === event.target.innerText)?.id)
   }
 
+  const [packaging, setapackaging] = useState([])
+
   useEffect(() => {
+    fetchPackaging({}).then(response => {
+      if (response.data === null) {
+        setapackaging([])
+      } else setapackaging([{id: -1, name: "بدون بسته بندی", price: 0}, ...response.data])
+    }).catch((err) => {
+      const errorMessage = err.response?.data?.message ? err.response.data.message : "خطایی رخ داده است"
+      setError("packaging", "خطا در دریافت بسته بندی.مجددا بارگزاری نمایید")
+      toast.error(errorMessage)
+    })
     if (showUser || edit) {
       setHasSender(true)
       setHasReciever(true)
@@ -214,6 +229,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
       setSenderLatLang([user.receiver_customer.lang, user.receiver_customer.lat])
     }
   }, [])
+
+  const pack = user.product?.packagin_price_id ? user.product?.packaging_price_id : -1
 
   const defaultValues = user ? {
     senderCodeMelli: user.sender_customer.identity_code,
@@ -260,12 +277,13 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
     needsEvacuate: user.product.product_unloading_required,
     needsLoading: user.product.product_loading_required,
     needsMovement: user.product.movement_required,
-    isSuburb: user.product.is_suburb
+    isSuburb: user.product.is_suburb,
+    packaging: pack
   } : emptyForm
 
 
   const {
-    reset, setValue, control, handleSubmit, formState: {errors}
+    reset, setValue, control,setError, handleSubmit, formState: {errors}
   } = useForm({
     defaultValues, mode: 'onChange', resolver: yupResolver(schema)
   })
@@ -280,6 +298,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
   const onSubmit = data => {
     const senderCustomerid = hasSender ? {"customer_id": senderId} : {}
     const recieverCustomerId = hasReciever ? {"customer_id": recieverIde} : {}
+    const packaging = data.packaging !== -1 ? {"packagin_price_id": data.packaging} : {}
 
     const config = {
       "sender_customer": {
@@ -339,7 +358,8 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         "product_loading_required": data.needsLoading,
         "product_unloading_required": data.needsEvacuate,
         "payment_method": data.paymentMethod,
-        "isSuburb": data.isSuburb
+        "isSuburb": data.isSuburb,
+        ...packaging
       }
     }
     if (edit) {
@@ -1913,6 +1933,36 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                   {errors.isSuburb && (
                     <FormHelperText sx={{color: 'error.main'}}>{errors.isSuburb.message}</FormHelperText>
                   )}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                <FormControl fullWidth sx={{mb: 4}}>
+                  <Controller
+                    name='packaging'
+                    control={control}
+                    rules={{required: true}}
+                    render={({field: {onChange, onBlur}}) => (<>
+                      <InputLabel>بسته بندی</InputLabel>
+                      <Select
+                        type='number'
+                        onBlur={onBlur}
+                        id='demo-multiple-name'
+                        onChange={onChange}
+                        input={<OutlinedInput label='Name'/>}
+                        error={Boolean(errors.packaging)}
+                        InputLabelProps={{shrink: true}}
+                        disabled={showUser}
+                      >
+                        {packaging.map(pack => (
+                          <MenuItem key={pack.id} value={pack.id}>
+                            {/* eslint-disable-next-line camelcase */}
+                            {pack.name}({pack.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}ریال)
+                          </MenuItem>))}
+                      </Select>
+                    </>)}
+                  />
+                  {errors.packaging &&
+                    <FormHelperText sx={{color: 'error.main'}}>{errors.packaging.message}</FormHelperText>}
                 </FormControl>
               </Grid>
             </Grid>

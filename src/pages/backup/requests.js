@@ -24,8 +24,7 @@ export const downloadBackup = async (id) => {
   const response = await http
     .get(urls.downloadBackupById(id), {}, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,
-      responseType: 'blob'
-    })
+    }, { responseType: 'arraybuffer',})
 
   return response;
 };
@@ -34,7 +33,6 @@ export const applyBackupById = async (id) => {
   const response = await http
     .post(urls.applyBackupById(id), {}, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,
-      responseType: 'blob'
     })
 
   return response;

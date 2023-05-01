@@ -53,6 +53,7 @@ function AuthProvider({children}) {
             setUser(null)
             setLoading(false)
             setIsInitialized(false)
+            router.replace("/login")
           })
       } else {
         setLoading(false)

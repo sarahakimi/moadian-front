@@ -13,9 +13,11 @@ import {Autocomplete, Card, CardContent, CardHeader, FormLabel, Grid, MenuItem, 
 import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
 import toast from "react-hot-toast";
+import OutlinedInput from "@mui/material/OutlinedInput";
 import Map from "./map";
 import {calculatePrice, createOrder} from "./requests";
 import Table from "./table"
+import {fetchPackaging} from "../packaging/requests";
 
 const style = {
   position: 'absolute',
@@ -111,7 +113,8 @@ const schema = yup.object().shape({
   needsLoading: yup.boolean(),
   needsMovement: yup.boolean(),
   isSuburb: yup.boolean(),
-  operator_name: yup.string().typeError("به درستی وارد نمایید")
+  operator_name: yup.string().typeError("به درستی وارد نمایید"),
+  packaging: yup.number().typeError("به درستی انتخاب نمایید")
 })
 
 const emptyForm = {
@@ -160,7 +163,8 @@ const emptyForm = {
   needsLoading: false,
   needsMovement: false,
   isSuburb: false,
-  operator_name:''
+  operator_name:'',
+  packaging: -1
 }
 
 
@@ -210,6 +214,7 @@ const defaultValues = {
   needsLoading: false,
   needsMovement: false,
   isSuburb: false,
+  packaging:-1
 }
 const cars = ['موتور', 'سواری', 'وانت', 'کامیون', 'کامیونت']
 const paymentMethod = ['پیش کرایه', 'پس کرایه']
@@ -238,7 +243,7 @@ function ACLPage() {
     reset,
     setValue,
 
-    // setError,
+    setError,
     handleSubmit,
     formState: {errors}
   } = useForm({
@@ -256,8 +261,19 @@ function ACLPage() {
     onChange(values)
     setSelectedRecieverOstan(ostan.find(element => element.name === event.target.innerText)?.id)
   }
+  const [packaging, setapackaging]= useState([])
 
   useEffect(() => {
+    fetchPackaging({}).then(response => {
+      if (response.data === null) {
+        setapackaging([])
+      } else setapackaging([{id:-1, name:"بدون بسته بندی", price:0},...response.data])
+    }).catch((err) => {
+      const errorMessage = err.response?.data?.message ? err.response.data.message : "خطایی رخ داده است"
+      setError("packaging", "خطا در دریافت بسته بندی.مجددا بارگزاری نمایید")
+      toast.error(errorMessage)
+    })
+
     navigator.geolocation.getCurrentPosition((pos) => {
       setSenderLatLang([pos.coords.longitude, pos.coords.latitude])
       setRecieverLatLang([pos.coords.longitude, pos.coords.latitude])
@@ -270,6 +286,7 @@ function ACLPage() {
 
     const senderCustomerid = hasSender ? {"customer_id": senderId} : {}
     const recieverCustomerId = hasReciever ? {"customer_id": recieverIde} : {}
+    const packaging = data.packaging!==-1 ? {"packagin_price_id": data.packaging}:{}
 
     const config = {
       "sender_customer": {
@@ -329,7 +346,8 @@ function ACLPage() {
         "product_loading_required": data.needsLoading,
         "product_unloading_required": data.needsEvacuate,
         "payment_method": data.paymentMethod,
-        "isSuburb": data.isSuburb
+        "isSuburb": data.isSuburb,
+        ...packaging
       }
     }
     if (submitType === "submit") {
@@ -1789,6 +1807,34 @@ function ACLPage() {
                 {errors.isSuburb && (
                   <FormHelperText sx={{color: 'error.main'}}>{errors.isSuburb.message}</FormHelperText>
                 )}
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+              <FormControl fullWidth sx={{mb: 4}}>
+                <Controller
+                  name='packaging'
+                  control={control}
+                  rules={{required: true}}
+                  render={({field: {onChange, onBlur}}) => (<>
+                    <InputLabel>بسته بندی</InputLabel>
+                    <Select
+                      type='number'
+                      onBlur={onBlur}
+                      id='demo-multiple-name'
+                      onChange={onChange}
+                      input={<OutlinedInput label='Name'/>}
+                      error={Boolean(errors.packaging)}
+                      InputLabelProps={{shrink: true}}
+                    >
+                      {packaging.map(pack => (
+                        <MenuItem key={pack.id} value={pack.id}>
+                          {/* eslint-disable-next-line camelcase */}
+                          {pack.name}({pack.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}ریال)
+                        </MenuItem>))}
+                    </Select>
+                  </>)}
+                />
+                {errors.packaging && <FormHelperText sx={{color: 'error.main'}}>{errors.packaging.message}</FormHelperText>}
               </FormControl>
             </Grid>
           </Grid>

@@ -17,7 +17,7 @@ import {
   DatabaseEye,
   HumanMale, MagnifyScan,
   OfficeBuildingOutline,
-  CreditCardFast
+  CreditCardFast, FoodTakeoutBoxOutline
 } from "mdi-material-ui";
 
 
@@ -140,6 +140,13 @@ const navigation = () => [
     subject: 'every-page',
     icon: CalculatorVariantOutline,
     title: ' قیمت گذاری'
+  },
+  {
+    path: '/packaging',
+    action: 'read',
+    subject: 'every-page',
+    icon: FoodTakeoutBoxOutline,
+    title: ' بسنه بندی'
   },
   {
     icon: AccountOutline,

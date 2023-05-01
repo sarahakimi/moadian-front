@@ -48,8 +48,9 @@ export default {
   downloadBackupById: (id) => `backup/${id}`,
   uploadBackup: 'backup/apply',
   applyBackupById: (id) => `backup/apply/${id}`,
-  roles:'user/roles',
-  downloadPdf: (id) => `ordering/pdf/${id}`
-
+  roles: 'user/roles',
+  downloadPdf: (id) => `ordering/pdf/${id}`,
+  packaging: "pricing/packaging",
+  packagingById: (id) => `pricing/packaging/${id}`
 
 }

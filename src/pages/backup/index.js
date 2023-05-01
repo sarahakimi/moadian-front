@@ -38,7 +38,6 @@ function ACLPage() {
     {key: "id", label: "شناسه"},
     {key: "created_at", label: "تاریخ و ساعت"},
     {key: "name", label: "تام کاربر"},
-    {key: "username", label: "تام کاربری"},
     {key: "traffic_type", label: "عملیات"},
   ];
 
@@ -174,24 +173,24 @@ function ACLPage() {
       })
   }
 
-  const uploadFile = ( file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    toast.promise(
-      applyBackup(file)
-        .then(() => {
-          alert("hi")
-        })
-      , {
-        loading: 'در حال دانلود فایل پشتیبان گیری',
-        success: 'دانلود انجام شد',
-        error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
-      })
-  };
+
 
   const onChangeInpuFile = (ev) => {
-    const file = ev.target.files[0];
-    uploadFile(file);
+    console.log(ev.target.files[0])
+    const formData = new FormData();
+    formData.append("file", ev.target.files[0], ev.target.files[0].name);
+    console.log(formData)
+
+    // toast.promise(
+    //   applyBackup(file)
+    //     .then(() => {
+    //       alert("hi")
+    //     })
+    //   , {
+    //     loading: 'در حال دانلود فایل پشتیبان گیری',
+    //     success: 'دانلود انجام شد',
+    //     error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.",
+    //   })
   }
 
   return (
@@ -200,19 +199,19 @@ function ACLPage() {
         <Card>
           <CardContent>
             <TableHeader data={downloadData}
-                         api={downloadApi} headers={headers} name="پشتیبان گیری" noAdd>
+                         api={downloadApi} headers={headers} name="پشتیبان گیری" noAdd noExport>
               <>
                 <Button onClick={getBackup} variant="outlined">
                   پشتیبان گیری در لحظه
                 </Button>
-                <Button variant="outlined" component="label">
+                <Button variant="outlined" component="label" disabled>
                   اعمال فایل پشتیبان گیری
-                  <input hidden accept=".Bak" type="file" onChange={onChangeInpuFile}/>
+                  <input hidden accept=".Bak" type="file" onChange={(event)=>onChangeInpuFile(event)}/>
                 </Button>
               </>
             </TableHeader>
             <GridContainer sx={{p: 4, m: 1}}>
-              <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel}/>
+              <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} />
             </GridContainer>
           </CardContent>
         </Card>

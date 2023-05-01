@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import Table from "@core/components/table/table";
 import TableHeader from "@core/components/table-header/TableHeader";
 import RowOptions from "@core/components/row-options/row-options";
-import {deleteUser, fetchData} from "./requests";
+import {deleteUser, fetchPackaging} from "./requests";
 import AddUserDrawer from "./AddUserDrawer";
 
 export const GridContainer = styled(Paper)({
@@ -34,13 +34,11 @@ function ACLPage() {
   const [downloadData, setDownloadData] = useState([])
 
   const headers = [
-    {key: "start_price", label: "قیمت شروع"},
-    {key: "end_price", label: "قیمت پایان"},
-    {key: "representative_percent", label: "درصد نماینده"},
-    {key: "marketer_percent", label: "درصد بازاریاب"}
+    {key: "name", label: "نام بسته بندی"},
+    {key: "price", label: "قیمت"},
   ];
 
-  const downloadApi = () => toast.promise(fetchData(sortModel).then(response => setDownloadData(response.data)), {
+  const downloadApi = () => toast.promise(fetchPackaging({sort_by: sortModel.sort_by, serach: sortModel.serach}).then(response => setDownloadData(response.data)), {
     loading: 'در حال دانلود',
     success: 'دانلود انجام شد. در صورت عدم دانلود از خالی نبودن موارد دانلود مطمئن شوید.',
     error: (err) => err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داده است.از خالی نبودن موارد دانلود مطمئن شوید.",
@@ -67,9 +65,9 @@ function ACLPage() {
     {
       flex: 1,
       minWidth: 150,
-      field: 'start_price',
+      field: 'name',
       filterOperators,
-      headerName: 'از قیمت',
+      headerName: 'نوع بسته بندی',
       sortable: false,
       hideable: false,
       filterable: false,
@@ -77,7 +75,7 @@ function ACLPage() {
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
             <Typography noWrap component='a' variant='subtitle2' sx={{color: 'text.primary', textDecoration: 'none'}}>
-              {row.start_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}ریال
+              {row.name}
             </Typography>
           </Box>
         </Box>
@@ -86,9 +84,9 @@ function ACLPage() {
     {
       flex: 1,
       minWidth: 150,
-      field: 'end_price',
+      field: 'price',
       filterOperators,
-      headerName: 'تا قیمت',
+      headerName: ' قیمت',
       sortable: false,
       hideable: false,
       filterable: false,
@@ -96,46 +94,13 @@ function ACLPage() {
         <Box sx={{display: 'flex', alignItems: 'center'}}>
           <Box sx={{display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
             <Typography noWrap component='a' variant='subtitle2' sx={{color: 'text.primary', textDecoration: 'none'}}>
-              {row.end_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}ریال
+              {row.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}ریال
             </Typography>
           </Box>
         </Box>
       )
     },
-    {
-      flex: 1,
-      field: 'representative_percent',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'درصد نماینده',
-      sortable: false,
-      hideable: false,
-      filterable: false,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {row.representative_percent}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      flex: 1,
-      field: 'marketer_percent',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'درصد بازاریاب',
-      sortable: false,
-      hideable: false,
-      filterable: false,
-      renderCell: ({row}) => (
-        <Box sx={{display: 'flex', alignItems: 'center'}}>
-          <Typography noWrap sx={{color: 'text.secondary', textTransform: 'capitalize'}}>
-            {row.marketer_percent}
-          </Typography>
-        </Box>
-      )
-    },
+
     {
       flex: 1,
       minWidth: 50,
@@ -153,7 +118,7 @@ function ACLPage() {
   ]
   useEffect(() => {
     setDownloadData([])
-    fetchData(sortModel).then(response => {
+    fetchPackaging(sortModel).then(response => {
       if (response.data === null) {
         setData([])
       } else setData(response.data)

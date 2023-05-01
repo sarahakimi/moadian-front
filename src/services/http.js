@@ -16,9 +16,11 @@ const headers = {
 }
 
 const http = {
-  get: (url, config, isAuthenticated) => axios.get(url, {
+  get: (url, config, isAuthenticated, elseParam) => axios.get(url, {
     headers: {...headers.headers, ...isAuthenticated},
-    params: config
+    params: config,
+  ...elseParam
+
   }),
   post: (url, config, isAuthenticated) =>
     axios.post(url, config, {headers: {...headers.headers, ...isAuthenticated}}),

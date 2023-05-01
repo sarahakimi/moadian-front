@@ -1,9 +1,9 @@
-import http from "../../services/http";
-import urls from "../../configs/requestEndpoints";
+import http from "services/http";
+import urls from "configs/requestEndpoints";
 
-export const fetchData = async (sortModel) => {
+export const fetchPackaging = async (sortModel) => {
   const response = await http
-    .get(urls.getAdminOrders, sortModel, {
+    .get(urls.packaging, sortModel, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
@@ -12,7 +12,7 @@ export const fetchData = async (sortModel) => {
 
 export const deleteUser = async (id) => {
   const response = await http
-    .delete(urls.singleOrder(id), {
+    .delete(urls.packagingById(id), {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
@@ -21,7 +21,7 @@ export const deleteUser = async (id) => {
 
 export const registerUser = async (data) => {
   const response = await http
-    .post(urls.createOrder, data, {
+    .post(urls.packaging, data, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
 
@@ -31,21 +31,9 @@ export const registerUser = async (data) => {
 
 export const editUser = async (id, data) => {
   const response = await http
-    .put(urls.singleOrder(id), data, {
+    .put(urls.packagingById(id), data, {
       Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
     })
-
-  return response;
-};
-
-export const downloadOrder = async (id) => {
-  const response = await http
-    .get(urls.downloadPdf(id), {}, {
-      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`,
-
-      // responseType: 'blob',
-      content_type:'application/pdf',
-}, { responseType: 'arraybuffer',})
 
   return response;
 };
