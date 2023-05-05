@@ -42,7 +42,7 @@ export default {
   money: yup.string()
     .required('ارزش کالا الزامی است')
     .matches(/d*/, 'ارزش کالا باید عدد باشد')
-    .min(1, 'حداقل باید 1 تومان باشد'),
+    .min(1, 'حداقل باید 1 ریال باشد'),
   cartype: yup.string().required('وسیله حمل کننده الزامی است'),
   needsSpecialCarry: yup.boolean(),
   SpecialBox: yup.boolean(),

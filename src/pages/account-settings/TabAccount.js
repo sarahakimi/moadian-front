@@ -87,7 +87,7 @@ function TabAccount() {
         toast.dismiss(toastId)
         toast.success("انجام شد")
         if (response.data != null) {
-          sethub_ids(response.data)
+          sethub_ids([{id:0, name:"ادمین اصلی شرکت (بدون هاب)"},...response.data])
         } else sethub_ids([])
 
       })
@@ -210,7 +210,7 @@ function TabAccount() {
               {errors.username && <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>}
             </FormControl>
           </Grid>
-          {formData.hub_id !== 0 ?
+
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth sx={{mb: 4}}>
                 <Controller
@@ -242,13 +242,7 @@ function TabAccount() {
                 />
                 {errors.hub_id && <FormHelperText sx={{color: 'error.main'}}>{errors.hub_id.message}</FormHelperText>}
               </FormControl>
-            </Grid>: <TextField
-              label='هاب'
-              value="بدون هاب (ادمسن اصلی شرکت"
-              error={Boolean(errors.name)}
-              disabled
-              InputLabelProps={{shrink: true}}
-            />}
+            </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth sx={{mb: 4}}>
               <Controller

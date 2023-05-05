@@ -104,7 +104,7 @@ const schema = yup.object().shape({
   money: yup.number()
     .required('ارزش کالا الزامی است').typeError("باید عدد باشد")
 
-    .min(1, 'حداقل باید 1 تومان باشد'),
+    .min(1, 'حداقل باید 1 ریال باشد'),
   car: yup.string().required('وسیله حمل کننده الزامی است'),
   needsSpecialCarry: yup.boolean(),
   SpecialBox: yup.boolean(),
@@ -370,7 +370,7 @@ function ACLPage() {
         calculatePrice(config).then((response) => {
           toast((t) => (
             <Box flex>
-              قیمت محاسبه شده <b>{response.data}</b> تومان می باشد
+              قیمت محاسبه شده <b>{response.data}</b> ریال می باشد
               <Button onClick={() => toast.dismiss(t.id)}>
                 بستن
               </Button>
@@ -1545,7 +1545,7 @@ function ACLPage() {
                   render={({field: {value, onChange, onBlur}}) => (
                     <TextField
 
-                      label='ارزش کالا (تومان)'
+                      label='ارزش کالا (ریال)'
                       value={value}
                       onBlur={onBlur}
                       onChange={onChange}

@@ -6,7 +6,7 @@ import {useAuth} from 'hooks/useAuth'
 
 export const getHomeRoute = (role, hubId) => {
   if (role) return '/superadmin'
-  if (hubId===0) return "/admin/backup"
+  if (hubId===0) return "/admin/users"
 
   return '/dashboards'
 }

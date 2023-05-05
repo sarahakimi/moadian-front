@@ -697,7 +697,7 @@ function Index() {
                     <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
                       <TextField
                         disabled
-                        label='ارزش کالا (تومان)'
+                        label='ارزش کالا (ریال)'
                         value={data.product.product_cost}
                         dir='ltr'
                         fullWidth

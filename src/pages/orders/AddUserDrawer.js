@@ -116,7 +116,7 @@ const schema = yup.object().shape({
     .min(1, 'حداقل باید 1 سانتی متر باشد').typeError("باید عدد باشد"),
   money: yup.number()
     .required('ارزش کالا الزامی است')
-    .min(1, 'حداقل باید 1 تومان باشد').typeError("باید عدد باشد"),
+    .min(1, 'حداقل باید 1 ریال باشد').typeError("باید عدد باشد"),
   car: yup.string().required('وسیله حمل کننده الزامی است'),
   needsSpecialCarry: yup.boolean(),
   SpecialBox: yup.boolean(),
@@ -401,7 +401,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
         calculatePrice(config).then((response) => {
           toast((t) => (
             <Box flex>
-              قیمت محاسبه شده <b>{response.data}</b> تومان می باشد
+              قیمت محاسبه شده <b>{response.data}</b> ریال می باشد
               <Button onClick={() => toast.dismiss(t.id)}>
                 بستن
               </Button>
@@ -1666,7 +1666,7 @@ function SidebarAddCourier({open, toggle, setChange, user, edit, showUser}) {
                     render={({field: {value, onChange, onBlur}}) => (
                       <TextField
                         disabled={showUser}
-                        label='ارزش کالا (تومان)'
+                        label='ارزش کالا (ریال)'
                         value={value}
                         onBlur={onBlur}
                         onChange={onChange}
