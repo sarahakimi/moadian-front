@@ -1,9 +1,9 @@
-import {createContext, useEffect, useState} from 'react'
-import {useRouter} from 'next/router'
+import { createContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import authConfig from 'configs/auth'
 import http from 'services/http'
-import toast from "react-hot-toast";
-import urls from "configs/requestEndpoints"
+import toast from 'react-hot-toast'
+import urls from 'configs/requestEndpoints'
 
 const defaultProvider = {
   user: null,
@@ -18,11 +18,10 @@ const defaultProvider = {
 }
 const AuthContext = createContext(defaultProvider)
 
-function AuthProvider({children}) {
+function AuthProvider({ children }) {
   const [user, setUser] = useState(defaultProvider.user)
   const [loading, setLoading] = useState(defaultProvider.loading)
   const [isInitialized, setIsInitialized] = useState(defaultProvider.isInitialized)
-
 
   const router = useRouter()
   useEffect(() => {
@@ -41,19 +40,18 @@ function AuthProvider({children}) {
           )
           .then(async response => {
             setLoading(false)
-            setUser({...response.data})
-            const {returnUrl} = router.query
+            setUser({ ...response.data })
+            const { returnUrl } = router.query
             const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
             router.replace(redirectURL)
           })
           .catch(() => {
             localStorage.removeItem('userData')
-            localStorage.removeItem('refreshToken')
-            localStorage.removeItem('accessToken')
+            localStorage.removeItem(authConfig.storageTokenKeyName)
             setUser(null)
             setLoading(false)
             setIsInitialized(false)
-            router.replace("/login")
+            router.replace('/login')
           })
       } else {
         setLoading(false)
@@ -88,16 +86,21 @@ function AuthProvider({children}) {
                 {
                   Authorization: `Bearer ${window.localStorage.getItem(authConfig.storageTokenKeyName)}`
                 }
-              ).then(async (resp) => {
-              const adminId = resp.data.filter(el => el.value === 1)
-              const {returnUrl} = router.query
-              setUser({...response.data, isSuperAdmin: response.data.roles.includes(adminId[0].id)})
-              await window.localStorage.setItem('userData', JSON.stringify({...response.data, isSuperAdmin: response.data.roles.includes(adminId[0].id)}))
-              const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-              router.replace(redirectURL)
-            })
-
-
+              )
+              .then(async resp => {
+                const adminId = resp.data.filter(el => el.value === 1)
+                const { returnUrl } = router.query
+                setUser({ ...response.data, isSuperAdmin: response.data.roles.includes(adminId[0].id) })
+                await window.localStorage.setItem(
+                  'userData',
+                  JSON.stringify({
+                    ...response.data,
+                    isSuperAdmin: response.data.roles.includes(adminId[0].id)
+                  })
+                )
+                const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
+                router.replace(redirectURL)
+              })
           })
       })
       .catch(err => {
@@ -105,15 +108,22 @@ function AuthProvider({children}) {
       })
   }
 
-  const handleLogout = () => http.post(urls.logout, {}, {
-    Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
-  }).then(() => {
-    setUser(null)
-    setIsInitialized(false)
-    window.localStorage.removeItem('userData')
-    window.localStorage.removeItem(authConfig.storageTokenKeyName)
-    router.push('/login')
-  })
+  const handleLogout = () =>
+    http
+      .post(
+        urls.logout,
+        {},
+        {
+          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+        }
+      )
+      .then(() => {
+        setUser(null)
+        setIsInitialized(false)
+        window.localStorage.removeItem('userData')
+        window.localStorage.removeItem(authConfig.storageTokenKeyName)
+        router.push('/login')
+      })
 
   const values = {
     user,
@@ -129,4 +139,4 @@ function AuthProvider({children}) {
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }
 
-export {AuthContext, AuthProvider}
+export { AuthContext, AuthProvider }

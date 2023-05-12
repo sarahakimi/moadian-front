@@ -5,31 +5,30 @@ import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
-import MenuItem from "@mui/material/MenuItem";
+import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import {styled, useTheme} from '@mui/material/styles'
+import { styled, useTheme } from '@mui/material/styles'
 import FormHelperText from '@mui/material/FormHelperText'
 import InputAdornment from '@mui/material/InputAdornment'
 import Typography from '@mui/material/Typography'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import * as yup from 'yup'
-import DialogContentText from "@mui/material/DialogContentText";
-import {Controller, useForm} from 'react-hook-form'
-import {yupResolver} from '@hookform/resolvers/yup'
-import {useAuth} from 'hooks/useAuth'
-import {useSettings} from '@core/hooks/useSettings'
-import {useState} from 'react'
+import DialogContentText from '@mui/material/DialogContentText'
+import { Controller, useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useAuth } from 'hooks/useAuth'
+import { useSettings } from '@core/hooks/useSettings'
+import { useState } from 'react'
 import themeConfig from 'configs/themeConfig'
 import BlankLayout from '@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'views/pages/auth/FooterIllustrationsV2'
-import {Dialog, DialogActions, DialogContent, DialogTitle, Select} from "@mui/material";
-import toast from "react-hot-toast";
+import { Dialog, DialogActions, DialogContent, DialogTitle, Select } from '@mui/material'
+import toast from 'react-hot-toast'
 
-
-const LoginIllustrationWrapper = styled(Box)(({theme}) => ({
+const LoginIllustrationWrapper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(20),
   paddingRight: '0 !important',
   [theme.breakpoints.down('lg')]: {
@@ -37,7 +36,7 @@ const LoginIllustrationWrapper = styled(Box)(({theme}) => ({
   }
 }))
 
-const LoginIllustration = styled('img')(({theme}) => ({
+const LoginIllustration = styled('img')(({ theme }) => ({
   maxWidth: '48rem',
   [theme.breakpoints.down('xl')]: {
     maxWidth: '38rem'
@@ -47,7 +46,7 @@ const LoginIllustration = styled('img')(({theme}) => ({
   }
 }))
 
-const RightWrapper = styled(Box)(({theme}) => ({
+const RightWrapper = styled(Box)(({ theme }) => ({
   width: '100%',
   [theme.breakpoints.up('md')]: {
     maxWidth: 400
@@ -57,40 +56,41 @@ const RightWrapper = styled(Box)(({theme}) => ({
   }
 }))
 
-const BoxWrapper = styled(Box)(({theme}) => ({
+const BoxWrapper = styled(Box)(({ theme }) => ({
   width: '100%',
   [theme.breakpoints.down('md')]: {
     maxWidth: 400
   }
 }))
 
-const TypographyStyled = styled(Typography)(({theme}) => ({
+const TypographyStyled = styled(Typography)(({ theme }) => ({
   fontWeight: 600,
   letterSpacing: '0.18px',
   marginBottom: theme.spacing(1.5),
-  [theme.breakpoints.down('md')]: {marginTop: theme.spacing(8)}
+  [theme.breakpoints.down('md')]: { marginTop: theme.spacing(8) }
 }))
 
 const schema = yup.object().shape({
-  username: yup.string()
+  username: yup
+    .string()
     .required('نام کاربری الزامی است')
     .min(4, 'نام کاربری باید حداقل ۴ کاراکتر باشد')
     .max(50, 'نام کاربری باید حداکثر 50 کاراکتر باشد.'),
-  password: yup.string()
+  password: yup
+    .string()
     .required('رمز عبور الزامی است')
     .min(8, 'رمز عبور باید حداقل 8 کاراکتر باشد.')
     .max(32, 'مز عبور باید حداکثر 32 کاراکتر باشد.'),
-  hub_id: yup.number(),
+  hub_id: yup.number()
 })
-
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const auth = useAuth()
   const theme = useTheme()
-  const {settings} = useSettings()
+  const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
-  const {skin} = settings
+  const { skin } = settings
   const [companies, setCompanies] = useState([])
   const [isDuplicate, setIsDuplicate] = useState(false)
   const [prevForm, setPrevForm] = useState({})
@@ -98,20 +98,21 @@ function LoginPage() {
   const emptyForm = {
     password: '',
     username: '',
-    hub_id: -1,
+    hub_id: -1
   }
 
-  const defaultValues = isDuplicate ? {
-    hub_id: -1,
-    ...prevForm,
-  } : emptyForm
-
+  const defaultValues = isDuplicate
+    ? {
+        hub_id: -1,
+        ...prevForm
+      }
+    : emptyForm
 
   const {
     control,
     setError,
     handleSubmit,
-    formState: {errors}
+    formState: { errors }
   } = useForm({
     defaultValues,
     mode: 'onChange',
@@ -119,71 +120,78 @@ function LoginPage() {
   })
 
   const handleClose = () => {
-    setIsDuplicate(false);
-  };
-
+    setIsDuplicate(false)
+  }
 
   const onSubmit = data => {
-    const toastid = toast.loading("در حال ورود...")
+    const toastid = toast.loading('در حال ورود...')
     if (isDuplicate) {
       if (data.hub_id === -1) {
         setError('hub_id', {
           type: 'manual',
-          message: "لطفا یک گزینه انتخاب کنید"
+          message: 'لطفا یک گزینه انتخاب کنید'
         })
 
         return
       }
-      setIsDuplicate(false);
+      setIsDuplicate(false)
 
-      auth.login({
-        username: data.username,
-        password: data.password,
-        chosen_item: true,
-        company_id: companies[data.hub_id].company.companyId,
+      auth.login(
+        {
+          username: data.username,
+          password: data.password,
+          chosen_item: true,
+          company_id: companies[data.hub_id].company.companyId,
 
-        hub_id: companies[data.hub_id].hub.hubId,
+          hub_id: companies[data.hub_id].hub.hubId,
 
-        // hub_id: 1,
-        user_type: 1,
-      }, err => {
-        toast.dismiss(toastid)
-        toast.error(err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داد")
-        setError('username', {
-          type: 'manual',
-          message: err.response?.data?.message
-        })
-      }, toastid)
+          // hub_id: 1,
+          user_type: 1
+        },
+        err => {
+          toast.dismiss(toastid)
+          toast.error(err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داد')
+          setError('username', {
+            type: 'manual',
+            message: err?.response?.data?.message
+          })
+        },
+        toastid
+      )
     } else {
-      const {username, password} = data
+      const { username, password } = data
       setPrevForm(data)
-      auth.login({username, password, user_type: 1}, err => {
-        toast.dismiss(toastid)
-        toast.error(err.response?.data?.message ? err.response?.data?.message : "خطایی رخ داد")
-        setError('username', {
-          type: 'manual',
-          message: err.response?.data?.message
-        })
-        if (err?.response?.data?.messageCode === 413) {
-          const {data} = err.response.data
-          setCompanies(data)
-          setIsDuplicate(true)
-        }
-      }, toastid)
+      auth.login(
+        { username, password, user_type: 1 },
+        err => {
+          toast.dismiss(toastid)
+          toast.error(err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داد')
+          setError('username', {
+            type: 'manual',
+            message: err?.response?.data?.message
+          })
+          if (err?.response?.data?.messageCode === 413) {
+            const { data } = err.response.data
+            setCompanies(data)
+            setIsDuplicate(true)
+          }
+        },
+        toastid
+      )
     }
   }
 
   return (
     <Box className='content-right'>
       {!hidden ? (
-        <Box sx={{flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center'}}>
+        <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
           <LoginIllustrationWrapper>
-            <LoginIllustration alt='login-illustration' src='/images/pages/login-illus.png'/>
+            <LoginIllustration alt='login-illustration' src='/images/pages/login-illus.png' />
           </LoginIllustrationWrapper>
-          <FooterIllustrationsV2/>
+          <FooterIllustrationsV2 />
         </Box>
       ) : null}
-      <RightWrapper sx={skin === 'bordered' && !hidden ? {borderLeft: `1px solid ${theme.palette.divider}`} : {}}>
+      <RightWrapper sx={skin === 'bordered' && !hidden ? { borderLeft: `1px solid ${theme.palette.divider}` } : {}}>
         <Box
           sx={{
             p: 7,
@@ -205,12 +213,12 @@ function LoginPage() {
                 justifyContent: 'center'
               }}
             >
-              <img width={60} height={60} src='/images/favicon.png'/>
-              <Typography variant='h6' sx={{ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important'}}>
+              <img width={60} height={60} src='/images/favicon.png' />
+              <Typography variant='h6' sx={{ ml: 2, lineHeight: 1, fontWeight: 700, fontSize: '1.5rem !important' }}>
                 {themeConfig.templateName}
               </Typography>
             </Box>
-            <Box sx={{mb: 6}}>
+            <Box sx={{ mb: 6 }}>
               <TypographyStyled variant='h5'>{`ورود به ${themeConfig.templateName}`}</TypographyStyled>
               <Typography variant='body2'>لطفا برای شروع ، وارد حساب کاربری خود شوید</Typography>
             </Box>
@@ -223,14 +231,13 @@ function LoginPage() {
               </Typography>
             </Alert> */}
             <form noValidate autoComplete='off' onSubmit={handleSubmit(onSubmit)}>
-              <FormControl fullWidth sx={{mb: 4}}>
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller
                   name='username'
                   control={control}
-                  rules={{required: true}}
-                  render={({field: {value, onChange, onBlur}}) => (
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
                     <TextField
-
                       label='نام کاربری'
                       value={value}
                       onBlur={onBlur}
@@ -240,18 +247,18 @@ function LoginPage() {
                   )}
                 />
                 {errors.username && (
-                  <FormHelperText sx={{color: 'error.main'}}>{errors.username.message}</FormHelperText>
+                  <FormHelperText sx={{ color: 'error.main' }}>{errors.username.message}</FormHelperText>
                 )}
               </FormControl>
-              <FormControl fullWidth sx={{mb: 4}}>
+              <FormControl fullWidth sx={{ mb: 4 }}>
                 <InputLabel htmlFor='auth-login-v2-password' error={Boolean(errors.password)}>
                   کلمه عبور
                 </InputLabel>
                 <Controller
                   name='password'
                   control={control}
-                  rules={{required: true}}
-                  render={({field: {value, onChange, onBlur}}) => (
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange, onBlur } }) => (
                     <OutlinedInput
                       value={value}
                       onBlur={onBlur}
@@ -267,7 +274,7 @@ function LoginPage() {
                             onMouseDown={e => e.preventDefault()}
                             onClick={() => setShowPassword(!showPassword)}
                           >
-                            {showPassword ? <EyeOutline/> : <EyeOffOutline/>}
+                            {showPassword ? <EyeOutline /> : <EyeOffOutline />}
                           </IconButton>
                         </InputAdornment>
                       }
@@ -275,54 +282,61 @@ function LoginPage() {
                   )}
                 />
                 {errors.password && (
-                  <FormHelperText sx={{color: 'error.main'}} id=''>
+                  <FormHelperText sx={{ color: 'error.main' }} id=''>
                     {errors.password.message}
                   </FormHelperText>
                 )}
               </FormControl>
-              {isDuplicate && <Dialog open={isDuplicate} onClose={handleClose} disableEnforceFocus>
-                <DialogTitle>انتخاب هاب</DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    لطفا شرکت و هاب خود را از بین گزینه های زیر انتخاب کنبد.
-                  </DialogContentText>
+              {isDuplicate && (
+                <Dialog open={isDuplicate} onClose={handleClose} disableEnforceFocus>
+                  <DialogTitle>انتخاب هاب</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText>لطفا شرکت و هاب خود را از بین گزینه های زیر انتخاب کنبد.</DialogContentText>
 
-                  <FormControl fullWidth sx={{mt: 4}}>
-                    <Controller
-                      type="number"
-                      name="hub_id"
-                      control={control}
-                      render={({field: {onChange, onBlur}}) => (
-                        <>
-                          <InputLabel>شرکت</InputLabel>
-                          <Select
-                            label="شرکت"
-                            type="number"
-                            onBlur={onBlur}
-                            onChange={onChange}
-                            input={<OutlinedInput/>}
-                            error={Boolean(errors.hub_id)}
-
-                          >
-                            {companies.map((company, idx) => (
-                              <MenuItem key={idx}
-                                        value={idx}>
-                                شرکت {company.company?.companyName} ,هاب {company.hub?.hubName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </>
+                    <FormControl fullWidth sx={{ mt: 4 }}>
+                      <Controller
+                        type='number'
+                        name='hub_id'
+                        control={control}
+                        render={({ field: { onChange, onBlur } }) => (
+                          <>
+                            <InputLabel>شرکت</InputLabel>
+                            <Select
+                              label='شرکت'
+                              type='number'
+                              onBlur={onBlur}
+                              onChange={onChange}
+                              input={<OutlinedInput />}
+                              error={Boolean(errors.hub_id)}
+                            >
+                              {companies.map((company, idx) => (
+                                <MenuItem key={idx} value={idx}>
+                                  شرکت {company.company?.companyName} ,هاب {company.hub?.hubName}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </>
+                        )}
+                      />
+                      {errors.hub_id && (
+                        <FormHelperText sx={{ color: 'error.main' }}>{errors.hub_id.message}</FormHelperText>
                       )}
-                    />
-                    {errors.hub_id &&
-                      <FormHelperText sx={{color: 'error.main'}}>{errors.hub_id.message}</FormHelperText>}
-                  </FormControl>
-                </DialogContent><DialogActions>
-                <Button fullWidth size='large' type='submit' variant='contained' sx={{mb: 7}}
-                        onClick={handleSubmit(onSubmit)}>
-                  ورود
-                </Button>
-              </DialogActions></Dialog>}
+                    </FormControl>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button
+                      fullWidth
+                      size='large'
+                      type='submit'
+                      variant='contained'
+                      sx={{ mb: 7 }}
+                      onClick={handleSubmit(onSubmit)}
+                    >
+                      ورود
+                    </Button>
+                  </DialogActions>
+                </Dialog>
+              )}
               <Box
                 sx={{
                   mb: 4,
@@ -334,12 +348,12 @@ function LoginPage() {
                 }}
               >
                 <Link passHref href='/forgot-password'>
-                  <Typography component={MuiLink} variant='body2' sx={{color: 'primary.main'}}>
+                  <Typography component={MuiLink} variant='body2' sx={{ color: 'primary.main' }}>
                     کلمه عبور را فراموش کردید؟
                   </Typography>
                 </Link>
               </Box>
-              <Button fullWidth size='large' type='submit' variant='contained' sx={{mb: 7}}>
+              <Button fullWidth size='large' type='submit' variant='contained' sx={{ mb: 7 }}>
                 ورود
               </Button>
             </form>
