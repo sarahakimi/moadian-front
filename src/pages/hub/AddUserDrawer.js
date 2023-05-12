@@ -192,8 +192,8 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
                     sx={{ display: 'inline' }}
                   />
                   <Avatar src={imageUrl} sx={{ width: 56, height: 56 }} />
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                   {!showUser && (
+                    /* eslint-disable-next-line jsx-a11y/label-has-associated-control */
                     <label htmlFor='raised-button-file'>
                       <Button variant='text' component='span'>
                         افزودن لوگو

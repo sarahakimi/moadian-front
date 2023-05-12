@@ -332,15 +332,15 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
                   >
                     {/* eslint-disable-next-line camelcase */}
                     {hub_ids.length === 0 ? (
-                      <MenuItem value={undefined}>
-                        هاب موجود نیست
-                        {/* eslint-disable-next-line camelcase */}
-                      </MenuItem>
+                      <MenuItem value={undefined}>هاب موجود نیست</MenuItem>
                     ) : (
+                      /* eslint-disable-next-line camelcase */
                       hub_ids.map(
                         (
-                          hub_id // eslint-disable-next-line camelcase
+                          // eslint-disable-next-line camelcase
+                          hub_id
                         ) => (
+                          // eslint-disable-next-line camelcase
                           <MenuItem key={hub_id.id} value={parseInt(hub_id.id, 10)}>
                             {/* eslint-disable-next-line camelcase */}
                             {hub_id.name}
