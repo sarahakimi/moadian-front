@@ -7,11 +7,15 @@ const DefaultPalette = (mode, skin) => {
   const defaultBgColor = () => {
     if (skin === 'bordered' && mode === 'light') {
       return '#FFF'
-    } else if (skin === 'bordered' && mode === 'dark') {
+    }
+    if (skin === 'bordered' && mode === 'dark') {
       return '#30334E'
-    } else if (mode === 'light') {
+    }
+    if (mode === 'light') {
       return '#F7F7F9'
-    } else return '#282A42'
+    }
+
+    return '#282A42'
   }
 
   return {
@@ -29,41 +33,42 @@ const DefaultPalette = (mode, skin) => {
       black: '#000',
       white: '#FFF'
     },
-    mode: mode,
+    mode,
     primary: {
-      light: '#787EFF',
-      main: '#666CFF',
-      dark: '#5A5FE0',
+      light: 'rgb(133, 125, 115)',
+      main: '#675D50',
+      dark: 'rgb(72, 65, 56)',
       contrastText: '#FFF'
     },
+
     secondary: {
-      light: '#7F889B',
-      main: '#6D788D',
-      dark: '#606A7C',
-      contrastText: '#FFF'
+      light: 'rgb(182, 151, 98)',
+      main: '#A47E3B',
+      dark: 'rgb(114, 88, 41)',
+      contrastText: '#fff'
     },
     success: {
-      light: '#83E542',
-      main: '#72E128',
-      dark: '#64C623',
+      light: 'rgb(135, 155, 135)',
+      main: '#698269',
+      dark: 'rgb(73, 91, 73)',
       contrastText: '#FFF'
     },
     error: {
-      light: '#FF625F',
-      main: '#FF4D49',
-      dark: '#E04440',
+      light: 'rgb(187, 119, 119)',
+      main: '#AA5656',
+      dark: 'rgb(118, 60, 60)',
       contrastText: '#FFF'
     },
     warning: {
-      light: '#FDBE42',
-      main: '#FDB528',
-      dark: '#DF9F23',
-      contrastText: '#FFF'
+      light: 'rgb(239, 185, 135)',
+      main: '#ECA869',
+      dark: 'rgb(165, 117, 73)',
+      contrastText: 'rgba(0, 0, 0, 0.87)'
     },
     info: {
-      light: '#40CDFA',
-      main: '#26C6F9',
-      dark: '#21AEDB',
+      light: 'rgb(117, 141, 159)',
+      main: '#537188',
+      dark: 'rgb(58, 79, 95)',
       contrastText: '#FFF'
     },
     grey: {
