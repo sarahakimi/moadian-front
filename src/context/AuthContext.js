@@ -26,7 +26,6 @@ function AuthProvider({ children }) {
   const router = useRouter()
   useEffect(() => {
     const initAuth = async () => {
-      setIsInitialized(true)
       const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
       if (storedToken) {
         setLoading(true)
@@ -44,6 +43,7 @@ function AuthProvider({ children }) {
             const { returnUrl } = router.query
             const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
             router.replace(redirectURL)
+            setIsInitialized(true)
           })
           .catch(() => {
             localStorage.removeItem('userData')
@@ -58,7 +58,7 @@ function AuthProvider({ children }) {
       }
     }
     initAuth()
-  }, [])
+  }, [isInitialized])
 
   const handleLogin = (params, errorCallback, toastid) => {
     http
@@ -78,29 +78,9 @@ function AuthProvider({ children }) {
               Authorization: `Bearer ${window.localStorage.getItem(authConfig.storageTokenKeyName)}`
             }
           )
-          .then(async response => {
-            http
-              .get(
-                urls.roles,
-                {},
-                {
-                  Authorization: `Bearer ${window.localStorage.getItem(authConfig.storageTokenKeyName)}`
-                }
-              )
-              .then(async resp => {
-                const adminId = resp.data.filter(el => el.value === 1)
-                const { returnUrl } = router.query
-                setUser({ ...response.data, isSuperAdmin: response.data.roles.includes(adminId[0].id) })
-                await window.localStorage.setItem(
-                  'userData',
-                  JSON.stringify({
-                    ...response.data,
-                    isSuperAdmin: response.data.roles.includes(adminId[0].id)
-                  })
-                )
-                const redirectURL = returnUrl && returnUrl !== '/' ? returnUrl : '/'
-                router.replace(redirectURL)
-              })
+          .then(response => {
+            setUser({ ...response.data })
+            setIsInitialized(true)
           })
       })
       .catch(err => {

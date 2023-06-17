@@ -35,40 +35,40 @@ const DefaultPalette = (mode, skin) => {
     },
     mode,
     primary: {
-      light: 'rgb(133, 125, 115)',
-      main: '#675D50',
-      dark: 'rgb(72, 65, 56)',
-      contrastText: '#FFF'
+      light: 'rgb(51, 202, 202)',
+      main: '#00bdbd',
+      dark: 'rgb(0, 132, 132)',
+      contrastText: 'rgba(0, 0, 0, 0.87)'
     },
 
     secondary: {
-      light: 'rgb(182, 151, 98)',
-      main: '#A47E3B',
-      dark: 'rgb(114, 88, 41)',
+      light: 'rgb(243, 118, 118)',
+      main: '#F05454',
+      dark: 'rgb(168, 58, 58)',
       contrastText: '#fff'
     },
     success: {
-      light: 'rgb(135, 155, 135)',
-      main: '#698269',
-      dark: 'rgb(73, 91, 73)',
+      light: 'rgb(125, 175, 122)',
+      main: '#5D9C59',
+      dark: 'rgb(65, 109, 62)',
       contrastText: '#FFF'
     },
     error: {
-      light: 'rgb(187, 119, 119)',
-      main: '#AA5656',
-      dark: 'rgb(118, 60, 60)',
+      light: 'rgb(229, 87, 95)',
+      main: '#DF2E38',
+      dark: 'rgb(156, 32, 39)',
       contrastText: '#FFF'
     },
     warning: {
-      light: 'rgb(239, 185, 135)',
-      main: '#ECA869',
-      dark: 'rgb(165, 117, 73)',
+      light: 'rgb(255, 234, 135)',
+      main: '#FFE569',
+      dark: 'rgb(178, 160, 73)',
       contrastText: 'rgba(0, 0, 0, 0.87)'
     },
     info: {
-      light: 'rgb(117, 141, 159)',
-      main: '#537188',
-      dark: 'rgb(58, 79, 95)',
+      light: 'rgb(199, 223, 237)',
+      main: '#BAD7E9',
+      dark: 'rgb(130, 150, 163)',
       contrastText: '#FFF'
     },
     grey: {

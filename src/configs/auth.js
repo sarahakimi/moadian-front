@@ -1,6 +1,6 @@
 export default {
   meEndpoint: 'user/me',
-  loginEndpoint: 'auth/user/login',
-  registerEndpoint: 'auth/user/login',
+  loginEndpoint: 'auth/login',
+  registerEndpoint: 'auth/login',
   storageTokenKeyName: 'access_Token'
 }

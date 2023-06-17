@@ -22,7 +22,7 @@ const ShapeImg = styled('img')(({ theme }) => ({
   }
 }))
 
-const FooterIllustrations = props => {
+function FooterIllustrations(props) {
   // ** Props
   const { image } = props
 
@@ -34,14 +34,14 @@ const FooterIllustrations = props => {
   const src = image || '/images/pages/misc-coming-soon-object.png'
   if (!hidden) {
     return (
-      <Fragment>
+      <>
         <ShapeImg alt='shape' src={src} />
-        <MaskImg alt='mask' src={`/images/pages/misc-mask-${theme.palette.mode}.png`} />
-      </Fragment>
+        {/* <MaskImg alt='mask' src={`/images/pages/misc-mask-${theme.palette.mode}.png`} /> */}
+      </>
     )
-  } else {
-    return null
   }
+
+  return null
 }
 
 export default FooterIllustrations

@@ -29,7 +29,7 @@ const Header = styled(Box)(({ theme }) => ({
 
 const schema = yup.object().shape({
   duration_of_activity: yup.number().required(' الزامی است').min(1, 'حداقل 1 روز').typeError('باید عدد باشد'),
-  active: yup.boolean().required('الزامی است').typeError('فیلد را انتخاب کنید'),
+  activated: yup.boolean().required('الزامی است').typeError('فیلد را انتخاب کنید'),
   name: yup.string()
 })
 
@@ -39,7 +39,7 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
   const defaultValues = {
     duration_of_activity: company.duration_of_activity,
     name: company.name,
-    active: company.active
+    activated: company.activated
   }
 
   const {
@@ -61,7 +61,7 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
     reset({
       duration_of_activity: 0,
       name: '',
-      active: false
+      activated: false
     })
   }
 
@@ -72,18 +72,18 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
 
   const onSubmit = data => {
     toast.promise(
-      editCompany(company.id, data)
-        .then(() => {
-          handleClose()
-          setChange(true)
-        })
-        .catch(err => {
-          setError('name', { type: 'custom', message: err.response.data.message })
-        }),
+      editCompany(company.id, data).then(() => {
+        handleClose()
+        setChange(true)
+      }),
       {
         loading: 'در حال ویرایش شرکت',
         success: 'شرکت ویرایش شد',
-        error: err => (err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.')
+        error: err => {
+          setError('name', { type: 'custom', message: err.response.data.message })
+
+          return err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.'
+        }
       }
     )
   }
@@ -151,7 +151,7 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
           </FormControl>
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
-              name='active'
+              name='activated'
               control={control}
               render={({ field: { onChange, onBlur } }) => (
                 <>
@@ -161,8 +161,8 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
                     labelId='demo-multiple-name-label'
                     id='demo-multiple-name'
                     onChange={onChange}
-                    defaultValue={company.active}
-                    error={Boolean(errors.active)}
+                    defaultValue={company.activated}
+                    error={Boolean(errors.activated)}
                     input={<OutlinedInput label='Name' />}
                   >
                     <MenuItem value>فعال</MenuItem>
@@ -171,7 +171,9 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
                 </>
               )}
             />
-            {errors.active && <FormHelperText sx={{ color: 'error.main' }}>{errors.active.message}</FormHelperText>}
+            {errors.activated && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.activated.message}</FormHelperText>
+            )}
           </FormControl>
 
           <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }} fullWidth>

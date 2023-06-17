@@ -18,6 +18,10 @@ import IconButton from '@mui/material/IconButton'
 import EyeOutline from 'mdi-material-ui/EyeOutline'
 import EyeOffOutline from 'mdi-material-ui/EyeOffOutline'
 import toast from 'react-hot-toast'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Switch from '@mui/material/Switch'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
 import { registerCompany } from './requests'
 
 const Header = styled(Box)(({ theme }) => ({
@@ -34,7 +38,6 @@ const schema = yup.object().shape({
     .required('کدملی  الزامی است')
     .test('len', 'کدملی باید 10 رقم باشد', val => val.toString().length === 10)
     .matches(/d*/, 'کدملی باید عدد باشد'),
-  adminName: yup.string().required('نام و نام خانوادگی الزامی است').min(5, 'فیلد را به درستی پر کنید'),
   phone: yup
     .string()
     .required('موبایل الزامی است')
@@ -43,7 +46,10 @@ const schema = yup.object().shape({
   name: yup.string().required('نام شرکت الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(8, 'حداقل باید 8 کاراکتر باشد'),
-  duration_of_activity: yup.number().required(' الزامی است').min(1, 'حداقل 1 روز').typeError('باید عدد باشد')
+  duration_of_activity: yup.number().required(' الزامی است').min(1, 'حداقل 1 روز').typeError('باید عدد باشد'),
+  economic_code: yup.string().typeError('به درستی وارد نمایید'),
+  branch_code: yup.string().typeError('باید عدد باشد'),
+  activated: yup.boolean()
 })
 
 function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
@@ -51,13 +57,15 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
 
   const defaultValues = company
     ? {
-        natural_code: company?.admin?.natural_code,
-        name: company.name,
-        phone: company?.admin?.phone,
-        duration_of_activity: company.duration_of_activity,
-        username: company?.admin?.username,
+        natural_code: company?.natural_code,
+        name: company?.name,
+        phone: company?.phone,
+        duration_of_activity: company?.duration_of_activity,
+        username: company?.username,
         password: '********',
-        adminName: company?.admin?.name
+        economic_code: company?.economic_code,
+        branch_code: company?.branch_code,
+        activated: company?.activated
       }
     : {
         natural_code: '',
@@ -66,7 +74,9 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
         duration_of_activity: 0,
         username: '',
         password: '',
-        adminName: ''
+        economic_code: '',
+        branch_code: 0,
+        activated: true
       }
 
   const {
@@ -82,32 +92,20 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
   })
 
   const onSubmit = data => {
-    const config = {
-      name: data.name,
-      duration_of_activity: data.duration_of_activity,
-      active: true,
-      admin: {
-        name: data.adminName,
-        username: data.username,
-        phone: data.phone,
-        natural_code: data.natural_code,
-        password: data.password
-      }
-    }
     toast.promise(
-      registerCompany(config)
-        .then(() => {
-          reset(defaultValues)
-          setChange(true)
-          toggle()
-        })
-        .catch(err => {
-          setError('name', { type: 'custom', message: err.response.data.message })
-        }),
+      registerCompany(data).then(() => {
+        reset(defaultValues)
+        setChange(true)
+        toggle()
+      }),
       {
         loading: 'در حال ایجاد شرکت',
         success: 'شرکت ایجاد شد',
-        error: err => (err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.')
+        error: err => {
+          setError('name', { type: 'custom', message: err.response.data.message })
+
+          return err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.'
+        }
       }
     )
   }
@@ -163,6 +161,48 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
           </FormControl>
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
+              name='branch_code'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange, onBlur } }) => (
+                <TextField
+                  inputProps={{ maxLength: 30 }}
+                  label='کد شعبه'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.branch_code)}
+                  disabled={edit}
+                />
+              )}
+            />
+            {errors.branch_code && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.branch_code.message}</FormHelperText>
+            )}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 4 }}>
+            <Controller
+              name='economic_code'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { value, onChange, onBlur } }) => (
+                <TextField
+                  inputProps={{ maxLength: 30 }}
+                  label='کد اقتصادی'
+                  value={value}
+                  onBlur={onBlur}
+                  onChange={onChange}
+                  error={Boolean(errors.economic_code)}
+                  disabled={edit}
+                />
+              )}
+            />
+            {errors.economic_code && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.economic_code.message}</FormHelperText>
+            )}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 4 }}>
+            <Controller
               name='duration_of_activity'
               control={control}
               type='number'
@@ -210,26 +250,7 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
               <FormHelperText sx={{ color: 'error.main' }}>{errors.natural_code.message}</FormHelperText>
             )}
           </FormControl>
-          <FormControl fullWidth sx={{ mb: 4 }}>
-            <Controller
-              name='adminName'
-              control={control}
-              rules={{ required: true }}
-              render={({ field: { value, onChange, onBlur } }) => (
-                <TextField
-                  label='نام و نام خانوادگی'
-                  value={value}
-                  onBlur={onBlur}
-                  onChange={onChange}
-                  error={Boolean(errors.adminName)}
-                  disabled={edit}
-                />
-              )}
-            />
-            {errors.adminName && (
-              <FormHelperText sx={{ color: 'error.main' }}>{errors.adminName.message}</FormHelperText>
-            )}
-          </FormControl>
+
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
               name='phone'
@@ -305,6 +326,33 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
               />
             </FormControl>
           )}
+          <FormControl fullWidth sx={{ mb: 4 }}>
+            <Controller
+              name='activated'
+              control={control}
+              render={({ field: { onChange, onBlur } }) => (
+                <>
+                  <InputLabel id='demo-multiple-name-label'>وضعیت</InputLabel>
+                  <Select
+                    onBlur={onBlur}
+                    labelId='demo-multiple-name-label'
+                    id='demo-multiple-name'
+                    onChange={onChange}
+                    defaultValue={company?.activated ? company?.activated : true}
+                    error={Boolean(errors.activated)}
+                    disabled={edit}
+                    input={<OutlinedInput label='Name' />}
+                  >
+                    <MenuItem value>فعال</MenuItem>
+                    <MenuItem value={false}>غیرفعال</MenuItem>
+                  </Select>
+                </>
+              )}
+            />
+            {errors.activated && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.activated.message}</FormHelperText>
+            )}
+          </FormControl>
           {!edit && (
             <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }} fullWidth>
               ذخیره

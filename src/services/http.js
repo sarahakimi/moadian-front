@@ -2,9 +2,9 @@ import axios from 'axios'
 
 axios.defaults.baseURL = '/api'
 
-axios.defaults.baseURL = 'https://api.zaminbar.ir/'
+// axios.defaults.baseURL = 'https://api.zaminbar.ir/'
 
-// axios.defaults.baseURL = 'http://193.141.127.108:8001/'
+axios.defaults.baseURL = 'http://193.141.127.108:8004/'
 
 const headers = {
   headers: {
@@ -16,17 +16,17 @@ const headers = {
 }
 
 const http = {
-  get: (url, config, isAuthenticated, elseParam) => axios.get(url, {
-    headers: {...headers.headers, ...isAuthenticated},
-    params: config,
-  ...elseParam
-
-  }),
+  get: (url, config, isAuthenticated, elseParam) =>
+    axios.get(url, {
+      headers: { ...headers.headers, ...isAuthenticated },
+      params: config,
+      ...elseParam
+    }),
   post: (url, config, isAuthenticated) =>
-    axios.post(url, config, {headers: {...headers.headers, ...isAuthenticated}}),
+    axios.post(url, config, { headers: { ...headers.headers, ...isAuthenticated } }),
   put: (url, config, isAuthenticated) =>
-    axios.put(url, config, {headers: {...headers.headers, ...isAuthenticated}}),
-  delete: (url, isAuthenticated) => axios.delete(url, {headers: {...headers.headers, ...isAuthenticated}})
+    axios.put(url, config, { headers: { ...headers.headers, ...isAuthenticated } }),
+  delete: (url, isAuthenticated) => axios.delete(url, { headers: { ...headers.headers, ...isAuthenticated } })
 }
 
 export default http

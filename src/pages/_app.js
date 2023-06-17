@@ -67,12 +67,12 @@ function App(props) {
     <Provider store={store}>
       <CacheProvider value={emotionCache}>
         <Head>
-          <title> زمین بار</title>
+          <title> حساب یار</title>
           <meta
             name='description'
             content={`${themeConfig.templateName} – اپلیکیشن زمین بار اپلیکیشنی برای حمل و نقل زمینی است`}
           />
-          <meta name='keywords' content=',شرکت حساب رایانه زمین  بار, حساب رایانه, بار, زمین' />
+          <meta name='keywords' content=',شرکت حساب رایانه زمین  بار, حساب رایانه, حسابداری, مودیان, حساب یار' />
           <meta name='viewport' content='initial-scale=1, width=device-width' />
         </Head>
 

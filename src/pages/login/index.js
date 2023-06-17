@@ -37,9 +37,9 @@ const LoginIllustrationWrapper = styled(Box)(({ theme }) => ({
 }))
 
 const LoginIllustration = styled('img')(({ theme }) => ({
-  maxWidth: '48rem',
+  maxWidth: '50rem',
   [theme.breakpoints.down('xl')]: {
-    maxWidth: '38rem'
+    maxWidth: '50rem'
   },
   [theme.breakpoints.down('lg')]: {
     maxWidth: '30rem'
@@ -143,10 +143,7 @@ function LoginPage() {
           chosen_item: true,
           company_id: companies[data.hub_id].company.companyId,
 
-          hub_id: companies[data.hub_id].hub.hubId,
-
-          // hub_id: 1,
-          user_type: 1
+          hub_id: companies[data.hub_id].hub.hubId
         },
         err => {
           toast.dismiss(toastid)
@@ -162,7 +159,7 @@ function LoginPage() {
       const { username, password } = data
       setPrevForm(data)
       auth.login(
-        { username, password, user_type: 1 },
+        { username, password },
         err => {
           toast.dismiss(toastid)
           toast.error(err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داد')
@@ -170,11 +167,6 @@ function LoginPage() {
             type: 'manual',
             message: err?.response?.data?.message
           })
-          if (err?.response?.data?.messageCode === 413) {
-            const { data } = err.response.data
-            setCompanies(data)
-            setIsDuplicate(true)
-          }
         },
         toastid
       )
@@ -186,7 +178,7 @@ function LoginPage() {
       {!hidden ? (
         <Box sx={{ flex: 1, display: 'flex', position: 'relative', alignItems: 'center', justifyContent: 'center' }}>
           <LoginIllustrationWrapper>
-            <LoginIllustration alt='login-illustration' src='/images/pages/login-illus.png' />
+            <LoginIllustration alt='login-illustration' src='/images/pages/landing.png' />
           </LoginIllustrationWrapper>
           <FooterIllustrationsV2 />
         </Box>

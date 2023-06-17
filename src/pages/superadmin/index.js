@@ -49,8 +49,9 @@ function ACLPage() {
   const headers = [
     { key: 'id', label: 'شناسه' },
     { key: 'name', label: 'تام شرکت' },
+    { key: 'username', label: 'تام کاربری شرکت' },
     { key: 'duration_of_activity', label: 'اشتراک' },
-    { key: 'active', label: 'وضعیت' },
+    { key: 'activated', label: 'وضعیت' },
     { key: 'created_at', label: 'تاریخ ایجاد' }
   ]
 
@@ -66,8 +67,9 @@ function ACLPage() {
 
             return {
               ...element,
-              created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
-              active: isActive
+
+              // created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
+              activated: isActive
             }
           })
         )
@@ -92,7 +94,7 @@ function ACLPage() {
       minWidth: 230,
       field: 'name',
       filterOperators,
-      headerName: 'نام کوریر',
+      headerName: 'نام شرکت',
       hideable: false,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -104,29 +106,12 @@ function ACLPage() {
         </Box>
       )
     },
-    {
-      flex: 0.1,
-      minWidth: 230,
-      field: 'adminName',
-      filterable: false,
-      headerName: 'نام ادمین',
-      sortable: false,
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
-              {row?.admin?.name}
-            </Typography>
-          </Box>
-        </Box>
-      )
-    },
+
     {
       flex: 0.2,
       minWidth: 230,
       field: 'adminUsername',
-      headerName: 'نام کاربری ادمین',
+      headerName: 'نام کاربری',
       filterable: false,
       hideable: false,
       sortable: false,
@@ -134,7 +119,7 @@ function ACLPage() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
             <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
-              {row?.admin?.username}
+              {row?.username}
             </Typography>
           </Box>
         </Box>
@@ -150,7 +135,8 @@ function ACLPage() {
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {moment(row.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
+            {/* {moment(row.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')} */}
+            {row?.created_at}
           </Typography>
         </Box>
       )
@@ -171,7 +157,7 @@ function ACLPage() {
     {
       flex: 0.1,
       minWidth: 110,
-      field: 'active',
+      field: 'activated',
       filterable: false,
       headerName: 'وضعیت',
       hideable: false,
@@ -179,8 +165,8 @@ function ACLPage() {
         <CustomChip
           skin='light'
           size='small'
-          label={row.active ? 'فعال' : 'غیرفعال'}
-          color={userStatusObj[row.active]}
+          label={row.activated ? 'فعال' : 'غیرفعال'}
+          color={userStatusObj[row.activated]}
           sx={{ textTransform: 'capitalize', '& .MuiChip-label': { lineHeight: '18px' } }}
         />
       )
