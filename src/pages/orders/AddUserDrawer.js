@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
@@ -17,12 +17,11 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import { ostan, shahr } from 'iran-cities-json'
 import toast from 'react-hot-toast'
-import OutlinedInput from '@mui/material/OutlinedInput'
+
 import Table from '../newOrder/table'
 import Map from '../newOrder/map'
 import { calculatePrice, createOrder } from '../newOrder/requests'
 import { editUser } from './requests'
-import { fetchPackaging } from '../packaging/requests'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -216,8 +215,6 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
     setSelectedRecieverOstan(ostan.find(element => element.name === event.target.innerText)?.id)
   }
 
-  const [packaging, setapackaging] = useState([])
-
   const pack = user.product?.packaging_price_id ? user.product?.packaging_price_id : -1
 
   const defaultValues = user
@@ -275,7 +272,6 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
     reset,
     setValue,
     control,
-    setError,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -283,26 +279,6 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
     mode: 'onChange',
     resolver: yupResolver(schema)
   })
-
-  useEffect(() => {
-    fetchPackaging({})
-      .then(response => {
-        if (response.data === null) {
-          setapackaging([])
-        } else setapackaging([{ id: -1, name: 'بدون بسته بندی', price: 0 }, ...response.data])
-      })
-      .catch(err => {
-        const errorMessage = err.response?.data?.message ? err.response.data.message : 'خطایی رخ داده است'
-        setError('packaging', 'خطا در دریافت بسته بندی.مجددا بارگزاری نمایید')
-        toast.error(errorMessage)
-      })
-    if (showUser || edit) {
-      setHasSender(true)
-      setHasReciever(true)
-      setSenderLatLang([user.sender_customer.lang, user.sender_customer.lat])
-      setSenderLatLang([user.receiver_customer.lang, user.receiver_customer.lat])
-    }
-  }, [])
 
   const handleClose = () => {
     toggle()
@@ -1913,40 +1889,6 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
                     />
                     {errors.isSuburb && (
                       <FormHelperText sx={{ color: 'error.main' }}>{errors.isSuburb.message}</FormHelperText>
-                    )}
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
-                  <FormControl fullWidth sx={{ mb: 4 }}>
-                    <Controller
-                      name='packaging'
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field: { onChange, onBlur } }) => (
-                        <>
-                          <InputLabel>بسته بندی</InputLabel>
-                          <Select
-                            type='number'
-                            onBlur={onBlur}
-                            id='demo-multiple-name'
-                            onChange={onChange}
-                            input={<OutlinedInput label='Name' />}
-                            error={Boolean(errors.packaging)}
-                            InputLabelProps={{ shrink: true }}
-                            disabled={showUser}
-                          >
-                            {packaging.map(pack => (
-                              <MenuItem key={pack.id} value={pack.id}>
-                                {/* eslint-disable-next-line camelcase */}
-                                {pack.name}({pack.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}ریال)
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </>
-                      )}
-                    />
-                    {errors.packaging && (
-                      <FormHelperText sx={{ color: 'error.main' }}>{errors.packaging.message}</FormHelperText>
                     )}
                   </FormControl>
                 </Grid>

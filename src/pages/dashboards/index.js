@@ -186,22 +186,6 @@ function ACLPage() {
       })
   }, [sortModel, change, setData])
 
-  const setVerified = () => {
-    // eslint-disable-next-line no-param-reassign
-    delete selectedDriver.password
-    toast.promise(
-      editUser(selectedDriver.id, { ...selectedDriver, verified: true }).then(() => {
-        setChange(true)
-        handleClose()
-      }),
-      {
-        loading: 'در حال تایید راننده',
-        success: 'راننده تایید شد',
-        error: err => (err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.')
-      }
-    )
-  }
-
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -272,9 +256,6 @@ function ACLPage() {
               </Grid>
             </Grid>
             <Box>
-              <Button variant='contained' color='primary' onClick={setVerified} sx={{ mx: 2 }}>
-                انتخاب{' '}
-              </Button>
               <Button variant='contained' color='error' onClick={handleClose}>
                 بستن
               </Button>

@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField'
 import InputLabel from '@mui/material/InputLabel'
 import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
-import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import OutlinedInput from '@mui/material/OutlinedInput'
@@ -25,7 +24,7 @@ import { useState } from 'react'
 import themeConfig from 'configs/themeConfig'
 import BlankLayout from '@core/layouts/BlankLayout'
 import FooterIllustrationsV2 from 'views/pages/auth/FooterIllustrationsV2'
-import { Dialog, DialogActions, DialogContent, DialogTitle, Select } from '@mui/material'
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import toast from 'react-hot-toast'
 
 const LoginIllustrationWrapper = styled(Box)(({ theme }) => ({
@@ -91,7 +90,6 @@ function LoginPage() {
   const { settings } = useSettings()
   const hidden = useMediaQuery(theme.breakpoints.down('md'))
   const { skin } = settings
-  const [companies, setCompanies] = useState([])
   const [isDuplicate, setIsDuplicate] = useState(false)
   const [prevForm, setPrevForm] = useState({})
 
@@ -140,10 +138,7 @@ function LoginPage() {
         {
           username: data.username,
           password: data.password,
-          chosen_item: true,
-          company_id: companies[data.hub_id].company.companyId,
-
-          hub_id: companies[data.hub_id].hub.hubId
+          chosen_item: true
         },
         err => {
           toast.dismiss(toastid)
@@ -284,36 +279,6 @@ function LoginPage() {
                   <DialogTitle>انتخاب هاب</DialogTitle>
                   <DialogContent>
                     <DialogContentText>لطفا شرکت و هاب خود را از بین گزینه های زیر انتخاب کنبد.</DialogContentText>
-
-                    <FormControl fullWidth sx={{ mt: 4 }}>
-                      <Controller
-                        type='number'
-                        name='hub_id'
-                        control={control}
-                        render={({ field: { onChange, onBlur } }) => (
-                          <>
-                            <InputLabel>شرکت</InputLabel>
-                            <Select
-                              label='شرکت'
-                              type='number'
-                              onBlur={onBlur}
-                              onChange={onChange}
-                              input={<OutlinedInput />}
-                              error={Boolean(errors.hub_id)}
-                            >
-                              {companies.map((company, idx) => (
-                                <MenuItem key={idx} value={idx}>
-                                  شرکت {company.company?.companyName} ,هاب {company.hub?.hubName}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </>
-                        )}
-                      />
-                      {errors.hub_id && (
-                        <FormHelperText sx={{ color: 'error.main' }}>{errors.hub_id.message}</FormHelperText>
-                      )}
-                    </FormControl>
                   </DialogContent>
                   <DialogActions>
                     <Button
