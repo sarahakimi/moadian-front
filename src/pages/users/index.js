@@ -38,10 +38,8 @@ function ACLPage() {
   const headers = [
     { key: 'id', label: 'شناسه' },
     { key: 'name', label: 'تام کاربر' },
-    { key: 'username', label: 'تام کاربری' },
-    { key: 'natural_code', label: 'کدملی' },
-    { key: 'phone', label: 'شماره تلفن' },
-    { key: 'created_at', label: 'تاریخ ایجاد' }
+    { key: 'code', label: 'تام کاربری' },
+    { key: 'tax_code', label: 'کدملی' }
   ]
 
   const downloadApi = () =>
