@@ -6,7 +6,7 @@ export default {
   registerCompany: 'user/admin/register',
   getusers: 'explanation',
   singleUser: id => `explanation/${id}`,
-  registerUser: 'user/admin/register',
+  registerUser: 'explanation',
   getCustomers: 'customer/admin/3/all',
   singleCustomer: id => `customer/admin/${id}`,
   registerCustomer: 'customer/admin/3/register',

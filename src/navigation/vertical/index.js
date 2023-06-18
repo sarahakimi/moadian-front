@@ -30,7 +30,7 @@ const navigation = () => [
   {
     icon: Account,
     title: 'تعاریف',
-    path: '/users',
+    path: '/explainations',
     action: 'read',
     subject: 'every-page'
   },

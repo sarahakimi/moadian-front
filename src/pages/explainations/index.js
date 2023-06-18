@@ -36,7 +36,6 @@ function ACLPage() {
   const [downloadData, setDownloadData] = useState([])
 
   const headers = [
-    { key: 'id', label: 'شناسه' },
     { key: 'name', label: 'تام کاربر' },
     { key: 'code', label: 'تام کاربری' },
     { key: 'tax_code', label: 'کدملی' }
@@ -47,8 +46,7 @@ function ACLPage() {
       fetchData(sortModel).then(response => {
         setDownloadData(
           response.data.map(element => ({
-            ...element,
-            created_at: moment(element.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')
+            ...element
           }))
         )
       }),
@@ -82,7 +80,7 @@ function ACLPage() {
       flex: 0.2,
       minWidth: 230,
       field: 'name',
-      headerName: 'نام و نام خانوادگی',
+      headerName: 'نام کالا/خدمت',
       hideable: false,
       filterOperators,
       renderCell: ({ row }) => (
@@ -98,15 +96,15 @@ function ACLPage() {
     {
       flex: 0.2,
       minWidth: 230,
-      field: 'username',
-      headerName: 'نام کاربری',
+      field: 'code',
+      headerName: 'کد کالا',
       filterOperators,
       hideable: false,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
             <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
-              {row.username}
+              {row.code}
             </Typography>
           </Box>
         </Box>
@@ -114,50 +112,20 @@ function ACLPage() {
     },
     {
       flex: 0.15,
-      field: 'created_at',
+      field: 'tax_code',
       minWidth: 150,
-      headerName: 'تاریخ ثبت نام',
+      headerName: 'کد ۱۳ رقمی',
       filterable: false,
       hideable: false,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {moment(row.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
+            {row.tax_code}
           </Typography>
         </Box>
       )
     },
-    {
-      flex: 0.15,
-      field: 'natural_code',
-      minWidth: 150,
-      headerName: 'کدملی',
-      filterOperators,
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.natural_code}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      flex: 0.15,
-      field: 'phone',
-      minWidth: 150,
-      headerName: 'شماره تلفن',
-      filterOperators,
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.area_code}
-            {row.tel_number}
-          </Typography>
-        </Box>
-      )
-    },
+
     {
       flex: 0.1,
       minWidth: 90,
@@ -204,7 +172,7 @@ function ACLPage() {
             data={downloadData}
             api={downloadApi}
             headers={headers}
-            name='کاربر'
+            name='تعریف'
           />
           <GridContainer sx={{ p: 4, m: 1 }}>
             <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} />
