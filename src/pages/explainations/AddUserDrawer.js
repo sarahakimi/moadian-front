@@ -38,10 +38,6 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
     code: 0,
     tax_code: 0
   }
-  if (user && !Array.isArray(user.roles)) {
-    // eslint-disable-next-line no-param-reassign
-    user.roles = [user.roles]
-  }
 
   const defaultValues = user
     ? {
