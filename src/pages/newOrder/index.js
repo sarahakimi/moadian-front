@@ -1766,7 +1766,12 @@ function ACLPage() {
 
 ACLPage.acl = {
   action: 'read',
-  subject: 'every-page'
+  subject: 'none'
 }
+
+// ACLPage.acl = {
+//   action: 'read',
+//   subject: 'every-page'
+// }
 
 export default ACLPage

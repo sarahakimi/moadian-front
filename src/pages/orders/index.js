@@ -409,8 +409,13 @@ function ACLPage() {
 
 ACLPage.acl = {
   action: 'read',
-  subject: 'every-page'
+  subject: 'none'
 }
+
+// }ACLPage.acl = {
+//   action: 'read',
+//   subject: 'every-page'
+// }
 
 // ACLPage.acl = {
 //   action: 'read',
