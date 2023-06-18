@@ -40,7 +40,7 @@ const schema = yup.object().shape({
     .required('نام کاربری الزامی است')
     .min(4, 'حداقل باید ع کاراکتر باشد')
     .typeError('به درستی وارد نمایید'),
-  economic_code: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
+  economic_code: yup.number().required('الزامی است').typeError('به درستی وارد نمایید'),
   unique_identifier: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
   branch_code: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
   private_key: yup.string().typeError('به درستی وارد نمایید'),

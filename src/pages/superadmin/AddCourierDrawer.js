@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import { styled } from '@mui/material/styles'
@@ -21,6 +21,7 @@ import toast from 'react-hot-toast'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import { registerCompany } from './requests'
+import http from '../../services/http'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -45,13 +46,61 @@ const schema = yup.object().shape({
   username: yup.string().required('نام کاربری الزامی است').min(4, 'حداقل باید ع کاراکتر باشد'),
   password: yup.string().required('رمز عبور الزامی است').min(8, 'حداقل باید 8 کاراکتر باشد'),
   duration_of_activity: yup.number().required(' الزامی است').min(1, 'حداقل 1 روز').typeError('باید عدد باشد'),
-  economic_code: yup.string().typeError('به درستی وارد نمایید'),
+  economic_code: yup.number().typeError('به درستی وارد نمایید').min(1, 'الزامی است'),
   branch_code: yup.string().typeError('باید عدد باشد'),
-  activated: yup.boolean()
+  activated: yup.boolean(),
+  platform_id: yup.number().required('الزامی است').typeError('باید عدد باشد').min(1, 'انتخاب نمایید'),
+  service_id: yup.number().required('الزامی است').typeError('باید عدد باشد').min(1, 'انتخاب نمایید')
 })
 
 function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
   const [showPassword, setShowPassword] = useState(false)
+  const [platform, setPlatform] = useState([])
+  const [service, setService] = useState([])
+  useEffect(() => {
+    const toastId = toast.loading('در حال دریافت اطلاعات پلتفرم ها')
+    http
+      .get(
+        'invoice/platform',
+        {},
+        {
+          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+        }
+      )
+      .then(response => {
+        if (response.data !== null) {
+          console.log(response.data)
+          setPlatform(response.data)
+          toast.dismiss(toastId)
+        }
+      })
+      .catch(err => {
+        const errorMessage = err?.response?.data?.message ? err?.response?.data?.message : 'خطایی رخ داده است'
+        toast.error(errorMessage)
+        toast.dismiss(toastId)
+      })
+    const toastId2 = toast.loading('در حال دریافت اطلاعات سرویس ها')
+    http
+      .get(
+        'invoice/service',
+        {},
+        {
+          Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+        }
+      )
+      .then(response => {
+        if (response.data !== null) {
+          console.log(response.data)
+          setService(response.data)
+          toast.dismiss(toastId2)
+        }
+      })
+      .catch(err => {
+        const errorMessage = err?.response?.data?.message ? err?.response?.data?.message : 'خطایی رخ داده است'
+        toast.error(errorMessage)
+        toast.dismiss(toastId2)
+      })
+  }, [])
 
   const defaultValues = company
     ? {
@@ -63,7 +112,9 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
         password: '********',
         economic_code: company?.economic_code,
         branch_code: company?.branch_code,
-        activated: company?.activated
+        activated: company?.activated,
+        platform_id: company?.platform_id,
+        service_id: company?.service_id
       }
     : {
         natural_code: '',
@@ -74,7 +125,9 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
         password: '',
         economic_code: '',
         branch_code: 0,
-        activated: true
+        activated: true,
+        platform_id: 0,
+        service_id: 0
       }
 
   const {
@@ -248,7 +301,6 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
               <FormHelperText sx={{ color: 'error.main' }}>{errors.natural_code.message}</FormHelperText>
             )}
           </FormControl>
-
           <FormControl fullWidth sx={{ mb: 4 }}>
             <Controller
               name='phone'
@@ -349,6 +401,68 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
             />
             {errors.activated && (
               <FormHelperText sx={{ color: 'error.main' }}>{errors.activated.message}</FormHelperText>
+            )}
+          </FormControl>
+          <FormControl fullWidth sx={{ mb: 4 }}>
+            <Controller
+              name='platform_id'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur } }) => (
+                <>
+                  <InputLabel>پلتفرم</InputLabel>
+                  <Select
+                    type='number'
+                    onBlur={onBlur}
+                    id='demo-multiple-name'
+                    onChange={onChange}
+                    input={<OutlinedInput label='Name' />}
+                    error={Boolean(errors.platform_id)}
+                    disabled={edit}
+                    defaultValue={company ? company.platform_id : 0}
+                  >
+                    {platform.map(element => (
+                      <MenuItem key={element.id} value={parseInt(element.id, 10)}>
+                        {element.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </>
+              )}
+            />
+            {errors.platform_id && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.platform_id.message}</FormHelperText>
+            )}
+          </FormControl>{' '}
+          <FormControl fullWidth sx={{ mb: 4 }}>
+            <Controller
+              name='service_id'
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur } }) => (
+                <>
+                  <InputLabel>نوع سرویس</InputLabel>
+                  <Select
+                    type='number'
+                    onBlur={onBlur}
+                    id='demo-multiple-name'
+                    onChange={onChange}
+                    input={<OutlinedInput label='Name' />}
+                    error={Boolean(errors.service_id)}
+                    disabled={edit}
+                    defaultValue={company ? company.service_id : 0}
+                  >
+                    {service.map(element => (
+                      <MenuItem key={element.id} value={parseInt(element.id, 10)}>
+                        {element.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </>
+              )}
+            />
+            {errors.service_id && (
+              <FormHelperText sx={{ color: 'error.main' }}>{errors.service_id.message}</FormHelperText>
             )}
           </FormControl>
           {!edit && (
