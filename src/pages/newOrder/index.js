@@ -184,28 +184,28 @@ function ACLPage() {
               {riz}
             </Grid>{' '}
             <Grid item xs={12} xl={6}>
-              <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
-                بارگذاری فایل ریز جزئیات
+              <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image1'>
+                بارگذاری فایل سند
                 <input
                   hidden
                   type='file'
                   onChange={event => handleSetUpload(event, setSanad)}
                   accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
-                  id='account-settings-upload-image'
+                  id='account-settings-upload-image1'
                   name='image'
                 />
               </ButtonStyled>
               {sanad}
             </Grid>{' '}
             <Grid item xs={12}>
-              <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image'>
+              <ButtonStyled component='label' variant='contained' htmlFor='account-settings-upload-image2'>
                 بارگذاری فایل طرف حساب انبار
                 <input
                   hidden
                   type='file'
                   onChange={event => handleSetUpload(event, setTarafhesab)}
                   accept='.csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel'
-                  id='account-settings-upload-image'
+                  id='account-settings-upload-image2'
                   name='image'
                 />
               </ButtonStyled>
