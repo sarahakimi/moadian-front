@@ -3,7 +3,7 @@ import HomeOutline from 'mdi-material-ui/HomeOutline'
 import PlusOutline from 'mdi-material-ui/PlusOutline'
 import ViewListOutline from 'mdi-material-ui/ViewListOutline'
 
-import { OfficeBuildingOutline, Account, AccountOutline } from 'mdi-material-ui'
+import { OfficeBuildingOutline, Account, AccountOutline, MagnifyScan } from 'mdi-material-ui'
 
 const navigation = () => [
   {
@@ -21,7 +21,7 @@ const navigation = () => [
     path: '/account-settings'
   },
   {
-    icon: Account,
+    icon: MagnifyScan,
     title: 'تطبیق کدهای کالا و خدمات',
     path: '/explainations',
     action: 'read',
