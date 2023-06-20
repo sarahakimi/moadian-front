@@ -40,7 +40,7 @@ const schema = yup.object().shape({
     .required('نام کاربری الزامی است')
     .min(4, 'حداقل باید ع کاراکتر باشد')
     .typeError('به درستی وارد نمایید'),
-  economic_code: yup.number().required('الزامی است').typeError('به درستی وارد نمایید'),
+  economic_code: yup.number().required('الزامی است').typeError('به درستی وارد نمایید').min(12, 'حداقل ۱۲ رقم '),
   unique_identifier: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
   branch_code: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
   private_key: yup.string().typeError('به درستی وارد نمایید'),
@@ -189,7 +189,7 @@ function TabAccount() {
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextField
-                    label='کدملی'
+                    label='کدملی/شناسه ملی'
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
@@ -211,7 +211,7 @@ function TabAccount() {
                 rules={{ required: true }}
                 render={({ field: { value, onChange, onBlur } }) => (
                   <TextField
-                    label='نام شرکت'
+                    label='نام شرکت/نام شخص'
                     value={value}
                     onBlur={onBlur}
                     onChange={onChange}
@@ -346,7 +346,7 @@ function TabAccount() {
               {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label htmlFor='icon-button-video'>
                 <IconButton color='primary' component='span'>
-                  افزودن
+                  افزودن کد خصوصی
                   <PlusOutline />
                 </IconButton>
               </label>
@@ -398,7 +398,7 @@ function TabAccount() {
               {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label htmlFor='icon-button-video-1'>
                 <IconButton color='primary' component='span'>
-                  افزودن
+                  افزودن کد عمومی
                   <PlusOutline />
                 </IconButton>
               </label>
@@ -450,7 +450,7 @@ function TabAccount() {
               {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
               <label htmlFor='icon-button-video-2'>
                 <IconButton color='primary' component='span'>
-                  افزودن
+                  افزودن امضای الکترونیک
                   <PlusOutline />
                 </IconButton>
               </label>

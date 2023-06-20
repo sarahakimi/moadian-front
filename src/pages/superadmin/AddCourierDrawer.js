@@ -199,7 +199,7 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
               render={({ field: { value, onChange, onBlur } }) => (
                 <TextField
                   inputProps={{ maxLength: 30 }}
-                  label='نام شرکت'
+                  label='نام شرکت/نام شخص'
                   value={value}
                   onBlur={onBlur}
                   onChange={onChange}
@@ -286,7 +286,7 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
               rules={{ required: true }}
               render={({ field: { value, onChange, onBlur } }) => (
                 <TextField
-                  label='کدملی'
+                  label='کدملی/شناسه ملی'
                   value={value}
                   onBlur={onBlur}
                   onChange={onChange}

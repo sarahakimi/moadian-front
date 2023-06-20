@@ -94,7 +94,7 @@ function ACLPage() {
       minWidth: 230,
       field: 'name',
       filterOperators,
-      headerName: 'نام شرکت',
+      headerName: 'نام شرکت/نام شخص',
       hideable: false,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>

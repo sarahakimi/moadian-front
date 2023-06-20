@@ -120,7 +120,7 @@ function SidebarAddCourier({ open, toggle, setChange, company, edit }) {
               rules={{ required: true }}
               render={({ field: { value, onChange, onBlur } }) => (
                 <TextField
-                  label='نام شرکت'
+                  label='نام شرکت/نام شخص'
                   value={value}
                   onBlur={onBlur}
                   onChange={onChange}

@@ -9,12 +9,8 @@ import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
 import toast from 'react-hot-toast'
 import Table from '@core/components/table/table'
-import download from 'downloadjs'
 import TableHeader from '@core/components/table-header/TableHeader'
-import RowOptions from '@core/components/row-options/row-options'
-import Button from '@mui/material/Button'
-import AddUserDrawer from './AddUserDrawer'
-import { deleteUser, downloadOrder, fetchData } from './requests'
+import { fetchData } from './requests'
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -27,11 +23,8 @@ export const GridContainer = styled(Paper)({
 })
 
 function ACLPage() {
-  const [selectedCompany, setSelectedCompany] = useState({})
-  const [openEdit, setOpenEdit] = useState(false)
-  const [showUser, setShowUser] = useState(false)
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [sortModel, setSortModel] = useState({ page: 1, sort_by: 'id desc', serach: '' })
+  const [sortModel, setSortModel] = useState({ page: 1, page_size: 10, sort_by: 'id desc', serach: '' })
   const [data, setData] = useState([])
   const [change, setChange] = useState(false)
   const [downloadData, setDownloadData] = useState([])
@@ -153,54 +146,12 @@ function ACLPage() {
       }
     )
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
-  const toggleEditUserDrawer = () => setOpenEdit(!openEdit)
-  const toggleShowUserDrawer = () => setShowUser(!showUser)
-
-  const deleteFunction = company => {
-    toast.promise(deleteUser(company.order.id).then(setChange(true)), {
-      loading: 'در حال حذف سفارش',
-      success: 'با موفقیت حذف شد',
-      error: err => (err?.response?.data?.message ? err.response.data.message : 'خطایی رخ داده است')
-    })
-  }
 
   const filterOperators = getGridStringOperators().filter(({ value }) =>
     ['contains' /* add more over time */].includes(value)
   )
 
-  const getOrder = id => {
-    toast.promise(
-      downloadOrder(id).then(response => {
-        // FileDownload(response.data, 'report.pdf');
-        const content = response.headers['content-type']
-        download(response.data, 'file.pdf', content)
-      }),
-      {
-        loading: 'در حال دانلود سفارش',
-        success: 'دانلود انجام شد',
-        error: err => (err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.')
-      }
-    )
-  }
-
   const columns = [
-    {
-      flex: 0.1,
-      minWidth: 50,
-      field: 'id',
-      filterOperators,
-      headerName: 'شماره',
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
-              {row.order.id}
-            </Typography>
-          </Box>
-        </Box>
-      )
-    },
     {
       flex: 0.1,
       minWidth: 100,
@@ -212,150 +163,45 @@ function ACLPage() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
             <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
-              {moment(row.order.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
+              {/* {moment.unix(row.timestamp).format('YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')} */}
+              {row.timestamp}
             </Typography>
           </Box>
         </Box>
       )
     },
     {
-      flex: 0.15,
-      field: 'sender_name',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'فرستنده',
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.sender_customer.name}
-          </Typography>
-        </Box>
-      )
-    },
-    {
       flex: 0.1,
-      field: 'sender_city',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'شهر قرستنده',
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.sender_customer.city}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      flex: 0.1,
-      field: 'reiever_name',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'گیرنده',
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.receiver_customer.name}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      flex: 0.1,
-      field: 'reciever_city',
-      minWidth: 150,
-      filterOperators,
-      headerName: 'شهر گیرنده',
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.receiver_customer.city}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      flex: 0.2,
-      field: 'price',
       minWidth: 100,
+      field: 'vaziat',
       filterOperators,
-      headerName: 'مبلغ سفارش',
+      headerName: 'وضعیت',
       hideable: false,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.order.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}ریال
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      flex: 0.2,
-      field: 'state',
-      minWidth: 100,
-      filterOperators,
-      headerName: 'مرحله',
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.order.state}
-          </Typography>
-        </Box>
-      )
-    },
-    {
-      flex: 0.1,
-      minWidth: 50,
-      sortable: false,
-      hideable: false,
-      filterable: false,
-      field: 'گزینه ها',
-      headerName: 'گزینه ها',
-      renderCell: ({ row }) => (
-        <RowOptions
-          company={row}
-          toggleShowUserDrawer={toggleShowUserDrawer}
-          toggleEditUserDrawer={toggleEditUserDrawer}
-          setSelectedCompany={setSelectedCompany}
-          setChange={setChange}
-          selectedCompany={selectedCompany}
-          deleteFunction={deleteFunction}
-        />
-      )
-    },
-    {
-      flex: 0.2,
-      field: 'download',
-      minWidth: 100,
-      filterOperators,
-      headerName: 'مرحله',
-      hideable: false,
-      renderCell: ({ row }) => (
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Button onClick={() => getOrder(row.order.id)}>دانلود</Button>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+            <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
+              {moment.unix(row.timestamp).fotmat('YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
+            </Typography>
+          </Box>
         </Box>
       )
     }
   ]
   useEffect(() => {
     setDownloadData([])
-    fetchData({})
+    fetchData(sortModel)
       .then(response => {
         if (response.data === null) {
           setData([])
-        } else setData(response.data.map(element => ({ id: element.order.id, ...element })))
+        } else setData(response.data.map(element => ({ ...element, id: element.result.data[0].uid })))
         if (change) setChange(false)
       })
       .catch(err => {
         const errorMessage = err?.response?.data?.message ? err.response.data.message : 'خطایی رخ داده است'
         toast.error(errorMessage)
       })
-  }, [setDownloadData, change])
+  }, [sortModel, setDownloadData, change])
 
   return (
     <Grid container spacing={6}>
@@ -366,56 +212,29 @@ function ACLPage() {
             data={downloadData}
             api={downloadApi}
             headers={headers}
-            name='سفارش'
+            name='فاکتور'
+            noAdd
+            noExport
           />
           <GridContainer sx={{ p: 4, m: 1 }}>
             <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} selfFilter />
           </GridContainer>
         </Card>
       </Grid>
-      {addUserOpen && (
-        <AddUserDrawer
-          open={addUserOpen}
-          toggle={toggleAddUserDrawer}
-          setChange={setChange}
-          edit={false}
-          company={null}
-          showUser={false}
-        />
-      )}
-      {openEdit && (
-        <AddUserDrawer
-          open={openEdit}
-          toggle={toggleEditUserDrawer}
-          setChange={setChange}
-          user={selectedCompany}
-          edit
-          showUser={false}
-        />
-      )}
-      {showUser && (
-        <AddUserDrawer
-          open={showUser}
-          toggle={toggleShowUserDrawer}
-          setChange={setChange}
-          edit
-          user={selectedCompany}
-          showUser
-        />
-      )}
     </Grid>
   )
 }
 
+//
+// ACLPage.acl = {
+//   action: 'read',
+//   subject: 'none'
+// }
+
 ACLPage.acl = {
   action: 'read',
-  subject: 'none'
+  subject: 'every-page'
 }
-
-// }ACLPage.acl = {
-//   action: 'read',
-//   subject: 'every-page'
-// }
 
 // ACLPage.acl = {
 //   action: 'read',
