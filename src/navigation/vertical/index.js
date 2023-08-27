@@ -30,7 +30,7 @@ const navigation = () => [
 
   {
     icon: PlusOutline,
-    title: 'ارسال صورت خساب',
+    title: 'ارسال صورت حساب',
     path: '/newOrder',
     action: 'read',
     subject: 'every-page'

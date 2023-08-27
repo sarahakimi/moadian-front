@@ -124,9 +124,9 @@ function ACLPage() {
         )
         .then(() => {
           reset(defaultValues)
-          setRiz('')
-          setTarafhesab('')
-          setSanad('')
+          setRiz(null)
+          setTarafhesab(null)
+          setSanad(null)
         }),
       {
         loading: 'در حال ثبت',
@@ -290,7 +290,7 @@ function ACLPage() {
                   <FormHelperText sx={{ color: 'error.main' }}>{errors.invoice_subject.message}</FormHelperText>
                 )}
               </FormControl>
-            </Grid>{' '}
+            </Grid>
             <Grid item xs={12} lg={6}>
               <FormControl fullWidth sx={{ mb: 4 }}>
                 <Controller

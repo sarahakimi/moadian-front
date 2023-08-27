@@ -5,12 +5,15 @@ import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import { getGridStringOperators } from '@mui/x-data-grid'
 import { styled } from '@mui/material/styles'
-import moment from 'jalali-moment'
 import Paper from '@mui/material/Paper'
 import toast from 'react-hot-toast'
 import Table from '@core/components/table/table'
 import TableHeader from '@core/components/table-header/TableHeader'
+import IconButton from '@mui/material/IconButton'
+import InformationOutline from 'mdi-material-ui/InformationOutline'
+import Tooltip from '@mui/material/Tooltip'
 import { fetchData } from './requests'
+import DetailModal from './detailModal'
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -24,116 +27,31 @@ export const GridContainer = styled(Paper)({
 
 function ACLPage() {
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [sortModel, setSortModel] = useState({ page: 1, page_size: 10, sort_by: 'id desc', serach: '' })
+  const [sortModel, setSortModel] = useState({ page: 1, page_size: 100, sort_by: 'id desc', serach: '' })
   const [data, setData] = useState([])
   const [change, setChange] = useState(false)
   const [downloadData, setDownloadData] = useState([])
+  const [openModal, setOpenModal] = useState(false)
+  const [detailData, setDetailData] = useState([])
 
   const headers = [
-    { key: 'createdAt', label: 'تاریخ ثبت' },
-    { key: 'price', label: 'مبلغ سفارش' },
-    { key: 'state', label: 'وضعیت' },
-    { key: 'senderCodeMelli', label: 'کدملی فرستنده' },
-    { key: 'senderName', label: 'نام فرستنده' },
-    { key: 'senderMobile', label: 'موبایل فرستنده' },
-    { key: 'senderPhone', label: 'تلفن فرستنده' },
-    { key: 'senderPhonePrefix', label: 'پیش شماره تلفن فرستنده' },
-    { key: 'senderCompany', label: 'شرکت فرستنده' },
-    { key: 'senderCounty', label: 'استان فرستنده' },
-    { key: 'senderCity', label: 'شهر فرستنده' },
-    { key: 'senderCodePosti', label: 'کدپستی فرستنده' },
-    { key: 'senderOtherInfo', label: 'سایر اطلاعات فرستنده' },
-    { key: 'senderMainRoard', label: 'خیابان اصلی فرستنده' },
-    { key: 'senderSubRoad', label: 'خیابان فرعی فرستنده' },
-    { key: 'senderAlley', label: 'کوچه فرستنده' },
-    { key: 'senderPlaque', label: 'پلاک فرستنده' },
-    { key: 'senderFloor', label: 'طبقه فرستنده' },
-    { key: 'senderUnit', label: 'واحد فرستنده' },
-    { key: 'recieverCodeMelli', label: 'کدملی گیرنده' },
-    { key: 'recieverName', label: 'نام گیرنده' },
-    { key: 'recieverMobile', label: 'موبایل گیرنده' },
-    { key: 'recieverPhone', label: 'تلفن گیرنده' },
-    { key: 'recieverPhonePrefix', label: 'پیش شماره گیرنده' },
-    { key: 'recieverCompany', label: 'شرکت گیرنده' },
-    { key: 'recieverCounty', label: 'استان گیرنده' },
-    { key: 'recieverCity', label: 'شهر گیرنده' },
-    { key: 'recieverCodePosti', label: 'کدپستی گیرنده' },
-    { key: 'recieverMainRoard', label: 'خیابان اصلی گیرنده' },
-    { key: 'recieverSubRoad', label: 'خیابان فرعی گیرنده' },
-    { key: 'recieverAlley', label: 'کوچه گیرنده' },
-    { key: 'recieverPlaque', label: 'پلاک گیرنده' },
-    { key: 'recieverFloor', label: 'طبقه گیرنده' },
-    { key: 'recieverUnit', label: 'واحد گیرنده' },
-    { key: 'receiverOtherInfo', label: 'سایر اطلاعات گیرنده' },
-    { key: 'weight', label: 'وزن' },
-    { key: 'length', label: 'طول' },
-    { key: 'width', label: 'عرض' },
-    { key: 'height', label: 'ارتفاع' },
-    { key: 'money', label: 'ارزش بنا به اظهار فرستنده' },
-    { key: 'car', label: 'نوع ماشین حمل کننده' },
-    { key: 'needsSpecialCarry', label: 'نیازمند حمل ویژه' },
-    { key: 'SpecialBox', label: 'بار خاص' },
-    { key: 'paymentMethod', label: 'نحوه پرداخت' },
-    { key: 'needsEvacuate', label: 'نیازمند تخلیه' },
-    { key: 'needsLoading', label: 'نیازمند بارگیری' },
-    { key: 'needsMovement', label: 'نیازمند جابجایی' },
-    { key: 'isSuburb', label: 'برون شهری' }
+    { key: 'created_at', label: 'تاریخ' },
+    { key: 'referenceNumber', label: 'شماره پیگیری' },
+    { key: 'status', label: 'وضعیت' }
   ]
 
   const downloadApi = () =>
     toast.promise(
       fetchData({ sort_by: sortModel.sort_by, serach: sortModel.serach }).then(response => {
         setDownloadData(
-          response.data.map(user => ({
-            senderCodeMelli: user.sender_customer.identity_code,
-            senderName: user.sender_customer.name,
-            senderMobile: user.sender_customer.mobile,
-            senderPhone: user.sender_customer.tel,
-            senderPhonePrefix: user.sender_customer.area_code,
-            senderCompany: user.sender_customer.companyName,
-            senderCounty: user.sender_customer.provence,
-            senderCity: user.sender_customer.city,
-            senderCodePosti: user.sender_customer.postal_code,
-            senderOtherInfo: user.sender_customer.other_information,
-            senderMainRoard: user.sender_customer.main_street,
-            senderSubRoad: user.sender_customer.side_street,
-            senderAlley: user.sender_customer.alley,
-            senderPlaque: user.sender_customer.plaque,
-            senderFloor: user.sender_customer.floor,
-            senderUnit: user.sender_customer.home_unit,
-            recieverCodeMelli: user.receiver_customer.identity_code,
-            recieverName: user.receiver_customer.name,
-            recieverMobile: user.receiver_customer.mobile,
-            recieverPhone: user.receiver_customer.tel,
-            recieverPhonePrefix: user.receiver_customer.area_code,
-            recieverCompany: user.receiver_customer.companyName,
-            recieverCounty: user.receiver_customer.provence,
-            recieverCity: user.receiver_customer.city,
-            recieverCodePosti: user.receiver_customer.postal_code,
-            recieverMainRoard: user.receiver_customer.main_street,
-            recieverSubRoad: user.receiver_customer.side_street,
-            recieverAlley: user.receiver_customer.alley,
-            recieverPlaque: user.receiver_customer.plaque,
-            recieverFloor: user.receiver_customer.floor,
-            recieverUnit: user.receiver_customer.home_unit,
-            receiverOtherInfo: user.receiver_customer.other_information,
-            weight: user.product.weight,
-            length: user.product.length,
-            width: user.product.width,
-            height: user.product.height,
-            money: user.product.product_cost,
-            car: user.product.vehicle,
-            needsSpecialCarry: user.product.special_vehicle_required ? 'می باشد' : 'نمی باشد',
-            SpecialBox: user.product.special_product ? 'می باشد' : 'نمی باشد',
-            paymentMethod: user.product.payment_method,
-            needsEvacuate: user.product.product_unloading_required ? 'می باشد' : 'نمی باشد',
-            needsLoading: user.product.product_loading_required ? 'می باشد' : 'نمی باشد',
-            needsMovement: user.product.movement_required ? 'می باشد' : 'نمی باشد',
-            createdAt: moment(user.order.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD'),
-            price: user.order.price,
-            state: user.order.state,
-            isSuburb: user.product.is_suburb ? 'می باشد' : 'نمی باشد'
-          }))
+          response.data.map(element => {
+            let status
+            if (element.status === 'FAILED') status = 'ناموفق'
+            else if (element.status === 'SUCCESS') status = 'موفق'
+            else status = 'پیدا نشد'
+
+            return { ...element, status }
+          })
         )
       }),
       {
@@ -155,17 +73,32 @@ function ACLPage() {
     {
       flex: 0.1,
       minWidth: 100,
-      field: 'created_at',
+      field: 'referenceNumber',
       filterOperators,
-      headerName: 'تاریخ ثبت',
+      headerName: 'شماره پیگیری',
       hideable: false,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
-              {/* {moment.unix(row.timestamp).format('YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')} */}
-              {row.timestamp}
-            </Typography>
+            {row.referenceNumber === '' ? (
+              <Typography
+                noWrap
+                component='a'
+                variant='subtitle2'
+                sx={{ color: 'text.primary', textDecoration: 'none' }}
+              >
+                ندارد
+              </Typography>
+            ) : (
+              <Typography
+                noWrap
+                component='a'
+                variant='subtitle2'
+                sx={{ color: 'text.primary', textDecoration: 'none' }}
+              >
+                {row.referenceNumber}
+              </Typography>
+            )}
           </Box>
         </Box>
       )
@@ -173,16 +106,78 @@ function ACLPage() {
     {
       flex: 0.1,
       minWidth: 100,
-      field: 'vaziat',
+      field: 'status',
       filterOperators,
       headerName: 'وضعیت',
       hideable: false,
       renderCell: ({ row }) => (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
-            <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
-              {moment.unix(row.timestamp).fotmat('YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
-            </Typography>
+            {row.status === 'FAILED' && (
+              <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'red', textDecoration: 'none' }}>
+                ناموفق
+              </Typography>
+            )}
+            {row.status === 'NOT_FOUND' && (
+              <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'black', textDecoration: 'none' }}>
+                پیدا نشد
+              </Typography>
+            )}
+            {row.status === 'SUCCESS' && (
+              <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'green', textDecoration: 'none' }}>
+                موفق
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      )
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
+      field: 'detail',
+      filterOperators,
+      headerName: 'جزئیات',
+      hideable: false,
+      renderCell: ({ row }) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'row' }}>
+            {row?.data?.error?.length > 0 && (
+              <Tooltip title='خطا ها'>
+                <IconButton
+                  color='error'
+                  onClick={() => {
+                    setOpenModal(true)
+                    setDetailData(row.data.error.map(element => ({ ...element, id: element.code })))
+                  }}
+                >
+                  <InformationOutline />
+                </IconButton>
+              </Tooltip>
+            )}
+            {row?.data?.warning?.length > 0 && (
+              <Tooltip title='هشدار ها'>
+                <IconButton
+                  color='warning'
+                  onClick={() => {
+                    setOpenModal(true)
+                    setDetailData(row.data.warning.map(element => ({ ...element, id: element.code })))
+                  }}
+                >
+                  <InformationOutline />
+                </IconButton>
+              </Tooltip>
+            )}
+            {row?.data?.error?.length <= 0 && row?.data?.warning?.length <= 0 && (
+              <Typography
+                noWrap
+                component='a'
+                variant='subtitle2'
+                sx={{ color: 'text.primary', textDecoration: 'none' }}
+              >
+                موردی برای مشاهده وجود ندارد
+              </Typography>
+            )}
           </Box>
         </Box>
       )
@@ -194,7 +189,7 @@ function ACLPage() {
       .then(response => {
         if (response.data === null) {
           setData([])
-        } else setData(response.data.map(element => ({ ...element, id: element.result.data[0].uid })))
+        } else setData(response.data.map(element => ({ ...element, id: element.referenceNumber })).reverse())
         if (change) setChange(false)
       })
       .catch(err => {
@@ -214,31 +209,20 @@ function ACLPage() {
             headers={headers}
             name='فاکتور'
             noAdd
-            noExport
           />
           <GridContainer sx={{ p: 4, m: 1 }}>
             <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} selfFilter />
           </GridContainer>
         </Card>
       </Grid>
+      <DetailModal open={openModal} setOpen={setOpenModal} data={detailData} />
     </Grid>
   )
 }
-
-//
-// ACLPage.acl = {
-//   action: 'read',
-//   subject: 'none'
-// }
 
 ACLPage.acl = {
   action: 'read',
   subject: 'every-page'
 }
-
-// ACLPage.acl = {
-//   action: 'read',
-//   subject: 'acl-page'
-// }
 
 export default ACLPage
