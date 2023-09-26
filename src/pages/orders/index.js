@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid'
 import Card from '@mui/material/Card'
 import Typography from '@mui/material/Typography'
@@ -14,6 +14,7 @@ import InformationOutline from 'mdi-material-ui/InformationOutline'
 import Tooltip from '@mui/material/Tooltip'
 import { fetchData } from './requests'
 import DetailModal from './detailModal'
+import Loading from '../../@core/components/loading/loading'
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -26,8 +27,9 @@ export const GridContainer = styled(Paper)({
 })
 
 function ACLPage() {
+  const [LoadingOpen, setLoadingOpen] = useState(false)
   const [addUserOpen, setAddUserOpen] = useState(false)
-  const [sortModel, setSortModel] = useState({ page: 1, page_size: 100, sort_by: 'id desc', serach: '' })
+  const [sortModel, setSortModel] = useState({ page: 1, page_size: 10, sort_by: 'id desc', serach: '' })
   const [data, setData] = useState([])
   const [change, setChange] = useState(false)
   const [downloadData, setDownloadData] = useState([])
@@ -42,16 +44,18 @@ function ACLPage() {
 
   const downloadApi = () =>
     toast.promise(
-      fetchData({ sort_by: sortModel.sort_by, serach: sortModel.serach }).then(response => {
+      fetchData({}).then(response => {
         setDownloadData(
-          response.data.map(element => {
-            let status
-            if (element.status === 'FAILED') status = 'ناموفق'
-            else if (element.status === 'SUCCESS') status = 'موفق'
-            else status = 'پیدا نشد'
+          response.data
+            .filter(element => element.status === 'FAILED')
+            .map(element => {
+              let status
+              if (element.status === 'FAILED') status = 'ناموفق'
+              else if (element.status === 'SUCCESS') status = 'موفق'
+              else status = 'پیدا نشد'
 
-            return { ...element, status }
-          })
+              return { ...element, status }
+            })
         )
       }),
       {
@@ -184,13 +188,15 @@ function ACLPage() {
     }
   ]
   useEffect(() => {
+    setLoadingOpen(true)
     setDownloadData([])
-    fetchData(sortModel)
+    fetchData({ page: sortModel.page, page_size: sortModel.page_size })
       .then(response => {
         if (response.data === null) {
           setData([])
         } else setData(response.data.map(element => ({ ...element, id: element.referenceNumber })).reverse())
         if (change) setChange(false)
+        setLoadingOpen(false)
       })
       .catch(err => {
         const errorMessage = err?.response?.data?.message ? err.response.data.message : 'خطایی رخ داده است'
@@ -216,6 +222,7 @@ function ACLPage() {
         </Card>
       </Grid>
       <DetailModal open={openModal} setOpen={setOpenModal} data={detailData} />
+      <Loading open={LoadingOpen} />
     </Grid>
   )
 }
