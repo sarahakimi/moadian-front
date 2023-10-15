@@ -72,7 +72,7 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
         }),
         {
           loading: 'در حال ویرایش کالا/خدمت',
-          success: 'کاربر ویرایش شد',
+          success: 'کالا/خدمت ویرایش شد',
           error: err => (err?.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.')
         }
       )
@@ -84,7 +84,7 @@ function SidebarAddCourier({ open, toggle, setChange, user, edit, showUser }) {
         }),
         {
           loading: 'در حال ایجاد کالا/خدمت',
-          success: 'کاربر ایجاد شد',
+          success: 'کالا/خدمت ایجاد شد',
           error: err => (err.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.')
         }
       )

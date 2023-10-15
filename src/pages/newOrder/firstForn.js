@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Grid } from '@mui/material'
 import FormControl from '@mui/material/FormControl'
 import { Controller, useForm } from 'react-hook-form'
-import TextField from '@mui/material/TextField'
 import FormHelperText from '@mui/material/FormHelperText'
 import InputLabel from '@mui/material/InputLabel'
 import Select from '@mui/material/Select'
@@ -17,10 +16,11 @@ import { styled } from '@mui/material/styles'
 import Loading from '../../@core/components/loading/loading'
 
 const schema = yup.object().shape({
-  unique_tax_number: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
+  // unique_tax_number: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
   invoice_type: yup.number().required('الزامی است').typeError('به درستی وارد نمایید'),
   invoice_subject: yup.number().required('الزامی است').typeError('به درستی وارد نمایید'),
-  unique_tax_number_of_the_reference_invoice: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
+
+  // unique_tax_number_of_the_reference_invoice: yup.string().required('الزامی است').typeError('به درستی وارد نمایید'),
   riz: yup.mixed().required('الزامی است'),
   sanad: yup.mixed().required('الزامی است'),
   taraf_hesab_anbar: yup.mixed().required('الزامی است')
@@ -43,10 +43,12 @@ function FirstForn({ setRows, handleNext }) {
     riz: '',
     sanad: '',
     taraf_hesab_anbar: '',
-    unique_tax_number: '',
+
+    // unique_tax_number: '',
     invoice_type: 0,
-    invoice_subject: 0,
-    unique_tax_number_of_the_reference_invoice: ''
+    invoice_subject: 0
+
+    // unique_tax_number_of_the_reference_invoice: ''
   }
 
   const {
@@ -70,8 +72,9 @@ function FirstForn({ setRows, handleNext }) {
     formDataValue.append('taraf_hesab_anbar', data.taraf_hesab_anbar)
     formDataValue.append('invoice_subject', data.invoice_subject)
     formDataValue.append('invoice_type', data.invoice_type)
-    formDataValue.append('unique_tax_number', data.unique_tax_number)
-    formDataValue.append('unique_tax_number_of_the_reference_invoice', data.unique_tax_number_of_the_reference_invoice)
+
+    // formDataValue.append('unique_tax_number', data.unique_tax_number)
+    // formDataValue.append('unique_tax_number_of_the_reference_invoice', data.unique_tax_number_of_the_reference_invoice)
 
     toast.promise(
       axios
@@ -191,27 +194,27 @@ function FirstForn({ setRows, handleNext }) {
 
             {tarafHesab}
           </Grid>
-          <Grid item xs={12} lg={6}>
-            <FormControl fullWidth sx={{ mb: 4 }}>
-              <Controller
-                name='unique_tax_number'
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
-                    label='شماره منحصر به فرد مالیاتی'
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    error={Boolean(errors.unique_tax_number)}
-                  />
-                )}
-              />
-              {errors.unique_tax_number && (
-                <FormHelperText sx={{ color: 'error.main' }}>{errors.unique_tax_number.message}</FormHelperText>
-              )}
-            </FormControl>
-          </Grid>{' '}
+          {/* <Grid item xs={12} lg={6}> */}
+          {/*  <FormControl fullWidth sx={{ mb: 4 }}> */}
+          {/*    <Controller */}
+          {/*      name='unique_tax_number' */}
+          {/*      control={control} */}
+          {/*      rules={{ required: true }} */}
+          {/*      render={({ field: { value, onChange, onBlur } }) => ( */}
+          {/*        <TextField */}
+          {/*          label='شماره منحصر به فرد مالیاتی' */}
+          {/*          value={value} */}
+          {/*          onBlur={onBlur} */}
+          {/*          onChange={onChange} */}
+          {/*          error={Boolean(errors.unique_tax_number)} */}
+          {/*        /> */}
+          {/*      )} */}
+          {/*    /> */}
+          {/*    {errors.unique_tax_number && ( */}
+          {/*      <FormHelperText sx={{ color: 'error.main' }}>{errors.unique_tax_number.message}</FormHelperText> */}
+          {/*    )} */}
+          {/*  </FormControl> */}
+          {/* </Grid>{' '} */}
           <Grid item xs={12} lg={6}>
             <FormControl fullWidth sx={{ mb: 4 }}>
               <Controller
@@ -271,29 +274,29 @@ function FirstForn({ setRows, handleNext }) {
               )}
             </FormControl>
           </Grid>
-          <Grid item xs={12} lg={6}>
-            <FormControl fullWidth sx={{ mb: 4 }}>
-              <Controller
-                name='unique_tax_number_of_the_reference_invoice'
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { value, onChange, onBlur } }) => (
-                  <TextField
-                    label='شماره منحصر به فرد مالیاتی صورتحساب مرجع'
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={onChange}
-                    error={Boolean(errors.unique_tax_number_of_the_reference_invoice)}
-                  />
-                )}
-              />
-              {errors.unique_tax_number_of_the_reference_invoice && (
-                <FormHelperText sx={{ color: 'error.main' }}>
-                  {errors.unique_tax_number_of_the_reference_invoice.message}
-                </FormHelperText>
-              )}
-            </FormControl>
-          </Grid>
+          {/* <Grid item xs={12} lg={6}> */}
+          {/*  <FormControl fullWidth sx={{ mb: 4 }}> */}
+          {/*    <Controller */}
+          {/*      name='unique_tax_number_of_the_reference_invoice' */}
+          {/*      control={control} */}
+          {/*      rules={{ required: true }} */}
+          {/*      render={({ field: { value, onChange, onBlur } }) => ( */}
+          {/*        <TextField */}
+          {/*          label='شماره منحصر به فرد مالیاتی صورتحساب مرجع' */}
+          {/*          value={value} */}
+          {/*          onBlur={onBlur} */}
+          {/*          onChange={onChange} */}
+          {/*          error={Boolean(errors.unique_tax_number_of_the_reference_invoice)} */}
+          {/*        /> */}
+          {/*      )} */}
+          {/*    /> */}
+          {/*    {errors.unique_tax_number_of_the_reference_invoice && ( */}
+          {/*      <FormHelperText sx={{ color: 'error.main' }}> */}
+          {/*        {errors.unique_tax_number_of_the_reference_invoice.message} */}
+          {/*      </FormHelperText> */}
+          {/*    )} */}
+          {/*  </FormControl> */}
+          {/* </Grid> */}
           <Grid item xs={12} lg={6}>
             <Button size='large' type='submit' variant='contained' sx={{ m: 1 }} color='success'>
               ثبت صورت حساب

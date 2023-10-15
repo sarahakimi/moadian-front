@@ -8,6 +8,7 @@ import { styled } from '@mui/material/styles'
 import Paper from '@mui/material/Paper'
 import toast from 'react-hot-toast'
 import Table from '@core/components/table/table'
+import Button from '@mui/material/Button'
 
 import TableHeader from '@core/components/table-header/TableHeader'
 import RowOptions from '@core/components/row-options/row-options'
@@ -172,7 +173,15 @@ function ACLPage() {
             api={downloadApi}
             headers={headers}
             name='تعریف'
-          />
+          >
+            <Button
+              variant='outlined'
+              color='inherit'
+              onClick={() => window.open('https://stuffid.tax.gov.ir/', '_blank').focus()}
+            >
+              دریافت شناسه کالا و خدمات
+            </Button>
+          </TableHeader>
           <GridContainer sx={{ p: 4, m: 1 }}>
             <Table columns={columns} data={data} sortModel={sortModel} setSortModel={setSortModel} />
           </GridContainer>

@@ -155,7 +155,7 @@ function SecondForm({ rows, setRows, handleNext }) {
     },
     {
       field: 'tadis',
-      headerName: 'مجموع مبلغ پس از کسر تخفبف',
+      headerName: 'مجموع مبلغ پس از کسر تخفیف',
       type: 'number',
       editable: true,
       align: 'center',
