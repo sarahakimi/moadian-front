@@ -12,6 +12,7 @@ import TableHeader from '@core/components/table-header/TableHeader'
 import IconButton from '@mui/material/IconButton'
 import InformationOutline from 'mdi-material-ui/InformationOutline'
 import Tooltip from '@mui/material/Tooltip'
+import moment from 'jalali-moment'
 import { fetchData } from './requests'
 import DetailModal from './detailModal'
 import Loading from '../../@core/components/loading/loading'
@@ -77,6 +78,23 @@ function ACLPage() {
     {
       flex: 0.1,
       minWidth: 100,
+      field: 'createdAt',
+      filterOperators,
+      headerName: 'تاریخ',
+      hideable: false,
+      renderCell: ({ row }) => (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column' }}>
+            <Typography noWrap component='a' variant='subtitle2' sx={{ color: 'text.primary', textDecoration: 'none' }}>
+              {moment(row.created_at, 'YYYY/MM/DD').locale('fa').format('YYYY/MM/DD')}
+            </Typography>
+          </Box>
+        </Box>
+      )
+    },
+    {
+      flex: 0.1,
+      minWidth: 100,
       field: 'referenceNumber',
       filterOperators,
       headerName: 'شماره پیگیری',
@@ -107,6 +125,7 @@ function ACLPage() {
         </Box>
       )
     },
+
     {
       flex: 0.1,
       minWidth: 100,

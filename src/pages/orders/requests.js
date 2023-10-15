@@ -2,7 +2,7 @@ import http from '../../services/http'
 import urls from '../../configs/requestEndpoints'
 
 export const fetchData = async sortModel => {
-  const response = await http.get('invoice/id/', sortModel, {
+  const response = await http.get('invoice', sortModel, {
     Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
   })
 
