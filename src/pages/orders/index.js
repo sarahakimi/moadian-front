@@ -13,9 +13,11 @@ import IconButton from '@mui/material/IconButton'
 import InformationOutline from 'mdi-material-ui/InformationOutline'
 import Tooltip from '@mui/material/Tooltip'
 import moment from 'jalali-moment'
+import { ReplayOutlined } from '@mui/icons-material'
 import { fetchData } from './requests'
 import DetailModal from './detailModal'
 import Loading from '../../@core/components/loading/loading'
+import RetryModal from './retryModal'
 
 export const GridContainer = styled(Paper)({
   flexGrow: 1,
@@ -36,6 +38,7 @@ function ACLPage() {
   const [downloadData, setDownloadData] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [detailData, setDetailData] = useState([])
+  const [retryModalOpen, setRetryModalOpen] = useState(false)
 
   const headers = [
     { key: 'created_at', label: 'تاریخ' },
@@ -191,6 +194,19 @@ function ACLPage() {
                 </IconButton>
               </Tooltip>
             )}
+            {row?.data?.error?.length > 0 && (
+              <Tooltip title='ارسال محدد'>
+                <IconButton
+                  color='success'
+                  onClick={() => {
+                    setRetryModalOpen(true)
+                    setDetailData(row.id)
+                  }}
+                >
+                  <ReplayOutlined />
+                </IconButton>
+              </Tooltip>
+            )}
             {row?.data?.error?.length <= 0 && row?.data?.warning?.length <= 0 && (
               <Typography
                 noWrap
@@ -206,6 +222,7 @@ function ACLPage() {
       )
     }
   ]
+
   useEffect(() => {
     setLoadingOpen(true)
     setDownloadData([])
@@ -213,7 +230,7 @@ function ACLPage() {
       .then(response => {
         if (response.data === null) {
           setData([])
-        } else setData(response.data.map(element => ({ ...element, id: element.referenceNumber })).reverse())
+        } else setData(response.data.map((element, index) => ({ ...element, id: index })))
         if (change) setChange(false)
         setLoadingOpen(false)
       })
@@ -242,6 +259,7 @@ function ACLPage() {
         </Card>
       </Grid>
       <DetailModal open={openModal} setOpen={setOpenModal} data={detailData} />
+      {retryModalOpen && <RetryModal open={retryModalOpen} setOpen={setRetryModalOpen} id={detailData} />}
       <Loading open={LoadingOpen} />
     </Grid>
   )

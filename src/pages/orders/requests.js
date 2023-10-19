@@ -9,6 +9,18 @@ export const fetchData = async sortModel => {
   return response
 }
 
+export const fetchOrderDetail = async id => {
+  const response = await http.get(
+    `invoice/${id}`,
+    {},
+    {
+      Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`
+    }
+  )
+
+  return response
+}
+
 export const deleteUser = async id => {
   const response = await http.delete(urls.singleOrder(id), {
     Authorization: `Bearer ${window.localStorage.getItem('access_Token')}`

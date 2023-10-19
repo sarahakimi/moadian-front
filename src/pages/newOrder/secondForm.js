@@ -8,7 +8,7 @@ import http from 'services/http'
 import Typography from '@mui/material/Typography'
 import Loading from '../../@core/components/loading/loading'
 
-function SecondForm({ rows, setRows, handleNext }) {
+function SecondForm({ rows, setRows, handleNext, oneCell }) {
   const [cellModesModel, setCellModesModel] = useState({})
   const [LoadingOpen, setLoadingOpen] = useState(false)
   useEffect(() => {
@@ -436,6 +436,7 @@ function SecondForm({ rows, setRows, handleNext }) {
       }
     )
   }
+  const height = oneCell ? 50 : 100
 
   return (
     <>
@@ -443,13 +444,13 @@ function SecondForm({ rows, setRows, handleNext }) {
         اطلاعات موجود در جدول زیر به سامانه مودیان ارسال خواهد شد. در صورتی که هر فیلد آن نیاز به تغییر داشت ، با کلیک
         بر روی هر فیلد، می توانید آن را اصلاح کنید.
       </Alert>
-      <Box style={{ height: 1000, width: '100%' }} dir='ltr'>
+      <Box style={{ height, width: '100%' }} dir='ltr'>
         <DataGrid
           rows={rows}
           rowCount={rows.length}
           localeText={faIR.components.MuiDataGrid.defaultProps.localeText}
           columns={columns.reverse()}
-          rowsPerPageOptions={[100]}
+          rowsPerPageOptions={oneCell ? [1] : [100]}
           cellModesModel={cellModesModel}
           onCellModesModelChange={handleCellModesModelChange}
           onCellClick={handleCellClick}
@@ -472,7 +473,7 @@ function SecondForm({ rows, setRows, handleNext }) {
         />
       </Box>
       <Button size='large' variant='contained' sx={{ m: 1 }} color='success' onClick={onSubmitSooratHesab}>
-        ارسال به سامانه
+        ارسال {oneCell && 'مجدد'} به سامانه
       </Button>
       <Loading open={LoadingOpen} />
     </>
