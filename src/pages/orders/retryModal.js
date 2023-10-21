@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles'
-import Paper from '@mui/material/Paper'
 import Dialog from '@mui/material/Dialog'
-import { getGridStringOperators } from '@mui/x-data-grid'
 import Box from '@mui/material/Box'
-import Typography from '@mui/material/Typography'
 import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
 import Close from 'mdi-material-ui/Close'
@@ -15,16 +12,6 @@ import toast from 'react-hot-toast'
 import { fetchOrderDetail } from './requests'
 import SecondForm from '../newOrder/secondForm'
 
-export const GridContainer = styled(Paper)({
-  flexGrow: 1,
-  '.MuiDataGrid-root': {
-    border: 'none'
-  },
-  '.MuiTablePagination-displayedRows': {
-    display: 'none'
-  }
-})
-
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(1)
@@ -34,7 +21,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   }
 }))
 
-function RetryModal({ open, setOpen, id }) {
+function RetryModal({ open, setOpen, id, setChange }) {
   const [data, setData] = useState([])
 
   const handleClose = () => {
@@ -89,9 +76,9 @@ function RetryModal({ open, setOpen, id }) {
         <Close />
       </IconButton>
       <DialogContent dividers>
-        <GridContainer sx={{ p: 4, m: 1 }}>
-          <SecondForm rows={data} setRows={setData} handleNext={handleClose} />
-        </GridContainer>
+        <Box sx={{ p: 4, m: 1 }}>
+          <SecondForm rows={data} setRows={setData} handleNext={handleClose} oneCell setChange={setChange} />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button autoFocus onClick={handleClose}>

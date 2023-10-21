@@ -8,7 +8,7 @@ import http from 'services/http'
 import Typography from '@mui/material/Typography'
 import Loading from '../../@core/components/loading/loading'
 
-function SecondForm({ rows, setRows, handleNext, oneCell }) {
+function SecondForm({ rows, setRows, handleNext, oneCell, setChange }) {
   const [cellModesModel, setCellModesModel] = useState({})
   const [LoadingOpen, setLoadingOpen] = useState(false)
   useEffect(() => {
@@ -428,15 +428,20 @@ function SecondForm({ rows, setRows, handleNext, oneCell }) {
         .then(() => {
           setLoadingOpen(false)
           handleNext()
+          if (oneCell) setChange(true)
         }),
       {
         loading: 'در حال ثبت',
         success: ' ثبت شد',
-        error: err => (err.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.')
+        error: err => {
+          setLoadingOpen(false)
+
+          return err.response?.data?.message ? err.response?.data?.message : 'خطایی رخ داده است.'
+        }
       }
     )
   }
-  const height = oneCell ? 50 : 100
+  const height = oneCell ? 150 : 500
 
   return (
     <>
@@ -454,6 +459,7 @@ function SecondForm({ rows, setRows, handleNext, oneCell }) {
           cellModesModel={cellModesModel}
           onCellModesModelChange={handleCellModesModelChange}
           onCellClick={handleCellClick}
+          hideFooterPagination={oneCell}
           onCellEditCommit={event => {
             if (event.rowNode) {
               const newRows = rows

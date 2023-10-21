@@ -259,7 +259,9 @@ function ACLPage() {
         </Card>
       </Grid>
       <DetailModal open={openModal} setOpen={setOpenModal} data={detailData} />
-      {retryModalOpen && <RetryModal open={retryModalOpen} setOpen={setRetryModalOpen} id={detailData} />}
+      {retryModalOpen && (
+        <RetryModal open={retryModalOpen} setOpen={setRetryModalOpen} id={detailData} setChange={setChange} />
+      )}
       <Loading open={LoadingOpen} />
     </Grid>
   )
