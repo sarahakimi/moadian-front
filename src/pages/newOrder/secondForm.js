@@ -441,7 +441,7 @@ function SecondForm({ rows, setRows, handleNext, oneCell, setChange }) {
       }
     )
   }
-  const height = oneCell ? 150 : 500
+  const height = oneCell ? 200 : 500
 
   return (
     <>

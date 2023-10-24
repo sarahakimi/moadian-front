@@ -230,7 +230,7 @@ function ACLPage() {
       .then(response => {
         if (response.data === null) {
           setData([])
-        } else setData(response.data.map((element, index) => ({ ...element, id: index })))
+        } else setData(response.data.map(element => ({ ...element })))
         if (change) setChange(false)
         setLoadingOpen(false)
       })

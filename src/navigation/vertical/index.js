@@ -1,15 +1,21 @@
 // ** Icon imports
-import HomeOutline from 'mdi-material-ui/HomeOutline'
 import PlusOutline from 'mdi-material-ui/PlusOutline'
 import ViewListOutline from 'mdi-material-ui/ViewListOutline'
 
-import { OfficeBuildingOutline, Account, AccountOutline, MagnifyScan } from 'mdi-material-ui'
+import { OfficeBuildingOutline, AccountOutline, MagnifyScan } from 'mdi-material-ui'
 
 const navigation = () => [
+  // {
+  //   icon: HomeOutline,
+  //   title: 'داشبورد',
+  //   path: '/dashboards',
+  //   action: 'read',
+  //   subject: 'every-page'
+  // },
   {
-    icon: HomeOutline,
-    title: 'داشبورد',
-    path: '/dashboards',
+    icon: PlusOutline,
+    title: 'ارسال صورت حساب',
+    path: '/newOrder',
     action: 'read',
     subject: 'every-page'
   },
@@ -28,13 +34,6 @@ const navigation = () => [
     subject: 'every-page'
   },
 
-  {
-    icon: PlusOutline,
-    title: 'ارسال صورت حساب',
-    path: '/newOrder',
-    action: 'read',
-    subject: 'every-page'
-  },
   {
     icon: ViewListOutline,
     title: 'گزارشات',
